@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import dbConnect from "../../database/dbConnect";
 import Code from "../../models/Code";
+import System from "../../models/System";
 import axios from "axios";
 import NumberFormat from "react-number-format";
 import convertToTime from "../../utils/convertTime";
@@ -50,8 +51,9 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
 
-  const { sourceBySlug, newSource } = props;
+  let { sourceBySlug, newSource, systemData } = props;
   const [sourceCode, setSourceCode] = useState(JSON.parse(sourceBySlug));
+  systemData = JSON.parse(systemData);
   const [listComments, setListComment] = useState([]);
   const [listCommentsAll, setListCommentAll] = useState([]);
 
@@ -246,15 +248,11 @@ const DetailSourceCode = (props) => {
           <Head>
             <title>{`${sourceCode[0].title} - LT Blog`}</title>
             <meta name="description" content={sourceCode[0].desc} />
-            <meta
-              name="keywords"
-              content={`Thinhle, Le Thinh, lethinh2003, huynhobe, blog, laptrinhvien, it, cntt, source code free, source, code, game freefire, code game freefire, vong quay freefire, javascript,  ${sourceCode[0].keywords.join(
-                ", "
-              )}`}
-            />
+            {systemData.length > 0 && (
+              <meta name="keywords" content={`${systemData[0].meta_keywords},  ${sourceCode[0].keywords.join(", ")}`} />
+            )}
             <meta property="og:title" content={`${sourceCode[0].title} - LT Blog`} />
             <meta property="og:description" content={sourceCode[0].desc} />
-            <meta property="og:type" content="website" />
             <meta property="og:image" content={sourceCode[0].images[0]} />
             <meta property="og:image:width" content="600" />
             <meta property="og:image:height" content="315" />
@@ -445,6 +443,8 @@ const DetailSourceCode = (props) => {
                             <Button variant="outlined">Đăng Nhập Để Mua Code</Button>
                           )}
 
+                          <h1 className="title">Images</h1>
+
                           {item.images.length > 0 &&
                             item.images.map((im, i) => {
                               return (
@@ -562,64 +562,68 @@ const DetailSourceCode = (props) => {
                   Xem tất cả
                 </Button>
               )}
-              <h1 className="title" ref={getPSComment} id="comments">
-                MYSELF
-              </h1>
-              <Card sx={{ display: "flex", padding: "20px 0px" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                    gap: "20px",
-                    padding: { xs: "0 10px", md: "0 40px" },
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    sx={{ height: 100, width: 100, objectFit: "cover", borderRadius: "10px" }}
-                    image="https://i.imgur.com/gL5yqrj.jpg"
-                    alt="Live from space album cover"
-                  />
-                  <CardContent
-                    sx={{
-                      padding: "unset",
-                    }}
-                  >
-                    <Typography sx={{ fontFamily: "Noto Sans", fontWeight: "bold" }} component="div" variant="div">
-                      Lê Văn Thịnh
-                    </Typography>
-                    <Typography
-                      variant="subtitle1"
+              {systemData.length > 0 && (
+                <>
+                  <h1 className="title">MYSELF</h1>
+                  <Card sx={{ display: "flex", padding: "20px 0px" }}>
+                    <Box
                       sx={{
-                        fontFamily: "Noto Sans",
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                        gap: "20px",
+                        padding: { xs: "0 10px", md: "0 40px" },
                       }}
-                      color="text.secondary"
-                      component="div"
                     >
-                      Tôi chỉ là một người đam mê lập trình web, chia sẻ những gì mình tích luỹ được, góp phần cộng đồng
-                      lập trình người Việt
-                    </Typography>
-                  </CardContent>
-                  <Box sx={{ display: "flex", gap: "10px" }}>
-                    <a href="https://www.facebook.com/thinhvle2210/" target="_blank" rel="noopener noreferrer">
-                      <IconButton aria-label="fb">
-                        <FacebookIcon />
-                      </IconButton>
-                    </a>
-                    <a href="https://zalo.me/lethinhpro123" target="_blank" rel="noopener noreferrer">
-                      <IconButton aria-label="zalo">
-                        <SiZalo />
-                      </IconButton>
-                    </a>
-                    <a href="https://www.instagram.com/thinhle2210/" target="_blank" rel="noopener noreferrer">
-                      <IconButton aria-label="instagram">
-                        <InstagramIcon />
-                      </IconButton>
-                    </a>
-                  </Box>
-                </Box>
-              </Card>
+                      <CardMedia
+                        component="img"
+                        sx={{ height: 100, width: 100, objectFit: "cover", borderRadius: "10px" }}
+                        image={systemData[0].myself_avatar}
+                        alt={systemData[0].myself_name}
+                      />
+                      <CardContent
+                        sx={{
+                          padding: "unset",
+                        }}
+                      >
+                        <Typography sx={{ fontFamily: "Noto Sans", fontWeight: "bold" }} component="div" variant="div">
+                          {systemData[0].myself_name}
+                        </Typography>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontFamily: "Noto Sans",
+                          }}
+                          color="text.secondary"
+                          component="div"
+                        >
+                          {systemData[0].myself_desc}
+                        </Typography>
+                      </CardContent>
+                      <Typography sx={{ fontFamily: "Noto Sans", fontWeight: "bold" }} component="div" variant="div">
+                        Theo dõi tôi
+                      </Typography>
+                      <Box sx={{ display: "flex", gap: "10px" }}>
+                        <a href={systemData[0].myself_fb} target="_blank" rel="noopener noreferrer">
+                          <IconButton aria-label="fb">
+                            <FacebookIcon />
+                          </IconButton>
+                        </a>
+                        <a href={systemData[0].myself_zalo} target="_blank" rel="noopener noreferrer">
+                          <IconButton aria-label="zalo">
+                            <SiZalo />
+                          </IconButton>
+                        </a>
+                        <a href={systemData[0].myself_instagram} target="_blank" rel="noopener noreferrer">
+                          <IconButton aria-label="instagram">
+                            <InstagramIcon />
+                          </IconButton>
+                        </a>
+                      </Box>
+                    </Box>
+                  </Card>
+                </>
+              )}
 
               <h1 className="title" ref={getPSComment} id="comments">
                 Tag
@@ -648,15 +652,27 @@ export const getServerSideProps = async (context) => {
   const test = params.slug.join("/");
   await dbConnect();
   let sourceBySlug = [];
-
-  await Promise.all([Code.find({ slug: { $in: test } })])
+  let systemData = [];
+  await Promise.all([
+    Code.find({ slug: { $in: test } }),
+    System.find({}).select("-__v"),
+    System.updateMany(
+      {},
+      { $inc: { home_views: 1 } },
+      {
+        new: true,
+      }
+    ),
+  ])
     .then((data) => {
       sourceBySlug = data[0];
+      systemData = data[1];
     })
     .catch((err) => console.log(err));
   return {
     props: {
       sourceBySlug: JSON.stringify(sourceBySlug),
+      systemData: JSON.stringify(systemData),
     },
   };
 };

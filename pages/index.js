@@ -19,13 +19,24 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
 import Code from "../models/Code";
+import System from "../models/System";
+
 const Home = (props) => {
-  const { newCode, mostDownloadsCode, mostViewsCode } = props;
+  let { newCode, mostDownloadsCode, mostViewsCode, systemData } = props;
+  systemData = JSON.parse(systemData);
+
   return (
     <>
-      <Head>
-        <meta property="og:image" content="https://i.imgur.com/f1EUuvU.png" />
-      </Head>
+      {systemData.length > 0 && (
+        <Head>
+          <title> {systemData[0].meta_title}</title>
+          <meta name="description" content={systemData[0].meta_desc} />
+          <meta name="keywords" content={systemData[0].meta_keywords} />
+          <meta name="author" content={systemData[0].meta_author} />
+          <meta property="og:image" content={systemData[0].meta_thumbnail} />
+          <meta property="og:title" content={systemData[0].meta_title} />
+        </Head>
+      )}
       <Layout>
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
@@ -41,15 +52,25 @@ export const getServerSideProps = async () => {
   let newCode = [];
   let mostDownloadsCode = [];
   let mostViewsCode = [];
+  let systemData = [];
   const test = await Promise.all([
     Code.find({}).limit(4).select("-link -__v").sort("-_id"),
     Code.find({}).sort("-downloads").limit(4).select("-link -__v"),
     Code.find({}).sort("-views").limit(4).select("-link -__v"),
+    System.find({}).select("-__v"),
+    System.updateMany(
+      {},
+      { $inc: { home_views: 1 } },
+      {
+        new: true,
+      }
+    ),
   ])
     .then((data) => {
       newCode = data[0];
       mostDownloadsCode = data[1];
       mostViewsCode = data[2];
+      systemData = data[3];
     })
     .catch((err) => console.log(err));
   return {
@@ -57,6 +78,7 @@ export const getServerSideProps = async () => {
       newCode: JSON.stringify(newCode),
       mostDownloadsCode: JSON.stringify(mostDownloadsCode),
       mostViewsCode: JSON.stringify(mostViewsCode),
+      systemData: JSON.stringify(systemData),
     },
   };
 };

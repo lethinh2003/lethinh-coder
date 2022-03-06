@@ -12,7 +12,7 @@ import {
   CardContent,
   DialogContentText,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -31,6 +31,7 @@ import { SiZalo } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { useSession } from "next-auth/react";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
+import axios from "axios";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
@@ -39,6 +40,17 @@ const Navbar = (props) => {
   const handleClickSupport = () => {
     setIsModal(true);
   };
+  useEffect(() => {
+    const fetchSystem = async () => {
+      try {
+        const result = await axios.get("/api/system");
+        console.log(result.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSystem();
+  }, []);
 
   return (
     <>

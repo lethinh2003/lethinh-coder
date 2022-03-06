@@ -26,6 +26,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             property="og:title"
             content="LT Blog - Nơi chia sẻ kinh nghiệm, source code giá rẻ - chất lượng - uy tín"
           />
+
           <meta property="og:description" content="" />
           <meta property="og:type" content="website" />
 

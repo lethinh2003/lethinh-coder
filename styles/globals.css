@@ -1,10 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600&display=swap");
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "-apple-system", "BlinkMacSystemFont", '"Segoe UI"', "Roboto", '"Helvetica Neue"', "Arial",
-    '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', "Josefin Sans", sans-serif;
+  font-family: "League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "Noto Sans", sans-serif;
 }
 
 a {

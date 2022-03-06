@@ -12,7 +12,7 @@ import {
   CardContent,
   DialogContentText,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -30,15 +30,28 @@ import { useRouter } from "next/router";
 import { SiZalo } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { useSession } from "next-auth/react";
-
+import axios from "axios";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
   const [isModal, setIsModal] = useState(false);
+  const [data, setData] = useState([]);
   const router = useRouter();
   const handleClickSupport = () => {
     setIsModal(true);
   };
+  useEffect(() => {
+    const fetchSystem = async () => {
+      try {
+        const result = await axios.get("/api/system");
+
+        setData(result.data.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSystem();
+  }, []);
 
   return (
     <>
@@ -47,13 +60,13 @@ const Navbar = (props) => {
           <IconButton color="primary" aria-label="add to shopping cart">
             <FacebookIcon />
           </IconButton>
-          <a href="https://www.facebook.com/thinhvle2210/">Van Thinh Le</a>
+          {data.length > 0 && <a href={data[0].myself_fb}>{data[0].myself_fb_name}</a>}
         </DialogContentText>
         <DialogContentText>
           <IconButton color="primary" aria-label="add to shopping cart">
             <SiZalo />
           </IconButton>
-          <a href="https://zalo.me/lethinhpro123">Thinh Lee</a>
+          {data.length > 0 && <a href={data[0].myself_zalo}>{data[0].myself_zalo_name}</a>}
         </DialogContentText>
       </Modal>
       <Box
