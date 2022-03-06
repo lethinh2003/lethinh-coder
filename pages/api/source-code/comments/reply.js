@@ -4,6 +4,8 @@ import catchError from "../../../../utils/catchError";
 import { getSession } from "next-auth/react";
 import axios from "axios";
 import Comment from "../../../../models/Comment";
+import User from "../../../../models/User";
+import HistoryLike from "../../../../models/HistoryLike";
 import initMiddleware from "../../../../lib/init-middleware";
 import Cors from "cors";
 import rateLimit from "../../../../lib/rate-limit";
@@ -22,43 +24,44 @@ const limiter = rateLimit({
 
 const handle = async (req, res) => {
   const session = await getSession({ req });
-  const { codeId } = req.query;
-
   await cors(req, res);
   await dbConnect();
   await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
-  if (req.method === "GET") {
-    const results = await Comment.find({
-      code: codeId,
-    }).sort("-_id");
-    return res.status(200).json({
-      status: "success",
-      data: results,
-    });
-  } else if (req.method === "POST") {
+  if (req.method === "POST") {
     if (session && session.user) {
-      const { content } = req.body;
+      const { commentId, content } = req.body;
       try {
-        const findCode = await Code.find({
-          _id: codeId,
-        }).sort("_id");
-        const saveToDB = await Comment.create({
-          code: codeId,
-          content: content,
-          account: session.user.account,
-          role: session.user.role,
+        const findComment = Comment.find({
+          _id: commentId,
         });
-        return res.status(200).json({
-          status: "success",
-          message: "Comment thành công",
+
+        const findUser = User.find({
+          account: session.user.account,
+        });
+
+        await Promise.all([findComment, findUser]).then(async (data) => {
+          await Comment.findByIdAndUpdate(commentId, {
+            $push: {
+              reply: {
+                account: session.user.account,
+                content: content,
+                role: session.user.role,
+              },
+            },
+          });
+          return res.status(200).json({
+            status: "success",
+            message: "Thanh cong",
+          });
         });
       } catch (err) {
+        console.log(err);
         return catchError(err, res);
       }
     } else {
       return res.status(400).json({
         status: "fail",
-        message: "Đăng nhập để comment",
+        message: "Đăng nhập để Reply comment",
       });
     }
   }

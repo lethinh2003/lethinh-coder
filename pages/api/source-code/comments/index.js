@@ -31,34 +31,6 @@ const handle = async (req, res) => {
       status: "success",
       data: results,
     });
-  } else if (req.method === "POST") {
-    if (session && session.user) {
-      const { content, codeId } = req.body;
-      try {
-        await Promise.all([
-          Code.find({
-            _id: codeId,
-          }),
-          Comment.create({
-            code: codeId,
-            content: content,
-            account: session.user.account,
-          }),
-        ]).then((data) => {
-          return res.status(200).json({
-            status: "success",
-            message: "Comment thành công",
-          });
-        });
-      } catch (err) {
-        return catchError(err, res);
-      }
-    } else {
-      return res.status(400).json({
-        status: "fail",
-        message: "Đăng nhập để comment",
-      });
-    }
   }
 };
 export default handle;

@@ -48,6 +48,7 @@ import { BsCloudDownload } from "react-icons/bs";
 import Modal from "../../components/homePage/Modal";
 import { SiZalo } from "react-icons/si";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import CancelIcon from "@mui/icons-material/Cancel";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
 
@@ -56,6 +57,7 @@ const DetailSourceCode = (props) => {
   systemData = JSON.parse(systemData);
   const [listComments, setListComment] = useState([]);
   const [listCommentsAll, setListCommentAll] = useState([]);
+  const [replyComment, setReplyComment] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadMoreComments, setIsLoadMoreComments] = useState(false);
@@ -110,10 +112,17 @@ const DetailSourceCode = (props) => {
     if (comment.length >= 5 && isComment) {
       try {
         setIsPostingComment(true);
-        const result = await axios.post("/api/source-code/comments", {
-          codeId: sourceCode[0]._id,
-          content: comment,
-        });
+        if (replyComment.length === 0) {
+          const result = await axios.post("/api/source-code/comments/" + sourceCode[0]._id, {
+            content: comment,
+          });
+        } else {
+          const result = await axios.post("/api/source-code/comments/reply", {
+            commentId: replyComment[0].commentId,
+            content: comment,
+          });
+          setReplyComment([]);
+        }
         const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
         if (isLoadMoreComments) {
           setListComment(getComments.data.data);
@@ -139,7 +148,7 @@ const DetailSourceCode = (props) => {
     }
 
     const slug = router.query.slug.join("/");
-    console.log(slug);
+
     const fetchAPI = async () => {
       try {
         setIsGetListComments(false);
@@ -240,6 +249,20 @@ const DetailSourceCode = (props) => {
   const handleClickLoadMoreComments = () => {
     setIsLoadMoreComments(true);
     setListComment(listCommentsAll);
+  };
+
+  const handleClickReplyComment = (comment) => {
+    const content = [
+      {
+        commentId: comment._id,
+        commentAccount: comment.account,
+      },
+    ];
+
+    setReplyComment(content);
+  };
+  const handleClickCancelReply = () => {
+    setReplyComment([]);
   };
   return (
     <>
@@ -472,6 +495,25 @@ const DetailSourceCode = (props) => {
               <h1 className="title" ref={getPSComment} id="comments">
                 Comments
               </h1>
+              {replyComment.length > 0 && (
+                <Typography
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "5px",
+                    padding: "5px",
+                    border: "1px solid",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Typography>
+                    Đang trả lời cho {replyComment[0].commentAccount}
+                    <IconButton onClick={() => handleClickCancelReply()}>
+                      <CancelIcon />
+                    </IconButton>
+                  </Typography>
+                </Typography>
+              )}
               <Input
                 disabled={status === "authenticated" ? false : true}
                 value={comment}
@@ -488,6 +530,7 @@ const DetailSourceCode = (props) => {
               {status !== "authenticated" && (
                 <Typography sx={{ color: "#f44336" }}>Bạn phải đăng nhập để bình luận</Typography>
               )}
+
               {status === "authenticated" && (
                 <Button variant="contained" disabled={comment.length < 5 ? true : false} onClick={handleClickComment}>
                   Bình luận
@@ -526,7 +569,10 @@ const DetailSourceCode = (props) => {
                         <ListItemAvatar>
                           <Avatar alt={item.account}>{item.account.charAt(0)}</Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={item.account} secondary={item.content}></ListItemText>
+                        <ListItemText
+                          primary={`${item.account} - ${item.role === "admin" ? "Admin" : "Member"} `}
+                          secondary={item.content}
+                        ></ListItemText>
                         <IconButton
                           size="large"
                           aria-label="show likes"
@@ -544,16 +590,59 @@ const DetailSourceCode = (props) => {
                           </Badge>
                         </IconButton>
                       </ListItem>
+
                       <Typography
-                        button
                         sx={{
-                          paddingLeft: "18px",
-                          fontStyle: "italic",
-                          fontSize: "12px",
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "5px",
                         }}
                       >
-                        {convertToTime(item.createdAt)}
+                        <Typography
+                          sx={{
+                            paddingLeft: "18px",
+                            fontStyle: "italic",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {convertToTime(item.createdAt)}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            paddingLeft: "18px",
+                            fontStyle: "italic",
+                            fontSize: "12px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleClickReplyComment(item)}
+                        >
+                          Reply
+                        </Typography>
                       </Typography>
+
+                      {item.reply.length > 0 &&
+                        item.reply.map((replyItem, index) => (
+                          <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
+                            <ListItem button={true}>
+                              <ListItemAvatar>
+                                <Avatar alt={replyItem.account}>{replyItem.account.charAt(0)}</Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={`${replyItem.account} - ${item.role === "admin" ? "Admin" : "Member"} `}
+                                secondary={replyItem.content}
+                              ></ListItemText>
+                            </ListItem>
+                            <Typography
+                              sx={{
+                                paddingLeft: "18px",
+                                fontStyle: "italic",
+                                fontSize: "12px",
+                              }}
+                            >
+                              {convertToTime(replyItem.createdAt)}
+                            </Typography>
+                          </Box>
+                        ))}
                     </Box>
                   ))}
               </Box>
@@ -625,16 +714,16 @@ const DetailSourceCode = (props) => {
                 </>
               )}
 
-              <h1 className="title" ref={getPSComment} id="comments">
-                Tag
-              </h1>
+              <h1 className="title">Tag</h1>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   width: "100%",
-                  fontSize: "35px",
+                  fontSize: "20px",
                   padding: { xs: "0 10px", md: "0 40px" },
+                  fontFamily: "Noto Sans",
+                  opacity: "0.7",
                 }}
               >
                 {sourceCode[0].keywords.join(", ")}
@@ -659,6 +748,15 @@ export const getServerSideProps = async (context) => {
     System.updateMany(
       {},
       { $inc: { home_views: 1 } },
+      {
+        new: true,
+      }
+    ),
+    Code.updateOne(
+      {
+        slug: { $in: test },
+      },
+      { $inc: { views: 1 } },
       {
         new: true,
       }

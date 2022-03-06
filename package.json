@@ -38,6 +38,7 @@
     "sass": "^1.49.9",
     "slugify": "^1.6.5",
     "swr": "^1.2.2",
+    "uniqid": "^5.4.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
