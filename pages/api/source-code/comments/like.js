@@ -6,6 +6,7 @@ import axios from "axios";
 import Comment from "../../../../models/Comment";
 import User from "../../../../models/User";
 import HistoryLike from "../../../../models/HistoryLike";
+import Notify from "../../../../models/Notify";
 import initMiddleware from "../../../../lib/init-middleware";
 import Cors from "cors";
 import rateLimit from "../../../../lib/rate-limit";
@@ -31,7 +32,7 @@ const handle = async (req, res) => {
   await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
   if (req.method === "POST") {
     if (session && session.user) {
-      const { commentId, accountId } = req.body;
+      const { commentId, accountId, linkNotify } = req.body;
       try {
         const findComment = Comment.find({
           _id: commentId,
@@ -63,22 +64,47 @@ const handle = async (req, res) => {
               });
             });
           } else {
-            await Promise.all([
-              Comment.findByIdAndUpdate(commentId, {
-                $push: {
-                  likes: accountId,
-                },
-              }),
-              HistoryLike.create({
-                account: session.user.account,
-                comment: [commentId],
-              }),
-            ]).then((data) => {
-              return res.status(200).json({
-                status: "success",
-                message: "like",
+            if (session.user.account !== data[0][0].account) {
+              await Promise.all([
+                Comment.findByIdAndUpdate(commentId, {
+                  $push: {
+                    likes: accountId,
+                  },
+                }),
+                HistoryLike.create({
+                  account: session.user.account,
+                  comment: [commentId],
+                }),
+                Notify.create({
+                  link: linkNotify,
+                  account_send: session.user.account,
+                  account_receive: data[0][0].account,
+                  content: `${session.user.account} vừa like comment: "${data[0][0].content}" của bạn.`,
+                }),
+              ]).then((data) => {
+                return res.status(200).json({
+                  status: "success",
+                  message: "like",
+                });
               });
-            });
+            } else {
+              await Promise.all([
+                Comment.findByIdAndUpdate(commentId, {
+                  $push: {
+                    likes: accountId,
+                  },
+                }),
+                HistoryLike.create({
+                  account: session.user.account,
+                  comment: [commentId],
+                }),
+              ]).then((data) => {
+                return res.status(200).json({
+                  status: "success",
+                  message: "like",
+                });
+              });
+            }
           }
         });
       } catch (err) {

@@ -49,6 +49,7 @@ const Home = (props) => {
 export default Home;
 export const getServerSideProps = async () => {
   await dbConnect();
+
   let newCode = [];
   let mostDownloadsCode = [];
   let mostViewsCode = [];

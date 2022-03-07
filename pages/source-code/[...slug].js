@@ -120,6 +120,7 @@ const DetailSourceCode = (props) => {
           const result = await axios.post("/api/source-code/comments/reply", {
             commentId: replyComment[0].commentId,
             content: comment,
+            linkNotify: `/source-code/${sourceCode[0].slug}`,
           });
           setReplyComment([]);
         }
@@ -145,6 +146,9 @@ const DetailSourceCode = (props) => {
   useEffect(() => {
     if (sourceCode.length === 0) {
       return router.push("/");
+    }
+    if (status !== "authenticated") {
+      setReplyComment([]);
     }
 
     const slug = router.query.slug.join("/");
@@ -185,7 +189,7 @@ const DetailSourceCode = (props) => {
       }
     };
     fetchAPI();
-  }, [router.query.slug, status]);
+  }, [router.query.slug, status, session]);
 
   const images = sourceCode.length > 0 ? sourceCode[0].images : [];
 
@@ -204,6 +208,7 @@ const DetailSourceCode = (props) => {
         const result = await axios.post("/api/source-code/comments/like", {
           commentId: commentId,
           accountId: accountId,
+          linkNotify: `/source-code/${sourceCode[0].slug}`,
         });
         const getListCommentsStorage = localStorage.getItem("listLikeComments");
         if (result.data.message === "like") {
@@ -495,7 +500,7 @@ const DetailSourceCode = (props) => {
               <h1 className="title" ref={getPSComment} id="comments">
                 Comments
               </h1>
-              {replyComment.length > 0 && (
+              {replyComment.length > 0 && status === "authenticated" && (
                 <Typography
                   sx={{
                     display: "flex",
@@ -507,7 +512,10 @@ const DetailSourceCode = (props) => {
                   }}
                 >
                   <Typography>
-                    Đang trả lời cho {replyComment[0].commentAccount}
+                    Đang trả lời cho{" "}
+                    {session.user.account !== replyComment[0].commentAccount
+                      ? replyComment[0].commentAccount
+                      : "chính tôi"}
                     <IconButton onClick={() => handleClickCancelReply()}>
                       <CancelIcon />
                     </IconButton>
@@ -607,17 +615,19 @@ const DetailSourceCode = (props) => {
                         >
                           {convertToTime(item.createdAt)}
                         </Typography>
-                        <Typography
-                          sx={{
-                            paddingLeft: "18px",
-                            fontStyle: "italic",
-                            fontSize: "12px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleClickReplyComment(item)}
-                        >
-                          Reply
-                        </Typography>
+                        {status === "authenticated" && (
+                          <Typography
+                            sx={{
+                              paddingLeft: "18px",
+                              fontStyle: "italic",
+                              fontSize: "12px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleClickReplyComment(item)}
+                          >
+                            Reply
+                          </Typography>
+                        )}
                       </Typography>
 
                       {item.reply.length > 0 &&

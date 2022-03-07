@@ -22,9 +22,12 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 
 const Modal = (props) => {
-  const { isModal, setIsModal, title } = props;
+  const { isModal, setIsModal, title, setIsClickNotify } = props;
   const handleClose = () => {
     setIsModal(false);
+    if (setIsClickNotify) {
+      setIsClickNotify();
+    }
   };
   return (
     <>
