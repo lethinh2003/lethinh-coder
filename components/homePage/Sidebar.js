@@ -155,10 +155,13 @@ const Sidebar = (props) => {
               {isLoading && (
                 <>
                   {Array.from({ length: 5 }).map((item, i) => (
-                    <Skeleton key={i} variant="rectangular" width={"300px"} height={80} />
+                    <Box key={i} sx={{ maxWidth: "300px" }}>
+                      <Skeleton variant="rectangular" width={"100%"} height={80} />
+                    </Box>
                   ))}
                 </>
               )}
+              {!isLoading && data.length === 0 && <Typography>Thông báo trống</Typography>}
               {!isLoading &&
                 data.length > 0 &&
                 data.map((item, i) => (
@@ -172,9 +175,6 @@ const Sidebar = (props) => {
                         primary={item.account_send}
                         secondary={item.content}
                       ></ListItemText>
-                      <IconButton>
-                        <CancelIcon />
-                      </IconButton>
                     </ListItem>
                     <Typography
                       sx={{

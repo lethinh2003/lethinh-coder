@@ -13,6 +13,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <Head>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
           <title> LT Blog - Nơi chia sẻ kinh nghiệm, source code giá rẻ - chất lượng - uy tín</title>
+          <link rel="icon" type="image/x-icon" href="https://i.imgur.com/U0BdIic.png" />
+
           <meta
             name="description"
             content="LT Blog - Nơi chia sẻ kinh nghiệm, source code giá rẻ - chất lượng - uy tín"

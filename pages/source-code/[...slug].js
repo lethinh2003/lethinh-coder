@@ -189,7 +189,7 @@ const DetailSourceCode = (props) => {
       }
     };
     fetchAPI();
-  }, [router.query.slug, status, session]);
+  }, [router.query.slug, status]);
 
   const images = sourceCode.length > 0 ? sourceCode[0].images : [];
 
@@ -368,7 +368,7 @@ const DetailSourceCode = (props) => {
                       }}
                       component="img"
                       image={sourceCode[0].images[0]}
-                      alt="green iguana"
+                      alt={sourceCode[0].title}
                     />
                     <CardContent
                       sx={{

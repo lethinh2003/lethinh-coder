@@ -20,7 +20,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-
+import Modal from "../homePage/Modal";
 import axios from "axios";
 
 const Signup = (props) => {
@@ -33,6 +33,8 @@ const Signup = (props) => {
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
   const [accountValue, setAccountValue] = useState("");
   const [messageError, setMessageError] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [text, setText] = useState("");
   const handleClose = () => {
     setIsSignupModal(false);
   };
@@ -71,8 +73,16 @@ const Signup = (props) => {
           password: passwordValue,
           confirmPassword: confirmPasswordValue,
         });
+        setIsModal(true);
+        setText(result.data.message);
         setIsError(false);
         setIsLoading(false);
+        setIsShowPassword(false);
+        setIsShowConfirmPassword(false);
+        setPasswordValue("");
+        setConfirmPasswordValue("");
+        setAccountValue("");
+        setMessageError("");
       } catch (err) {
         setIsError(true);
         if (err.response) {
@@ -89,6 +99,9 @@ const Signup = (props) => {
           <Backdrop sx={{ color: "#fff", zIndex: 99999 }} open={isLoading}>
             <CircularProgress color="inherit" />
           </Backdrop>
+          <Modal title={"Thông báo"} isModal={isModal} setIsModal={setIsModal}>
+            <DialogContentText>{text}</DialogContentText>
+          </Modal>
           <Dialog open={isSignupModal} onClose={handleClose}>
             <DialogTitle>Signup</DialogTitle>
             <DialogContent>

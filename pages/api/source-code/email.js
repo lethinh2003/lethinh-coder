@@ -24,16 +24,16 @@ const handle = async (req, res) => {
     if (req.method === "POST") {
       const { email, codeId } = req.body;
       try {
-        // const findHistory = await HistoryCode.find({
-        //   code: codeId,
-        //   account: session.user.account,
-        // });
-        // if (findHistory && findHistory.length > 0) {
-        //   return res.status(400).json({
-        //     status: "fail",
-        //     message: "Bạn đã download code này rồi",
-        //   });
-        // }
+        const findHistory = await HistoryCode.find({
+          code: codeId,
+          account: session.user.account,
+        });
+        if (findHistory && findHistory.length > 0) {
+          return res.status(400).json({
+            status: "fail",
+            message: "Bạn đã download code này rồi",
+          });
+        }
         const findCode = await Code.find({
           _id: codeId,
         });
@@ -61,21 +61,32 @@ const handle = async (req, res) => {
 
         const historyMessage = `Download code ${findCode[0].title} với giá ${findCode[0].costs} VNĐ`;
         if (findCode[0].costs === 0) {
-          await sendEmail({
+          const sendMail = sendEmail({
             email: email,
             subject: "[No Reply] Download code thành công tại LT Blog",
             message,
           });
-          const saveToDB = await HistoryCode.create({
+          const saveToDB = HistoryCode.create({
             email: email,
             code: codeId,
             content: historyMessage,
             account: session.user.account,
             status: "success",
           });
-          return res.status(200).json({
-            status: "success",
-            message: "Tải xuống code thành công, vui lòng kiểm tra mail (bao gồm spam, thùng rác,..)",
+          const incViews = Code.updateOne(
+            {
+              _id: codeId,
+            },
+            { $inc: { downloads: 1 } },
+            {
+              new: true,
+            }
+          );
+          await Promise.all([sendMail, saveToDB, incViews]).then((data) => {
+            return res.status(200).json({
+              status: "success",
+              message: "Tải xuống code thành công, vui lòng kiểm tra mail (bao gồm spam, thùng rác,..)",
+            });
           });
         } else {
           const saveToDB = await HistoryCode.create({

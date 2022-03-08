@@ -199,23 +199,25 @@ const SidebarMobile = (props) => {
                   </Typography>
                 </Button>
               </Link>
-              <Button
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  gap: "5px",
-                  fontSize: "25px",
-                  fontWeight: "bold",
-                  padding: "5px",
-                }}
-                component="div"
-              >
-                <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                  Source
-                </Typography>
-              </Button>
+              <Link href="/source-code">
+                <Button
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: "5px",
+                    fontSize: "25px",
+                    fontWeight: "bold",
+                    padding: "5px",
+                  }}
+                  component="div"
+                >
+                  <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                    Source
+                  </Typography>
+                </Button>
+              </Link>
             </Box>
           </Box>
         </Slide>

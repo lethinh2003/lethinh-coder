@@ -31,6 +31,9 @@ import { SiZalo } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { useSession } from "next-auth/react";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
+import { AiFillTool } from "react-icons/ai";
+import { HiTemplate } from "react-icons/hi";
+
 import axios from "axios";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
@@ -54,22 +57,6 @@ const Navbar = (props) => {
 
   return (
     <>
-      <Modal title={"Thông tin hỗ trợ"} isModal={isModal} setIsModal={setIsModal}>
-        <DialogContentText>
-          <IconButton color="primary" aria-label="add to shopping cart">
-            <FacebookIcon />
-          </IconButton>
-          <a href="https://www.facebook.com/thinhvle2210/" target="_blank" rel="noopener noreferrer">
-            Van Thinh Le
-          </a>
-        </DialogContentText>
-        <DialogContentText>
-          <IconButton color="primary" aria-label="add to shopping cart">
-            <SiZalo />
-          </IconButton>
-          <a href="https://zalo.me/lethinhpro123">Thinh Lee</a>
-        </DialogContentText>
-      </Modal>
       <Box
         sx={{
           bgcolor: "header.background.default",
@@ -176,6 +163,64 @@ const Navbar = (props) => {
                   }}
                 >
                   Source
+                </Box>
+              </Button>
+            </Link>
+            <Link href="/admin/tools">
+              <Button
+                className={
+                  router.pathname === "/admin/tools"
+                    ? `ms-navbar__item active_${theme.palette.mode}`
+                    : "ms-navbar__item"
+                }
+                sx={{
+                  color: "text.primary",
+                }}
+              >
+                <Box
+                  className="ms-navbar__item--icon"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  <AiFillTool />
+                </Box>
+                <Box
+                  className="ms-navbar__item--title"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  Tools
+                </Box>
+              </Button>
+            </Link>
+            <Link href="/admin/orders">
+              <Button
+                className={
+                  router.pathname === "/admin/orders"
+                    ? `ms-navbar__item active_${theme.palette.mode}`
+                    : "ms-navbar__item"
+                }
+                sx={{
+                  color: "text.primary",
+                }}
+              >
+                <Box
+                  className="ms-navbar__item--icon"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  <HiTemplate />
+                </Box>
+                <Box
+                  className="ms-navbar__item--title"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  Orders
                 </Box>
               </Button>
             </Link>

@@ -8,7 +8,7 @@ const handle = async (req, res) => {
   const session = await getSession({ req });
   await dbConnect();
   if (req.method === "GET") {
-    if (session && session.user) {
+    if (session && session.user.role === "admin") {
       const results = await Comment.find({}).select("-__v");
 
       return res.status(200).json({

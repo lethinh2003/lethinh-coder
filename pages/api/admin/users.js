@@ -9,7 +9,7 @@ const handle = async (req, res) => {
   const session = await getSession({ req });
   await dbConnect();
   if (req.method === "GET") {
-    if (session && session.user) {
+    if (session && session.user.role === "admin") {
       const getUsers = await User.find({}).select("-__v -password");
       return res.status(200).json({
         status: "success",

@@ -65,7 +65,7 @@ const Email = (props) => {
           setMessageError(err.response.data.message);
         }
         setIsLoading(false);
-        console.log(err);
+
         setIsError(true);
       }
     }
