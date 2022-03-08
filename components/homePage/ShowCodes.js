@@ -107,13 +107,11 @@ const ShowCodes = (props) => {
                     <CardActions
                       sx={{
                         paddingTop: "20px",
+                        paddingLeft: "16px",
                       }}
                     >
-                      <Button size="small" color="primary">
-                        Share
-                      </Button>
                       <Link href={`/source-code/${item.slug}`}>
-                        <Button size="small" color="primary">
+                        <Button size="small" variant="outlined" color="primary">
                           Chi tiết
                         </Button>
                       </Link>
@@ -187,13 +185,11 @@ const ShowCodes = (props) => {
                   <CardActions
                     sx={{
                       paddingTop: "20px",
+                      paddingLeft: "16px",
                     }}
                   >
-                    <Button size="small" color="primary">
-                      Share
-                    </Button>
                     <Link href={`/source-code/${item.slug}`}>
-                      <Button size="small" color="primary">
+                      <Button size="small" variant="outlined" color="primary">
                         Chi tiết
                       </Button>
                     </Link>

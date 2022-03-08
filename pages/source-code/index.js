@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
 import axios from "axios";
 import NumberFormat from "react-number-format";
+import ReactPaginate from "react-paginate";
+
 import {
   Button,
   Box,
@@ -26,6 +28,8 @@ import {
   TextField,
   Autocomplete,
   Skeleton,
+  Pagination,
+  Stack,
 } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import LinkMUI from "@mui/material/Link";
@@ -43,7 +47,117 @@ import { useSession } from "next-auth/react";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { BsCloudDownload } from "react-icons/bs";
 import Modal from "../../components/homePage/Modal";
+import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 
+const Items = ({ currentItems, isLoading }) => {
+  return (
+    <>
+      <Box
+        sx={{
+          width: "100%",
+          flexWrap: "wrap",
+          bgcolor: "background.default",
+          justifyContent: "space-between",
+          color: "text.primary",
+          gap: "10px",
+          padding: "40px 20px",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(1, 1fr)",
+            sm: "repeat(2, 1fr)",
+            md: "repeat(3, 1fr)",
+            lg: "repeat(4, 1fr)",
+          },
+        }}
+      >
+        {isLoading &&
+          Array.from({ length: 4 }).map((item, i) => (
+            <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
+              <Skeleton variant="rectangular" width={"100%"} height={200} />
+              <Box sx={{ p: 2 }}>
+                <Skeleton />
+                <Skeleton />
+              </Box>
+              <Box sx={{ p: 2, borderRadius: "20px" }}>
+                <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={50} />
+              </Box>
+              <Box sx={{ p: 2, display: "flex", gap: "10px" }}>
+                <Skeleton variant="rectangular" width={100} height={40} />
+                <Skeleton variant="rectangular" width={100} height={40} />
+              </Box>
+            </Card>
+          ))}
+        {!isLoading &&
+          currentItems &&
+          currentItems.length > 0 &&
+          currentItems.map((item, i) => {
+            return (
+              <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
+                <CardMedia
+                  className="code-container__image"
+                  component="img"
+                  height="140"
+                  image={item.images[0]}
+                  alt={item.title}
+                />
+                <CardContent className="code-container__body">
+                  <Typography
+                    sx={{
+                      fontFamily: "Noto Sans",
+                      fontSize: "20px",
+                      fontWeight: "bold",
+                      textTransform: "capitalize",
+                    }}
+                    variant="h5"
+                    component="div"
+                  >
+                    {item.title}
+                  </Typography>
+
+                  <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
+                    {item.desc}
+                  </Typography>
+                  <Typography sx={{ marginTop: "20px" }}>
+                    {item.costs > 0 && (
+                      <Button variant="contained" color="success">
+                        <NumberFormat
+                          value={item.costs}
+                          displayType={"text"}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          suffix={" VNĐ"}
+                        />
+                      </Button>
+                    )}
+                    {item.costs === 0 && (
+                      <Button variant="contained">
+                        Free <MoneyOffIcon />
+                      </Button>
+                    )}
+                  </Typography>
+                </CardContent>
+
+                <CardActions
+                  sx={{
+                    paddingTop: "20px",
+                    paddingLeft: "16px",
+                  }}
+                >
+                  <Link href={`/source-code/${item.slug}`}>
+                    <Button size="small" variant="outlined" color="primary">
+                      Chi tiết
+                    </Button>
+                  </Link>
+                </CardActions>
+              </Card>
+            );
+          })}
+      </Box>
+    </>
+  );
+};
 const SourceCode = () => {
   const optionsPrice = [
     { label: "Giá giảm dần", key: "-costs" },
@@ -60,6 +174,10 @@ const SourceCode = () => {
   const [inputValueCosts, setInputValueCosts] = useState("");
   const [valueDate, setValueDate] = useState(optionsDate[1]);
   const [inputValueDate, setInputValueDate] = useState("");
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
   useEffect(() => {
     const getSourceCode = async () => {
       try {
@@ -75,10 +193,18 @@ const SourceCode = () => {
     };
     getSourceCode();
   }, []);
-  const handleClickFilter = async () => {
-    console.log(valueCosts);
-    console.log(valueDate);
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(sourceCode.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(sourceCode.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, sourceCode]);
 
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % sourceCode.length;
+    setItemOffset(newOffset);
+  };
+
+  const handleClickFilter = async () => {
     const arraySort = [];
     if (valueCosts) {
       arraySort.push(valueCosts.key);
@@ -181,7 +307,7 @@ const SourceCode = () => {
           <Button variant="contained" onClick={handleClickFilter}>
             Lọc
           </Button>
-          <Box
+          {/* <Box
             sx={{
               width: "100%",
               flexWrap: "wrap",
@@ -277,6 +403,23 @@ const SourceCode = () => {
                   </Card>
                 );
               })}
+          </Box> */}
+          <Items currentItems={currentItems} isLoading={isLoading} />
+          <Box>
+            <ReactPaginate
+              containerClassName="pagination"
+              pageLinkClassName="button"
+              activeLinkClassName="active"
+              previousLinkClassName="button"
+              nextLinkClassName="button"
+              breakLabel="..."
+              nextLabel={<NavigateNextIcon />}
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={5}
+              pageCount={pageCount}
+              previousLabel={<NavigateBeforeIcon />}
+              renderOnZeroPageCount={null}
+            />
           </Box>
         </Box>
       </Layout>

@@ -155,9 +155,7 @@ const Sidebar = (props) => {
               {isLoading && (
                 <>
                   {Array.from({ length: 5 }).map((item, i) => (
-                    <Box key={i} sx={{ maxWidth: "300px" }}>
-                      <Skeleton variant="rectangular" width={"100%"} height={80} />
-                    </Box>
+                    <Skeleton key={i} variant="rectangular" width={"300px"} height={80} />
                   ))}
                 </>
               )}

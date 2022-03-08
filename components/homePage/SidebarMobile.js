@@ -27,7 +27,12 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
 import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+
 const SidebarMobile = (props) => {
+  const { data: session } = useSession();
+
   const {
     status,
     handleClickSidebarMobile,
@@ -97,6 +102,8 @@ const SidebarMobile = (props) => {
                     fontSize: "25px",
                     fontWeight: "bold",
                     padding: "5px",
+                    textTransform: "capitalize",
+                    fontWeight: 500,
                   }}
                   component="div"
                   className={router.pathname === "/" ? `active_${theme.palette.mode}` : "thinhs"}
@@ -130,6 +137,8 @@ const SidebarMobile = (props) => {
                       fontSize: "25px",
                       fontWeight: "bold",
                       padding: "5px",
+                      textTransform: "capitalize",
+                      fontWeight: 500,
                     }}
                     component="div"
                   >
@@ -148,6 +157,8 @@ const SidebarMobile = (props) => {
                       fontSize: "25px",
                       fontWeight: "bold",
                       padding: "5px",
+                      textTransform: "capitalize",
+                      fontWeight: 500,
                     }}
                     component="div"
                   >
@@ -170,6 +181,8 @@ const SidebarMobile = (props) => {
                       fontSize: "25px",
                       fontWeight: "bold",
                       padding: "5px",
+                      textTransform: "capitalize",
+                      fontWeight: 500,
                     }}
                     component="div"
                   >
@@ -190,6 +203,8 @@ const SidebarMobile = (props) => {
                     fontSize: "25px",
                     fontWeight: "bold",
                     padding: "5px",
+                    textTransform: "capitalize",
+                    fontWeight: 500,
                   }}
                   component="div"
                 >
@@ -209,6 +224,8 @@ const SidebarMobile = (props) => {
                     fontSize: "25px",
                     fontWeight: "bold",
                     padding: "5px",
+                    textTransform: "capitalize",
+                    fontWeight: 500,
                   }}
                   component="div"
                 >
@@ -218,6 +235,29 @@ const SidebarMobile = (props) => {
                   </Typography>
                 </Button>
               </Link>
+              {session && session.user.role === "admin" && (
+                <Link href="/admin">
+                  <Button
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      gap: "5px",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                      padding: "5px",
+                      textTransform: "capitalize",
+                      fontWeight: 500,
+                    }}
+                    component="div"
+                  >
+                    <AdminPanelSettingsIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                      Admin
+                    </Typography>
+                  </Button>
+                </Link>
+              )}
             </Box>
           </Box>
         </Slide>
