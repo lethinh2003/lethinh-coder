@@ -648,7 +648,7 @@ const DetailSourceCode = (props) => {
                                 <Avatar alt={replyItem.account}>{replyItem.account.charAt(0)}</Avatar>
                               </ListItemAvatar>
                               <ListItemText
-                                primary={`${replyItem.account} - ${item.role === "admin" ? "Admin" : "Member"} `}
+                                primary={`${replyItem.account} - ${replyItem.role === "admin" ? "Admin" : "Member"} `}
                                 secondary={replyItem.content}
                               ></ListItemText>
                             </ListItem>
