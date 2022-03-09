@@ -81,7 +81,7 @@ const Email = (props) => {
             <DialogContentText>{text}</DialogContentText>
           </Modal>
           <Dialog open={isEmailModal} onClose={handleClose}>
-            <DialogTitle>Mua Code</DialogTitle>
+            <DialogTitle>Download Code</DialogTitle>
             <DialogContent>
               <DialogContentText>Nhập email xong vui lòng kiểm tra trong hòm thư rác, spam!</DialogContentText>
               {isError && <DialogContentText sx={{ color: "#f44336" }}>ERROR: {messageError}</DialogContentText>}

@@ -3,11 +3,6 @@ import Code from "../../../models/Code";
 import catchError from "../../../utils/catchError";
 import { getSession } from "next-auth/react";
 import axios from "axios";
-export const getMostDownload = async () => {
-  const results = await axios.get("/api/source-code/most-download");
-  console.log(results);
-  return results;
-};
 
 const handle = async (req, res) => {
   const session = await getSession({ req });

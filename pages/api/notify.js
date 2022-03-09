@@ -8,45 +8,54 @@ import Notify from "../../models/Notify";
 import Cors from "cors";
 import initMiddleware from "../../lib/init-middleware";
 const cors = initMiddleware(
-  // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
   Cors({
-    // Only allow requests with GET, POST and OPTIONS
-    origin: "https://www.lethinh-coder.site",
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: process.env.NEXTAUTH_URL,
+    methods: ["GET", "POST"],
   })
 );
 
 const handle = async (req, res) => {
-  const session = await getSession({ req });
-  // await cors(req, res);
-  await dbConnect();
-  if (session && session.user) {
-    if (req.method === "GET") {
-      const findNotifies = await Notify.find({
-        account_receive: session.user.account,
-      }).sort("-_id");
-      return res.status(200).json({
-        status: "success",
-        data: findNotifies,
-      });
-    }
-    if (req.method === "POST") {
-      const findNotifies = await Notify.updateMany(
-        {
+  try {
+    const session = await getSession({ req });
+    await cors(req, res);
+    await dbConnect();
+    if (session && session.user) {
+      if (req.method === "GET") {
+        const findNotifies = await Notify.find({
           account_receive: session.user.account,
-        },
-        { status: true }
-      );
-      return res.status(200).json({
-        status: "success",
-        data: findNotifies,
+        })
+          .sort("-_id")
+          .select("-__v");
+        return res.status(200).json({
+          status: "success",
+          data: findNotifies,
+        });
+      }
+      if (req.method === "POST") {
+        const findNotifies = await Notify.updateMany(
+          {
+            account_receive: session.user.account,
+          },
+          { status: true }
+        );
+        return res.status(200).json({
+          status: "success",
+          data: findNotifies,
+        });
+      } else {
+        return res.status(404).json({
+          status: "error",
+          message: "Something went wrong",
+        });
+      }
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Đăng nhập để xem thông báo",
       });
     }
-  } else {
-    return res.status(400).json({
-      status: "fail",
-      message: "Đăng nhập để tải xuống code",
-    });
+  } catch (err) {
+    return catchError(err, res);
   }
 };
 export default handle;

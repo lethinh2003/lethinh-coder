@@ -47,6 +47,10 @@ const CodeSchema = new mongoose.Schema({
     type: Array,
     trim: true,
   },
+  labels: {
+    type: Array,
+    trim: true,
+  },
   views: {
     type: Number,
     default: 0,

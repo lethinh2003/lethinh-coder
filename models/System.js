@@ -26,10 +26,22 @@ const SystemSchema = new mongoose.Schema({
     required: [true, "Missing link fb"],
     validate: [validator.isURL, "FB is not valid"],
   },
+  myself_fb_name: {
+    type: String,
+    tirm: true,
+    required: [true, "Missing name fb"],
+    validate: [validator.isURL, "FB is not valid"],
+  },
   myself_zalo: {
     type: String,
     tirm: true,
     required: [true, "Missing link zalo"],
+    validate: [validator.isURL, "Zalo is not valid"],
+  },
+  myself_zalo_name: {
+    type: String,
+    tirm: true,
+    required: [true, "Missing name zalo"],
     validate: [validator.isURL, "Zalo is not valid"],
   },
   myself_instagram: {

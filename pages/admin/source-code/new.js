@@ -46,7 +46,7 @@ export default function MyEditor() {
       const data = localStorage.getItem("postData") || null;
       const imagesArray = images.split(", ");
 
-      const response = await axios.post("/api/source-code", {
+      const response = await axios.post("/api/admin/source-code", {
         title: title,
         content: data,
         link: link,

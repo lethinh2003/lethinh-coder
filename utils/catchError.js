@@ -1,7 +1,7 @@
 const catchError = (err, res) => {
   if (err.code === 11000) {
     const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
-    const message = `Duplicate field value: ${value}. Please use another value!`;
+    const message = `${value} đã tồn tại, vui lòng nhập giá trị khác`;
     return res.status(400).json({
       status: "error",
       message: message,

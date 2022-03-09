@@ -11,8 +11,8 @@ const cors = initMiddleware(
   // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
   Cors({
     // Only allow requests with GET, POST and OPTIONS
-    origin: "https://www.lethinh-coder.site",
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: process.env.NEXTAUTH_URL,
+    methods: ["GET", "POST"],
   })
 );
 

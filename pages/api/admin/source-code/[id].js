@@ -26,7 +26,7 @@ const handle = async (req, res) => {
           message: "You can't access this router",
         });
       } else {
-        const { title, content, link, costs, images, id, status, desc } = req.body;
+        const { title, content, link, costs, images, id, status, desc, labels } = req.body;
         try {
           const result = await Code.findByIdAndUpdate(
             id,
@@ -38,6 +38,7 @@ const handle = async (req, res) => {
               images: images,
               status: status,
               desc: desc,
+              labels: labels,
               updatedAt: new Date().toISOString(),
             },
             {

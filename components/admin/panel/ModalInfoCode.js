@@ -42,8 +42,10 @@ const Modal = (props) => {
   const { isModal, setIsModal, title, id, setId } = props;
   const [data, setData] = useState([]);
   const [dataImg, setDataImg] = useState([]);
+  const [dataLabel, setDataLabel] = useState([]);
   const [dataContent, setDataContent] = useState("");
   const [dataImgAdd, setDataImgAdd] = useState("");
+  const [dataLabelAdd, setDataLabelAdd] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   //form
@@ -67,6 +69,7 @@ const Modal = (props) => {
         const result = await axios.get("/api/admin/source-code/" + id);
         setData(result.data.data);
         if (result.data.data.length > 0) {
+          setDataLabel(result.data.data[0].labels);
           setDataImg(result.data.data[0].images);
           setDataContent(result.data.data[0].content);
           setDataTitle(result.data.data[0].title);
@@ -75,6 +78,7 @@ const Modal = (props) => {
           setDataCosts(result.data.data[0].costs);
           setDataStatus(result.data.data[0].status);
         }
+
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
@@ -94,6 +98,9 @@ const Modal = (props) => {
   };
   const handleChangeImgAdd = (e) => {
     setDataImgAdd(e.target.value);
+  };
+  const handleChangeLabelAdd = (e) => {
+    setDataLabelAdd(e.target.value);
   };
   const handleChangeTitle = (e) => {
     setDataTitle(e.target.value);
@@ -115,6 +122,14 @@ const Modal = (props) => {
       setDataImgAdd("");
     }
   };
+  const handleClickAddLabel = () => {
+    if (dataLabelAdd.length > 0) {
+      const newData = dataLabel;
+      newData.push(dataLabelAdd.toLowerCase());
+      setDataLabel(newData);
+      setDataLabelAdd("");
+    }
+  };
   const handleClickEdit = async () => {
     try {
       setIsLoading(true);
@@ -127,8 +142,8 @@ const Modal = (props) => {
         images: dataImg,
         desc: dataDesc,
         status: dataStatus,
+        labels: dataLabel,
       });
-      console.log(response);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -136,6 +151,10 @@ const Modal = (props) => {
         console.log(err.response.data.message);
       }
     }
+  };
+  const handleClickDeleteLabel = (data) => {
+    const newData = dataLabel.filter((item) => item !== data);
+    setDataLabel(newData);
   };
 
   return (
@@ -261,6 +280,37 @@ const Modal = (props) => {
               </DialogContentText>
               <DialogContentText sx={{ pt: 2 }}>
                 <Button variant="outlined" onClick={handleClickAddImg} disabled={!validator.isURL(dataImgAdd)}>
+                  Thêm
+                </Button>
+              </DialogContentText>
+              <DialogContentText sx={{ pt: 2 }}>
+                Labels
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "5px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {dataLabel &&
+                    dataLabel.map((item, i) => (
+                      <Button key={i} variant="outlined" onClick={() => handleClickDeleteLabel(item)}>
+                        {item}
+                      </Button>
+                    ))}
+                </Box>
+              </DialogContentText>
+              <DialogContentText sx={{ pt: 2 }}>
+                <TextField
+                  fullWidth
+                  label="Thêm label"
+                  defaultValue={dataLabelAdd}
+                  value={dataLabelAdd}
+                  onChange={(e) => handleChangeLabelAdd(e)}
+                />
+              </DialogContentText>
+              <DialogContentText sx={{ pt: 2 }}>
+                <Button variant="outlined" onClick={handleClickAddLabel} disabled={!(dataLabelAdd.length > 0)}>
                   Thêm
                 </Button>
               </DialogContentText>

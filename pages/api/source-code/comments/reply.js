@@ -1,8 +1,6 @@
 import dbConnect from "../../../../database/dbConnect";
-import Code from "../../../../models/Code";
 import catchError from "../../../../utils/catchError";
 import { getSession } from "next-auth/react";
-import axios from "axios";
 import Comment from "../../../../models/Comment";
 import User from "../../../../models/User";
 import Notify from "../../../../models/Notify";
@@ -10,11 +8,9 @@ import initMiddleware from "../../../../lib/init-middleware";
 import Cors from "cors";
 import rateLimit from "../../../../lib/rate-limit";
 const cors = initMiddleware(
-  // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
   Cors({
-    // Only allow requests with GET, POST and OPTIONS
-    origin: "https://www.lethinh-coder.site",
-    methods: ["GET", "POST", "OPTIONS"],
+    origin: process.env.NEXTAUTH_URL,
+    methods: ["GET", "POST"],
   })
 );
 const limiter = rateLimit({
@@ -23,14 +19,15 @@ const limiter = rateLimit({
 });
 
 const handle = async (req, res) => {
-  const session = await getSession({ req });
-  await cors(req, res);
-  await dbConnect();
-  await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
-  if (req.method === "POST") {
-    if (session && session.user) {
-      const { commentId, content, linkNotify } = req.body;
-      try {
+  try {
+    const session = await getSession({ req });
+    await cors(req, res);
+    await dbConnect();
+    await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
+    if (req.method === "POST") {
+      if (session && session.user) {
+        const { commentId, content, linkNotify } = req.body;
+
         const findComment = Comment.find({
           _id: commentId,
         });
@@ -82,16 +79,20 @@ const handle = async (req, res) => {
             });
           }
         });
-      } catch (err) {
-        console.log(err);
-        return catchError(err, res);
+      } else {
+        return res.status(400).json({
+          status: "fail",
+          message: "Đăng nhập để Reply comment",
+        });
       }
     } else {
-      return res.status(400).json({
-        status: "fail",
-        message: "Đăng nhập để Reply comment",
+      return res.status(404).json({
+        status: "error",
+        message: "Something went wrong",
       });
     }
+  } catch (err) {
+    return catchError(err, res);
   }
 };
 export default handle;
