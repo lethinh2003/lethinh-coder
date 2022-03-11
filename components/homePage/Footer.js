@@ -24,6 +24,7 @@ const Footer = () => {
           display: "flex",
           flexWrap: { xs: "wrap", md: "nowrap" },
           gap: { xs: "20px", md: "unset" },
+          justifyContent: { md: "center" },
         }}
       >
         <Box

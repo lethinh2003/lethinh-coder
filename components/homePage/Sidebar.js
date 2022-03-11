@@ -24,6 +24,7 @@ import {
   ListItemText,
   ListItemAvatar,
   Skeleton,
+  useScrollTrigger,
 } from "@mui/material";
 
 import { useMemo, useState, useEffect } from "react";
@@ -140,7 +141,7 @@ const Sidebar = (props) => {
           setIsClickNotify={setIsClickNotify}
           setIsModal={setIsModal}
         >
-          {/* <FormControl fullWidth sx={{ m: 1 }}>
+          <FormControl fullWidth sx={{ m: 1 }}>
             <OutlinedInput
               id="outlined-adornment-amount"
               startAdornment={
@@ -149,7 +150,7 @@ const Sidebar = (props) => {
                 </InputAdornment>
               }
             />
-          </FormControl> */}
+          </FormControl>
           <Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {isLoading && (
@@ -166,11 +167,11 @@ const Sidebar = (props) => {
                   <Box key={i}>
                     <ListItem button={true}>
                       <ListItemAvatar>
-                        <Avatar alt={item.account_send}>{item.account_send.charAt(0)}</Avatar>
+                        <Avatar alt={item.account_send[0].account}>{item.account_send[0].account.charAt(0)}</Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         onClick={(e) => handleClickLinkNotify(e, item.link)}
-                        primary={item.account_send}
+                        primary={item.account_send[0].account}
                         secondary={item.content}
                       ></ListItemText>
                     </ListItem>
@@ -303,7 +304,9 @@ const Sidebar = (props) => {
                 onClose={handleCloseUserMenu}
               >
                 <MenuItem>
-                  <Typography textAlign="center">Upload</Typography>
+                  <Link href={"/users/" + session.user.account}>
+                    <Typography textAlign="center">Profile</Typography>
+                  </Link>
                 </MenuItem>
                 <MenuItem>
                   <Typography textAlign="center" onClick={handleClickLogoutMiddle}>

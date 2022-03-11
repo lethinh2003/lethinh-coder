@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
-import slugify from "slugify";
-import validator from "validator";
-import uniqid from "uniqid";
-import RepComment from "./RepComment";
-const commentSchema = new mongoose.Schema(
+const repCommentSchema = new mongoose.Schema(
   {
     user: [
       {
@@ -12,18 +8,11 @@ const commentSchema = new mongoose.Schema(
         required: [true, "Missing user"],
       },
     ],
-    reply: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: RepComment,
-      },
-    ],
-
-    code: {
+    content: {
       type: String,
       trim: true,
-      minlength: [6, "Code must lengths greater or equal 6"],
-      required: [true, "Missing code"],
+      minlength: [5, "content must lengths greater or equal 5"],
+      required: [true, "Missing content"],
     },
     content: {
       type: String,
@@ -51,6 +40,13 @@ const commentSchema = new mongoose.Schema(
     },
   }
 );
+repCommentSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "user",
+    select: "-__v -password",
+  });
+  next();
+});
 
-const Comment = mongoose.models.Comment || mongoose.model("Comment", commentSchema);
-export default Comment;
+const RepComment = mongoose.models.RepComment || mongoose.model("RepComment", repCommentSchema);
+export default RepComment;

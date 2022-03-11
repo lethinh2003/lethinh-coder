@@ -101,6 +101,7 @@ const Items = ({ currentItems, isLoading }) => {
                   height="140"
                   image={item.images[0]}
                   alt={item.title}
+                  loading="lazy"
                 />
                 <CardContent className="code-container__body">
                   <Typography
@@ -178,6 +179,7 @@ const SourceCode = () => {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
+  const AllSourceCodeRef = useRef();
   useEffect(() => {
     const getSourceCode = async () => {
       try {
@@ -202,6 +204,7 @@ const SourceCode = () => {
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % sourceCode.length;
     setItemOffset(newOffset);
+    window.scrollTo(0, AllSourceCodeRef.current.offsetTop);
   };
 
   const handleClickFilter = async () => {
@@ -269,6 +272,7 @@ const SourceCode = () => {
             component="h1"
             className="title"
             sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
+            ref={AllSourceCodeRef}
           >
             All Source Code
           </Typography>

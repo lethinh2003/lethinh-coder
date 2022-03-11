@@ -22,10 +22,18 @@ const handle = async (req, res) => {
     if (session && session.user) {
       if (req.method === "GET") {
         const findNotifies = await Notify.find({
-          account_receive: session.user.account,
+          account_receive: { $in: [session.user.id] },
         })
           .sort("-_id")
-          .select("-__v");
+          .select("-__v")
+          .populate({
+            path: "account_receive",
+            select: "-__v -password",
+          })
+          .populate({
+            path: "account_send",
+            select: "-__v -password",
+          });
         return res.status(200).json({
           status: "success",
           data: findNotifies,
@@ -34,7 +42,7 @@ const handle = async (req, res) => {
       if (req.method === "POST") {
         const findNotifies = await Notify.updateMany(
           {
-            account_receive: session.user.account,
+            account_receive: { $in: [session.user.id] },
           },
           { status: true }
         );

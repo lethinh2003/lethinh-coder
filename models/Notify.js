@@ -13,18 +13,20 @@ const NotifySchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  account_send: {
-    type: String,
-    trim: true,
-    minlength: [6, "Account send must lengths greater or equal 6"],
-    required: [true, "Missing account"],
-  },
-  account_receive: {
-    type: String,
-    trim: true,
-    minlength: [6, "Account receive must lengths greater or equal 6"],
-    required: [true, "Missing account"],
-  },
+  account_send: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: [true, "Missing account send"],
+    },
+  ],
+  account_receive: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: [true, "Missing account receive"],
+    },
+  ],
   status: {
     type: Boolean,
     default: false,

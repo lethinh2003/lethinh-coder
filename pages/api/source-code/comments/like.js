@@ -2,6 +2,7 @@ import dbConnect from "../../../../database/dbConnect";
 import catchError from "../../../../utils/catchError";
 import { getSession } from "next-auth/react";
 import Comment from "../../../../models/Comment";
+import RepComment from "../../../../models/RepComment";
 import User from "../../../../models/User";
 import HistoryLike from "../../../../models/HistoryLike";
 import Notify from "../../../../models/Notify";
@@ -29,79 +30,68 @@ const handle = async (req, res) => {
       if (session && session.user) {
         const { commentId, accountId, linkNotify } = req.body;
 
-        const findComment = Comment.find({
+        const findComment = await Comment.find({
           _id: commentId,
-        });
-
-        const findUser = User.find({
-          _id: accountId,
-        });
-        const checkUserLikedComment = Comment.find({
+        })
+          .populate({
+            path: "user",
+            select: "-__v -password",
+          })
+          .populate({
+            path: "reply",
+            select: "-__v -password",
+          });
+        const checkUserLikedComment = await Comment.find({
           _id: commentId,
           likes: { $in: [accountId] },
         });
-        await Promise.all([findComment, findUser, checkUserLikedComment]).then(async (data) => {
-          if (data[2].length > 0) {
-            await Promise.all([
-              Comment.findByIdAndUpdate(commentId, {
-                $pull: {
-                  likes: accountId,
-                },
-              }),
-              HistoryLike.deleteOne({
-                account: session.user.account,
-                comment: { $in: [commentId] },
-              }),
-            ]).then((data) => {
-              return res.status(200).json({
-                status: "success",
-                message: "unlike",
-              });
+        if (checkUserLikedComment.length > 0) {
+          await Comment.findByIdAndUpdate(commentId, {
+            $pull: {
+              likes: accountId,
+            },
+          });
+          await HistoryLike.deleteOne({
+            account: session.user.account,
+            comment: { $in: [commentId] },
+          });
+          return res.status(200).json({
+            status: "success",
+            message: "unlike",
+          });
+        } else {
+          if (session.user.account !== findComment[0].user[0].account) {
+            await Comment.findByIdAndUpdate(commentId, {
+              $push: {
+                likes: accountId,
+              },
+            });
+            await HistoryLike.create({
+              account: session.user.account,
+              comment: [commentId],
+            });
+            await Notify.create({
+              link: linkNotify,
+              account_send: [session.user.id],
+              account_receive: [findComment[0].user[0]._id],
+              content: `${session.user.account} vừa like comment: "${findComment[0].content}" của bạn.`,
             });
           } else {
-            if (session.user.account !== data[0][0].account) {
-              await Promise.all([
-                Comment.findByIdAndUpdate(commentId, {
-                  $push: {
-                    likes: accountId,
-                  },
-                }),
-                HistoryLike.create({
-                  account: session.user.account,
-                  comment: [commentId],
-                }),
-                Notify.create({
-                  link: linkNotify,
-                  account_send: session.user.account,
-                  account_receive: data[0][0].account,
-                  content: `${session.user.account} vừa like comment: "${data[0][0].content}" của bạn.`,
-                }),
-              ]).then((data) => {
-                return res.status(200).json({
-                  status: "success",
-                  message: "like",
-                });
-              });
-            } else {
-              await Promise.all([
-                Comment.findByIdAndUpdate(commentId, {
-                  $push: {
-                    likes: accountId,
-                  },
-                }),
-                HistoryLike.create({
-                  account: session.user.account,
-                  comment: [commentId],
-                }),
-              ]).then((data) => {
-                return res.status(200).json({
-                  status: "success",
-                  message: "like",
-                });
-              });
-            }
+            await Comment.findByIdAndUpdate(commentId, {
+              $push: {
+                likes: accountId,
+              },
+            });
+            await HistoryLike.create({
+              account: session.user.account,
+              comment: [commentId],
+            });
           }
-        });
+          return res.status(200).json({
+            status: "success",
+            message: "like",
+          });
+        }
       } else {
         return res.status(400).json({
           status: "fail",
@@ -115,6 +105,7 @@ const handle = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return catchError(err, res);
   }
 };

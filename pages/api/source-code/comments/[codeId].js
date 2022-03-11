@@ -27,6 +27,15 @@ const handle = async (req, res) => {
       const results = await Comment.find({
         code: codeId,
       })
+        .populate({
+          path: "user",
+          select: "-__v -password",
+        })
+        .populate({
+          path: "reply",
+          select: "-__v -password",
+        })
+
         .sort("-_id")
         .select("-__v");
       return res.status(200).json({
@@ -36,8 +45,9 @@ const handle = async (req, res) => {
     } else if (req.method === "POST") {
       if (session && session.user) {
         const { content } = req.body;
-
+        console.log(session.user);
         const saveToDB = await Comment.create({
+          user: [session.user.id],
           code: codeId,
           content: content,
           account: session.user.account,
@@ -60,6 +70,7 @@ const handle = async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return catchError(err, res);
   }
 };
