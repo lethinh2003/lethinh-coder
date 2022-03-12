@@ -33,10 +33,12 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import InfoCode from "../../components/code/InfoCode";
 import DescCode from "../../components/code/DescCode";
+import SummaryCode from "../../components/code/SummaryCode";
 import CommentsCode from "../../components/code/CommentsCode";
 import MySelf from "../../components/code/MySelf";
 import RelationCode from "../../components/code/RelationCode";
 import Tag from "../../components/code/Tag";
+import ImagesCode from "../../components/code/ImagesCode";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   let { sourceBySlug, newSource, systemData } = props;
@@ -116,7 +118,32 @@ const DetailSourceCode = (props) => {
                 }}
               >
                 <InfoCode sourceCode={sourceCode} />
-                <DescCode sourceCode={sourceCode} status={status} />
+                <Box
+                  className="thinhle"
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+
+                    bgcolor: "background.default",
+                    justifyContent: "center",
+                    color: "text.primary",
+                    gap: "10px",
+                    padding: "40px 0",
+                  }}
+                >
+                  <DescCode sourceCode={sourceCode} status={status} />
+                  <SummaryCode sourceCode={sourceCode} status={status} />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    padding: { xs: "10px", md: "20px" },
+                  }}
+                >
+                  <ImagesCode sourceCode={sourceCode} status={status} />
+                </Box>
               </Box>
               <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
               <MySelf systemData={systemData} />

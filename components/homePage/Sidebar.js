@@ -141,7 +141,7 @@ const Sidebar = (props) => {
           setIsClickNotify={setIsClickNotify}
           setIsModal={setIsModal}
         >
-          <FormControl fullWidth sx={{ m: 1 }}>
+          {/* <FormControl fullWidth>
             <OutlinedInput
               id="outlined-adornment-amount"
               startAdornment={
@@ -150,7 +150,7 @@ const Sidebar = (props) => {
                 </InputAdornment>
               }
             />
-          </FormControl>
+          </FormControl> */}
           <Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {isLoading && (
