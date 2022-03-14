@@ -1,43 +1,24 @@
+import CancelIcon from "@mui/icons-material/Cancel";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
   Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
   Backdrop,
+  Badge,
+  Box,
+  Button,
   CircularProgress,
+  IconButton,
+  Input,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Badge,
-  Input,
   Skeleton,
-  FormControl,
+  Typography,
 } from "@mui/material";
-import convertTime from "../../utils/convertTime";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye } from "react-icons/ai";
-import { useSession } from "next-auth/react";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { BsCloudDownload } from "react-icons/bs";
-import { SiZalo } from "react-icons/si";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import CancelIcon from "@mui/icons-material/Cancel";
-import NumberFormat from "react-number-format";
 import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
+import convertTime from "../../utils/convertTime";
 let socket;
 const CommentsCode = (props) => {
   const { status, session, sourceCode, router } = props;
@@ -55,10 +36,11 @@ const CommentsCode = (props) => {
   const [isTypingComment, setIsTypingComment] = useState(false);
   const inputComment = useRef();
   useEffect(() => socketInitializer(), [router.query.slug, status]);
-  const socketInitializer = async () => {
+  const socketInitializer = () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-room", sourceCode[0]._id);
     socket.on("send-all-comments", (getComments) => {
+      setIsGetListComments(false);
       if (isLoadMoreComments) {
         setListComment(getComments);
       } else {
@@ -126,7 +108,7 @@ const CommentsCode = (props) => {
     fetchAPI();
   }, [router.query.slug, status]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, receiveId) => {
     e.preventDefault();
     if (comment.length >= 5 && isComment) {
       try {
@@ -141,6 +123,8 @@ const CommentsCode = (props) => {
             content: comment,
             linkNotify: `/source-code/${sourceCode[0].slug}`,
           });
+          socket.emit("get-notify", receiveId);
+
           setReplyComment([]);
         }
         setComment("");
@@ -170,7 +154,7 @@ const CommentsCode = (props) => {
       setComment(e.target.value);
     }
   };
-  const handleCLickLikeComment = async (commentId, accountId) => {
+  const handleCLickLikeComment = async (commentId, accountId, receiveId) => {
     if (status === "authenticated") {
       try {
         setIsLoading(true);
@@ -181,6 +165,7 @@ const CommentsCode = (props) => {
         });
         const getListCommentsStorage = localStorage.getItem("listLikeComments");
         if (result.data.message === "like") {
+          socket.emit("get-notify", receiveId);
           if (getListCommentsStorage) {
             let convertToArray = JSON.parse(getListCommentsStorage);
             convertToArray.push(commentId);
@@ -232,6 +217,7 @@ const CommentsCode = (props) => {
         {
           commentId: comment._id,
           commentAccount: comment.user[0].account,
+          accountCommentId: comment.user[0]._id,
         },
       ];
       setReplyComment(content);
@@ -279,7 +265,7 @@ const CommentsCode = (props) => {
           flexDirection: "column",
           gap: "5px",
         }}
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={(e) => handleSubmit(e, replyComment.length > 0 ? replyComment[0].accountCommentId : null)}
       >
         <Input
           ref={inputComment}
@@ -300,7 +286,11 @@ const CommentsCode = (props) => {
         )}
 
         {status === "authenticated" && (
-          <Button variant="contained" disabled={comment.length < 5 ? true : false} onClick={(e) => handleSubmit(e)}>
+          <Button
+            variant="contained"
+            disabled={comment.length < 5 ? true : false}
+            onClick={(e) => handleSubmit(e, replyComment.length > 0 ? replyComment[0].accountCommentId : null)}
+          >
             Bình luận
           </Button>
         )}
@@ -356,7 +346,11 @@ const CommentsCode = (props) => {
                   size="large"
                   aria-label="show likes"
                   color="inherit"
-                  onClick={status === "authenticated" ? () => handleCLickLikeComment(item._id, session.user.id) : null}
+                  onClick={
+                    status === "authenticated"
+                      ? () => handleCLickLikeComment(item._id, session.user.id, item.user[0]._id)
+                      : null
+                  }
                 >
                   <Badge badgeContent={item.likes.length} color="error">
                     <ThumbUpAltIcon

@@ -19,6 +19,7 @@ const handle = async (req, res) => {
     const session = await getSession({ req });
     await cors(req, res);
     await dbConnect();
+
     if (session && session.user) {
       if (req.method === "GET") {
         const findNotifies = await Notify.find({
