@@ -40,7 +40,7 @@ const CommentsCode = (props) => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-room", sourceCode[0]._id);
     socket.on("send-all-comments", (getComments) => {
-      setIsGetListComments(false);
+      setIsGetListComments(true);
       if (isLoadMoreComments) {
         setListComment(getComments);
       } else {

@@ -120,7 +120,7 @@ const Notify = () => {
           <Dialog open={isClickNotify} onClose={handleClose}>
             <DialogTitle>{"Thông báo của bạn"}</DialogTitle>
             <DialogContent>
-              <FormControl fullWidth sx={{ m: 1 }}>
+              <FormControl fullWidth sx={{ paddingBottom: 2 }}>
                 <OutlinedInput
                   id="outlined-adornment-amount"
                   startAdornment={
