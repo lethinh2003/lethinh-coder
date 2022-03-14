@@ -37,7 +37,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import CancelIcon from "@mui/icons-material/Cancel";
 import NumberFormat from "react-number-format";
 import axios from "axios";
-
+import io from "socket.io-client";
+let socket;
 const CommentsCode = (props) => {
   const { status, session, sourceCode, router } = props;
   const getPSComment = useRef();
@@ -51,6 +52,25 @@ const CommentsCode = (props) => {
   const [isComment, setIsComment] = useState(false);
   const [isGetListComments, setIsGetListComments] = useState(false);
   const [isPostingComment, setIsPostingComment] = useState(false);
+  const [isTypingComment, setIsTypingComment] = useState(false);
+  const inputComment = useRef();
+  useEffect(() => socketInitializer(), [router.query.slug, status]);
+  const socketInitializer = async () => {
+    await axios.get("/api/socket/comments");
+    socket = io();
+    socket.on("connect", () => {
+      console.log("connected");
+    });
+    socket.emit("join-room", sourceCode[0]._id);
+    socket.on("send-all-comments", (getComments) => {
+      if (isLoadMoreComments) {
+        setListComment(getComments);
+      } else {
+        setListComment(getComments.slice(0, 5));
+      }
+      setListCommentAll(getComments);
+    });
+  };
   useEffect(() => {
     const eventScrollCommentsBox = async () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
@@ -131,14 +151,16 @@ const CommentsCode = (props) => {
         setIsComment(false);
 
         setIsPostingComment(false);
-        const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
-        if (isLoadMoreComments) {
-          setListComment(getComments.data.data);
-        } else {
-          setListComment(getComments.data.data.slice(0, 5));
-        }
+        socket.emit("get-all-comments", sourceCode[0]._id);
 
-        setListCommentAll(getComments.data.data);
+        // const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
+        // if (isLoadMoreComments) {
+        //   setListComment(getComments.data.data);
+        // } else {
+        //   setListComment(getComments.data.data.slice(0, 5));
+        // }
+
+        // setListCommentAll(getComments.data.data);
       } catch (err) {
         setIsPostingComment(false);
         console.log(err);
@@ -147,6 +169,7 @@ const CommentsCode = (props) => {
   };
   const handleChangeComment = (e) => {
     if (!isPostingComment) {
+      // socket.emit("typing-comment", sourceCode[0]._id);
       setIsComment(true);
       setComment(e.target.value);
     }
@@ -176,10 +199,11 @@ const CommentsCode = (props) => {
           const filterArray = convertToArray.filter((item) => item !== commentId);
           localStorage.setItem("listLikeComments", JSON.stringify(filterArray));
         }
+        socket.emit("get-all-comments", sourceCode[0]._id);
 
-        const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
-        setListComment(getComments.data.data.slice(0, 5));
-        setListCommentAll(getComments.data.data);
+        // const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
+        // setListComment(getComments.data.data.slice(0, 5));
+        // setListCommentAll(getComments.data.data);
 
         setIsLoading(false);
       } catch (err) {
@@ -262,6 +286,7 @@ const CommentsCode = (props) => {
         onSubmit={(e) => handleSubmit(e)}
       >
         <Input
+          ref={inputComment}
           disabled={status === "authenticated" ? false : true}
           value={comment}
           placeholder="Nhập bình luận"
@@ -292,6 +317,7 @@ const CommentsCode = (props) => {
           padding: { xs: "0 10px", md: "0 40px" },
         }}
       >
+        {isTypingComment && <h3>Ai đó đang nhập bình luận ...</h3>}
         {isPostingComment && (
           <CircularProgress
             sx={{
