@@ -37,7 +37,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import CancelIcon from "@mui/icons-material/Cancel";
 import NumberFormat from "react-number-format";
 import axios from "axios";
-import io from "socket.io-client";
+import socketIOClient from "socket.io-client";
 let socket;
 const CommentsCode = (props) => {
   const { status, session, sourceCode, router } = props;
@@ -56,11 +56,7 @@ const CommentsCode = (props) => {
   const inputComment = useRef();
   useEffect(() => socketInitializer(), [router.query.slug, status]);
   const socketInitializer = async () => {
-    await axios.get("/api/socket/comments");
-    socket = io();
-    socket.on("connect", () => {
-      console.log("connected");
-    });
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-room", sourceCode[0]._id);
     socket.on("send-all-comments", (getComments) => {
       if (isLoadMoreComments) {
@@ -337,7 +333,7 @@ const CommentsCode = (props) => {
               </ListItemText>
             </ListItem>
           ))}
-        {listComments.length === 0 && !isPostingComment && <Typography>Hãy là người đầu tiên bình luận</Typography>}
+        {listComments.length === 0 && !isLoadingComments && <Typography>Hãy là người đầu tiên bình luận</Typography>}
         {listComments.length > 0 &&
           listComments.map((item, i) => (
             <Box

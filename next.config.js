@@ -3,6 +3,7 @@ module.exports = {
   optimizeFonts: false,
   env: {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    HOST_SOCKET: process.env.HOST_SOCKET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     ACCOUNT_GMAIL: process.env.ACCOUNT_GMAIL,
     PASSWORD_GMAIL: process.env.PASSWORD_GMAIL,
