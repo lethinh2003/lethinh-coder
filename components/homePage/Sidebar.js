@@ -83,7 +83,7 @@ const Sidebar = (props) => {
               }}
             />
           </IconButton>
-          <Link href="/about-me">
+          <Link href="/#">
             <Button
               sx={{
                 fontWeight: "bold",

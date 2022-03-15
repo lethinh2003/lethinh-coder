@@ -42,10 +42,7 @@ const handle = async (req, res) => {
       } else if (req.method === "POST") {
         const { notifyId } = req.body;
         const findNotifies = await Notify.findByIdAndDelete(notifyId);
-        return res.status(204).json({
-          status: "success",
-          message: "Delete success",
-        });
+        return res.status(204).end();
       } else {
         return res.status(404).json({
           status: "error",

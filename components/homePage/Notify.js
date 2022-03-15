@@ -142,14 +142,33 @@ const Notify = () => {
             >
               <Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {isLoading && (
-                    <>
-                      {Array.from({ length: 5 }).map((item, i) => (
-                        <Skeleton key={i} variant="rectangular" width={"300px"} height={80} />
-                      ))}
-                    </>
+                  {isLoading &&
+                    Array.from({ length: 4 }).map((item, i) => (
+                      <ListItem
+                        button={true}
+                        key={i}
+                        sx={{
+                          minWidth: "300px",
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Skeleton variant="circular" width={40} height={40} />
+                        </ListItemAvatar>
+                        <ListItemText>
+                          <Skeleton variant="text" height={70} />
+                          <Skeleton variant="text" width={100} />
+                        </ListItemText>
+                      </ListItem>
+                    ))}
+                  {!isLoading && dataNoti.length === 0 && (
+                    <Typography
+                      sx={{
+                        textAlign: "center",
+                      }}
+                    >
+                      Thông báo trống
+                    </Typography>
                   )}
-                  {!isLoading && dataNoti.length === 0 && <Typography>Thông báo trống</Typography>}
                   {!isLoading &&
                     dataNoti.length > 0 &&
                     dataNoti.map((item, i) => (

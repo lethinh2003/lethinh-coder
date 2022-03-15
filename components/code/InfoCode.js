@@ -1,9 +1,9 @@
-import { Box, Typography, CardContent, CardMedia } from "@mui/material";
+import { Box, Typography, CardContent, CardMedia, Button } from "@mui/material";
 import convertTime from "../../utils/convertTime";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "next/link";
 
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye } from "react-icons/ai";
+import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye, AiFillTags } from "react-icons/ai";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { BsCloudDownload } from "react-icons/bs";
 
@@ -108,6 +108,28 @@ const InfoCode = (props) => {
               >
                 <AiOutlineCalendar /> Thời gian: {convertTime(sourceCode[0].createdAt)}{" "}
               </Typography>
+              {sourceCode[0].labels.length > 0 && (
+                <Typography
+                  sx={{
+                    fontWeight: "500",
+                  }}
+                >
+                  <AiFillTags /> Labels:{" "}
+                  <Box
+                    sx={{
+                      display: "inline-flex",
+                      gap: "5px",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {sourceCode[0].labels.map((item, i) => (
+                      <Button key={i} variant="outlined">
+                        {item}
+                      </Button>
+                    ))}
+                  </Box>
+                </Typography>
+              )}
             </CardContent>
           </Box>
         </Box>

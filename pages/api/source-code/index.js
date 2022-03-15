@@ -20,7 +20,14 @@ const handle = async (req, res) => {
       let results = Code.find({}).select("-link -__v");
       if (req.query.sort) {
         const arraySort = req.query.sort.split(",").join(" ");
+
         results = results.sort(arraySort);
+      }
+      if (req.query.label) {
+        const labels = req.query.label;
+        results = results.find({
+          labels: { $in: [labels] },
+        });
       }
       const data = await results;
       return res.status(200).json({

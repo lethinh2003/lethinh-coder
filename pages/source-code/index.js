@@ -164,6 +164,10 @@ const SourceCode = () => {
     { label: "Giá giảm dần", key: "-costs" },
     { label: "Giá tăng dần", key: "costs" },
   ];
+  const optionsLabel = [
+    { label: "PHP", key: "php" },
+    { label: "REACTJS", key: "reactjs" },
+  ];
   const optionsDate = [
     { label: "Mới nhất", key: "-createdAt" },
     { label: "Cũ nhất", key: "createdAt" },
@@ -173,6 +177,8 @@ const SourceCode = () => {
   const [sourceCodeAll, setSourceCodeAll] = useState([]);
   const [valueCosts, setValueCosts] = useState("");
   const [inputValueCosts, setInputValueCosts] = useState("");
+  const [valueLabels, setValueLabels] = useState("");
+  const [inputValueLabels, setInputValueLabels] = useState("");
   const [valueDate, setValueDate] = useState(optionsDate[1]);
   const [inputValueDate, setInputValueDate] = useState("");
   const [currentItems, setCurrentItems] = useState(null);
@@ -220,8 +226,8 @@ const SourceCode = () => {
 
     try {
       setIsLoading(true);
-      const result = await axios.get(`/api/source-code?sort=${newArraySort}`);
-      console.log(result);
+
+      const result = await axios.get(`/api/source-code?sort=${newArraySort}&label=${inputValueLabels.toLowerCase()}`);
       setSourceCode(result.data.data);
       setIsLoading(false);
     } catch (err) {
@@ -276,41 +282,60 @@ const SourceCode = () => {
           >
             All Source Code
           </Typography>
-          <Box sx={{ p: 2, display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-            <Autocomplete
-              disablePortal
-              value={valueCosts}
-              onChange={(event, newValue) => {
-                setValueCosts(newValue);
-              }}
-              inputValue={inputValueCosts}
-              onInputChange={(event, newInputValue) => {
-                setInputValueCosts(newInputValue);
-              }}
-              options={optionsPrice}
-              isOptionEqualToValue={(option, value) => option.key === value.key}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Giá" />}
-            />
-            <Autocomplete
-              disablePortal
-              value={valueDate}
-              onChange={(event, newValue) => {
-                setValueDate(newValue);
-              }}
-              inputValue={inputValueDate}
-              onInputChange={(event, newInputValue) => {
-                setInputValueDate(newInputValue);
-              }}
-              options={optionsDate}
-              isOptionEqualToValue={(option, value) => option.key === value.key}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Thời gian" />}
-            />
-          </Box>
-          <Button variant="contained" onClick={handleClickFilter}>
-            Lọc
-          </Button>
+          {!isLoading && (
+            <>
+              <Box sx={{ p: 2, display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
+                <Autocomplete
+                  disablePortal
+                  value={valueCosts}
+                  onChange={(event, newValue) => {
+                    setValueCosts(newValue);
+                  }}
+                  inputValue={inputValueCosts}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValueCosts(newInputValue);
+                  }}
+                  options={optionsPrice}
+                  isOptionEqualToValue={(option, value) => option.key === value.key}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Giá" />}
+                />
+                <Autocomplete
+                  disablePortal
+                  value={valueLabels}
+                  onChange={(event, newValue) => {
+                    setValueLabels(newValue);
+                  }}
+                  inputValue={inputValueLabels}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValueLabels(newInputValue);
+                  }}
+                  options={optionsLabel}
+                  isOptionEqualToValue={(option, value) => option.key === value.key}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Labels" />}
+                />
+                <Autocomplete
+                  disablePortal
+                  value={valueDate}
+                  onChange={(event, newValue) => {
+                    setValueDate(newValue);
+                  }}
+                  inputValue={inputValueDate}
+                  onInputChange={(event, newInputValue) => {
+                    setInputValueDate(newInputValue);
+                  }}
+                  options={optionsDate}
+                  isOptionEqualToValue={(option, value) => option.key === value.key}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Thời gian" />}
+                />
+              </Box>
+              <Button variant="contained" onClick={handleClickFilter}>
+                Lọc
+              </Button>
+            </>
+          )}
           {/* <Box
             sx={{
               width: "100%",

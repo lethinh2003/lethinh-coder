@@ -41,6 +41,15 @@ const CommentsCode = (props) => {
     socket.emit("join-room", sourceCode[0]._id);
     socket.on("send-all-comments", async (getComments) => {
       setIsGetListComments(true);
+
+      if (isLoadMoreComments) {
+        setListComment(getComments);
+      } else {
+        setListComment(getComments.slice(0, 5));
+      }
+      setListCommentAll(getComments);
+    });
+    socket.on("send-room-history-likes", async () => {
       if (status === "authenticated") {
         const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
         if (getHistoryCommentsLiked.data.data.length > 0) {
@@ -53,12 +62,6 @@ const CommentsCode = (props) => {
           localStorage.setItem("listLikeComments", JSON.stringify(newArrayToPush));
         }
       }
-      if (isLoadMoreComments) {
-        setListComment(getComments);
-      } else {
-        setListComment(getComments.slice(0, 5));
-      }
-      setListCommentAll(getComments);
     });
   };
   useEffect(() => {
@@ -100,6 +103,7 @@ const CommentsCode = (props) => {
         setListComment([]);
 
         if (status === "authenticated") {
+          socket.emit("join-room-history-likes", session.user.id);
           const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
           if (getHistoryCommentsLiked.data.data.length > 0) {
             const newArrayToPush = [];
@@ -175,6 +179,8 @@ const CommentsCode = (props) => {
           accountId: accountId,
           linkNotify: `/source-code/${sourceCode[0].slug}`,
         });
+        socket.emit("send-room-history-likes", session.user.id);
+
         const getListCommentsStorage = localStorage.getItem("listLikeComments");
         if (result.data.message === "like") {
           socket.emit("get-notify", receiveId);
