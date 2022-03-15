@@ -29,7 +29,6 @@ const handle = async (req, res) => {
     if (req.method === "POST") {
       if (session && session.user) {
         const { commentId, accountId, linkNotify } = req.body;
-
         const findComment = await Comment.find({
           _id: commentId,
         })

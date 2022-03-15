@@ -17,6 +17,8 @@ import {
   Typography,
   IconButton,
   Badge,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -25,6 +27,7 @@ import { useEffect, useState } from "react";
 import convertToTime from "../../utils/convertTime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import socketIOClient from "socket.io-client";
+import DeleteIcon from "@mui/icons-material/Delete";
 let socket;
 const Notify = () => {
   const { data: session, status } = useSession();
@@ -56,16 +59,6 @@ const Notify = () => {
       });
     }
   };
-  const handleClose = () => {
-    setIsClickNotify(false);
-  };
-
-  const handleClickNotify = () => {
-    setIsLoading(true);
-    setDataNoti([]);
-    setIsClickNotify(!isClickNotify);
-  };
-
   useEffect(() => {
     const fetchAPI = async () => {
       try {
@@ -96,12 +89,35 @@ const Notify = () => {
       fetchAPI();
     }
   }, [isClickNotify, status]);
+  const handleClose = () => {
+    setIsClickNotify(false);
+  };
+
+  const handleClickNotify = () => {
+    setIsLoading(true);
+    setDataNoti([]);
+    setIsClickNotify(!isClickNotify);
+  };
+
   const handleClickLinkNotify = (e, item) => {
     e.preventDefault();
     if (item) {
       router.push(item);
     }
     handleClickNotify();
+  };
+
+  const handleClickDelete = async (id) => {
+    try {
+      await axios.post("/api/notify", {
+        notifyId: id,
+      });
+      const newArray = [...dataNoti];
+      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
+      setDataNoti(newArrayRemoveItem);
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <>
@@ -119,17 +135,11 @@ const Notify = () => {
           </IconButton>
           <Dialog open={isClickNotify} onClose={handleClose}>
             <DialogTitle>{"Thông báo của bạn"}</DialogTitle>
-            <DialogContent>
-              <FormControl fullWidth sx={{ paddingBottom: 2 }}>
-                <OutlinedInput
-                  id="outlined-adornment-amount"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
+            <DialogContent
+              sx={{
+                padding: "20px 10px",
+              }}
+            >
               <Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {isLoading && (
@@ -143,33 +153,31 @@ const Notify = () => {
                   {!isLoading &&
                     dataNoti.length > 0 &&
                     dataNoti.map((item, i) => (
-                      <Box key={i}>
-                        <ListItem button={true}>
+                      <Box
+                        key={i}
+                        sx={{
+                          opacity: !item.status ? 1 : 0.6,
+                        }}
+                      >
+                        <ListItem button={true} className="box_notify">
                           <ListItemAvatar>
                             <Avatar alt={item.account_send[0].account}>{item.account_send[0].account.charAt(0)}</Avatar>
                           </ListItemAvatar>
                           <ListItemText
                             onClick={(e) => handleClickLinkNotify(e, item.link)}
-                            primary={item.account_send[0].account}
-                            secondary={item.content}
+                            primary={item.content}
+                            secondary={convertToTime(item.createdAt)}
                           ></ListItemText>
+                          <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
+                            <DeleteIcon />
+                          </IconButton>
                         </ListItem>
-                        <Typography
-                          sx={{
-                            paddingLeft: "18px",
-                            fontStyle: "italic",
-                            fontSize: "12px",
-                          }}
-                        >
-                          {convertToTime(item.createdAt)}
-                        </Typography>
                       </Box>
                     ))}
                 </Box>
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
               <Button onClick={handleClose}>Ok</Button>
             </DialogActions>
           </Dialog>

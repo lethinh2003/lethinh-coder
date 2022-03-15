@@ -45,7 +45,6 @@ const handle = async (req, res) => {
     } else if (req.method === "POST") {
       if (session && session.user) {
         const { content } = req.body;
-        console.log(session.user);
         const saveToDB = await Comment.create({
           user: [session.user.id],
           code: codeId,

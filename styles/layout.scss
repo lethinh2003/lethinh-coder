@@ -283,3 +283,24 @@
     color: #3ddbbd;
   }
 }
+.box_notify {
+  position: relative;
+
+  &:hover .button_notify {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.button_notify {
+  position: absolute;
+  right: 5px;
+  opacity: 0;
+  visibility: hidden;
+}
+.thinhlee {
+  box-shadow: unset;
+
+  .MuiPaper-elevation {
+    box-shadow: unset;
+  }
+}

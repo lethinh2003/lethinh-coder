@@ -67,17 +67,18 @@ const handle = async (req, res) => {
             user: [session.user.id],
             content: content,
           });
-          const updateComment = await Comment.findByIdAndUpdate(commentId, {
+          const updateComment = Comment.findByIdAndUpdate(commentId, {
             $push: {
               reply: createReplyComment._id,
             },
           });
-          const sendNotify = await Notify.create({
+          const sendNotify = Notify.create({
             link: linkNotify,
             account_send: [session.user.id],
             account_receive: [findComment[0].user[0]._id],
             content: `${session.user.account} vừa reply: "${content}" tại comment: "${findComment[0].content}" của bạn.`,
           });
+          await Promise.all([updateComment, sendNotify]);
           let listSendNotifies = [];
           let listArrayCheck = [];
 
@@ -97,9 +98,7 @@ const handle = async (req, res) => {
             }
           });
 
-          await Promise.all(listSendNotifies).then((data) => {
-            console.log("success");
-          });
+          await Promise.all(listSendNotifies);
           return res.status(200).json({
             status: "success",
             message: "Thanh cong",

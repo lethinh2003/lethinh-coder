@@ -39,17 +39,12 @@ const handle = async (req, res) => {
           status: "success",
           data: findNotifies,
         });
-      }
-      if (req.method === "POST") {
-        const findNotifies = await Notify.updateMany(
-          {
-            account_receive: { $in: [session.user.id] },
-          },
-          { status: true }
-        );
-        return res.status(200).json({
+      } else if (req.method === "POST") {
+        const { notifyId } = req.body;
+        const findNotifies = await Notify.findByIdAndDelete(notifyId);
+        return res.status(204).json({
           status: "success",
-          data: findNotifies,
+          message: "Delete success",
         });
       } else {
         return res.status(404).json({

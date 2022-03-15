@@ -36,11 +36,23 @@ const CommentsCode = (props) => {
   const [isTypingComment, setIsTypingComment] = useState(false);
   const inputComment = useRef();
   useEffect(() => socketInitializer(), [router.query.slug, status]);
-  const socketInitializer = () => {
+  const socketInitializer = async () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-room", sourceCode[0]._id);
-    socket.on("send-all-comments", (getComments) => {
+    socket.on("send-all-comments", async (getComments) => {
       setIsGetListComments(true);
+      if (status === "authenticated") {
+        const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
+        if (getHistoryCommentsLiked.data.data.length > 0) {
+          const newArrayToPush = [];
+          const listCommentsLiked = getHistoryCommentsLiked.data.data;
+          listCommentsLiked.map((item) => {
+            newArrayToPush.push(item.comment[0]);
+          });
+
+          localStorage.setItem("listLikeComments", JSON.stringify(newArrayToPush));
+        }
+      }
       if (isLoadMoreComments) {
         setListComment(getComments);
       } else {
