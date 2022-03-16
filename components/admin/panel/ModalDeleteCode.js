@@ -66,15 +66,11 @@ const Modal = (props) => {
       }
       setIsLoading(true);
       const response = await axios.delete("/api/admin/source-code/" + id);
-      console.log(response);
       setIsLoading(false);
       handleClose();
     } catch (err) {
       console.log(err);
       setIsLoading(false);
-      if (err.response) {
-        console.log(err.response.data.message);
-      }
     }
   };
   const handleChangeTitle = (e) => {

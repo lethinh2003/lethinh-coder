@@ -1,28 +1,8 @@
-import Layout from "../../../components/admin/Layout";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-} from "@mui/material";
-import { HiTemplate } from "react-icons/hi";
-import { AiOutlineCheck, AiFillFileZip } from "react-icons/ai";
-import { MdPendingActions } from "react-icons/md";
-import NumberFormat from "react-number-format";
-import Overview from "../../../components/admin/panel/Overview";
-import HistoryCode from "../../../components/admin/panel/HistoryCode";
-import Users from "../../../components/admin/panel/Users";
-import Code from "../../../components/admin/panel/Code";
+import { Box, Button } from "@mui/material";
 import Link from "next/link";
+import Layout from "../../../components/admin/Layout";
+import Code from "../../../components/admin/panel/Code";
+
 const SourceCode = () => {
   return (
     <>

@@ -158,7 +158,15 @@ const Code = () => {
         Source Code
       </Typography>
       <div style={{ height: 500, width: "100%" }}>
-        {isLoading && <Skeleton variant="rectangular" height={200} />}
+        {isLoading && (
+          <>
+            {Array.from({ length: 5 }).map((item, i) => (
+              <Box sx={{ marginTop: "10px" }}>
+                <Skeleton variant="rectangular" height={50} />
+              </Box>
+            ))}
+          </>
+        )}
         {!isLoading && <DataGrid rows={GridRowsProp} columns={GridColDef} />}
       </div>
     </>
