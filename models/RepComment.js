@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const repCommentSchema = new mongoose.Schema(
   {
     user: [
@@ -6,6 +7,13 @@ const repCommentSchema = new mongoose.Schema(
         type: mongoose.Schema.ObjectId,
         ref: "User",
         required: [true, "Missing user"],
+      },
+    ],
+    comment: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Comment",
+        required: [true, "Missing Comment"],
       },
     ],
     content: {

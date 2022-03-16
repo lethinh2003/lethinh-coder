@@ -23,7 +23,7 @@ const limiter = rateLimit({
 const handle = async (req, res) => {
   try {
     const session = await getSession({ req });
-    await cors(req, res);
+    // await cors(req, res);
     await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
 
     await dbConnect();

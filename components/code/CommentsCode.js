@@ -247,6 +247,21 @@ const CommentsCode = (props) => {
       setReplyComment([]);
     }
   };
+  const handleClickDeleteComment = async (item) => {
+    try {
+      if (!session || !(session.user.id === item.user[0]._id)) {
+        throw new Error("Co loi xay ra!");
+      } else {
+        await axios.post("/api/source-code/comments/delete", {
+          commentId: item._id,
+          userId: session.user.id,
+        });
+        socket.emit("get-all-comments", sourceCode[0]._id);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -407,6 +422,19 @@ const CommentsCode = (props) => {
                     onClick={() => handleClickReplyComment(item)}
                   >
                     Reply
+                  </Typography>
+                )}
+                {status === "authenticated" && session.user.id === item.user[0]._id && (
+                  <Typography
+                    sx={{
+                      paddingLeft: "18px",
+                      fontStyle: "italic",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleClickDeleteComment(item)}
+                  >
+                    Delete
                   </Typography>
                 )}
               </Typography>

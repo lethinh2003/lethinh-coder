@@ -51,6 +51,7 @@ const handle = async (req, res) => {
         if (session.user.account === findComment[0].user[0].account) {
           const createReplyComment = await RepComment.create({
             user: [session.user.id],
+            comment: [findComment[0]._id],
             content: content,
           });
           const updateComment = await Comment.findByIdAndUpdate(commentId, {
@@ -65,6 +66,7 @@ const handle = async (req, res) => {
         } else {
           const createReplyComment = await RepComment.create({
             user: [session.user.id],
+            comment: [findComment[0]._id],
             content: content,
           });
           const updateComment = Comment.findByIdAndUpdate(commentId, {
