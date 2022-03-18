@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema({
     minlength: [6, "Account must lengths greater or equal 6"],
     required: [true, "Missing account"],
   },
+  name: {
+    type: String,
+    trim: true,
+    minlength: [2, "Name must lengths greater or equal 2"],
+    required: [true, "Missing name"],
+  },
   password: {
     type: String,
     trim: true,
@@ -33,10 +39,13 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
-  status: {
+  avatar: {
     type: String,
-    enum: ["active", "banned"],
-    default: "active",
+  },
+
+  status: {
+    type: Boolean,
+    default: true,
   },
   createdAt: {
     type: String,
@@ -44,6 +53,9 @@ const userSchema = new mongoose.Schema({
   },
 });
 userSchema.pre("save", async function (next) {
+  if (!this.name) {
+    this.name = this.account;
+  }
   this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = undefined;
   next();

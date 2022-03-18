@@ -53,11 +53,9 @@ const SidebarMobile = (props) => {
   };
   const handleClickOpenLoginMiddle = () => {
     handleClickSidebarMobile();
-    handleClickOpenLogin();
   };
   const handleClickOpenSignupMiddle = () => {
     handleClickSidebarMobile();
-    handleClickOpenSignup();
   };
   return (
     <>
@@ -127,46 +125,50 @@ const SidebarMobile = (props) => {
               </Link>
               {status !== "authenticated" && (
                 <>
-                  <Button
-                    onClick={handleClickOpenLoginMiddle}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                      gap: "5px",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                      padding: "5px",
-                      textTransform: "capitalize",
-                      fontWeight: 500,
-                    }}
-                    component="div"
-                  >
-                    <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                      Login
-                    </Typography>
-                  </Button>
-                  <Button
-                    onClick={handleClickOpenSignupMiddle}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                      gap: "5px",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                      padding: "5px",
-                      textTransform: "capitalize",
-                      fontWeight: 500,
-                    }}
-                    component="div"
-                  >
-                    <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                      Sign up
-                    </Typography>
-                  </Button>
+                  <Link href="/login">
+                    <Button
+                      onClick={handleClickOpenLoginMiddle}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        gap: "5px",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                        padding: "5px",
+                        textTransform: "capitalize",
+                        fontWeight: 500,
+                      }}
+                      component="div"
+                    >
+                      <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                      <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                        Login
+                      </Typography>
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button
+                      onClick={handleClickOpenSignupMiddle}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        gap: "5px",
+                        fontSize: "25px",
+                        fontWeight: "bold",
+                        padding: "5px",
+                        textTransform: "capitalize",
+                        fontWeight: 500,
+                      }}
+                      component="div"
+                    >
+                      <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                      <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                        Sign up
+                      </Typography>
+                    </Button>
+                  </Link>
                 </>
               )}
               {status === "authenticated" && (

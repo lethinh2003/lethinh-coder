@@ -28,7 +28,7 @@ const Introduce = (props) => {
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
-    color: "#48e8a2",
+    color: "#0b9ad1",
     fontWeight: "bold",
     backgroundColor: "#fff",
 
@@ -82,7 +82,7 @@ const Introduce = (props) => {
           <Card
             sx={{
               borderRadius: "20px",
-              backgroundImage: "linear-gradient(120deg,#65f6af,#1cd48f)",
+              backgroundImage: "linear-gradient(120deg,#3693b7,#10e5e5)",
               minHeight: 350,
               width: "100%",
               display: "flex",

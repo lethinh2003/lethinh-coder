@@ -35,7 +35,13 @@ const CommentsCode = (props) => {
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isTypingComment, setIsTypingComment] = useState(false);
   const inputComment = useRef();
-  useEffect(() => socketInitializer(), [router.query.slug, status]);
+
+  useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+    };
+  }, [router.query.slug, status]);
   const socketInitializer = async () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-room", sourceCode[0]._id);

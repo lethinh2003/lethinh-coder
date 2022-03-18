@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Notify from "./Notify";
+import { styled } from "@mui/material/styles";
 
 const Sidebar = (props) => {
   const router = useRouter();
@@ -40,6 +41,26 @@ const Sidebar = (props) => {
     handleClickLogout();
     handleCloseUserMenu();
   };
+  const LoginButton = styled(Button)({
+    boxShadow: "none",
+    fontSize: "14px",
+    borderRadius: "10px",
+    textTransform: "capitalize",
+    fontFamily: "Noto Sans",
+    color: "#0b9ad1",
+    fontWeight: "bold",
+    backgroundColor: "#fff",
+
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#fff",
+      borderColor: "#005cbf",
+    },
+
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
 
   return (
     <>
@@ -129,7 +150,9 @@ const Sidebar = (props) => {
             <>
               <Tooltip title="Open settings">
                 <IconButton onClick={(e) => handleOpenUserMenu(e)}>
-                  <Avatar alt={session.user.account}>{session.user.account.charAt(0)}</Avatar>
+                  <Avatar alt={session.user.account} src={session.user.avatar}>
+                    {session.user.account.charAt(0)}
+                  </Avatar>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -163,36 +186,24 @@ const Sidebar = (props) => {
           )}
           {status !== "authenticated" && (
             <>
-              <Button
-                onClick={handleClickOpenLogin}
-                sx={{
-                  fontWeight: "bold",
-                  height: "30px",
-                  padding: "5px",
-                  borderRadius: "10px",
-                  display: { xs: "none", md: "flex" },
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "inherit",
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                onClick={handleClickOpenSignup}
-                sx={{
-                  fontWeight: "bold",
-                  height: "30px",
-                  padding: "5px",
-                  borderRadius: "10px",
-                  display: { xs: "none", md: "flex" },
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "inherit",
-                }}
-              >
-                Signup
-              </Button>
+              <Link href="/login">
+                <LoginButton
+                  sx={{
+                    display: { xs: "none", md: "flex" },
+                  }}
+                >
+                  Login
+                </LoginButton>
+              </Link>
+              <Link href="/signup">
+                <LoginButton
+                  sx={{
+                    display: { xs: "none", md: "flex" },
+                  }}
+                >
+                  Signup
+                </LoginButton>
+              </Link>
             </>
           )}
         </Typography>

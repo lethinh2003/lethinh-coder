@@ -26,11 +26,12 @@ const handle = async (req, res) => {
 
     if (req.method === "POST") {
       if (!session || !session.user) {
-        const { account, password, confirmPassword } = req.body;
+        const { account, password, confirmPassword, name } = req.body;
         const result = await User.create({
           account: account,
           password: password,
           confirmPassword: confirmPassword,
+          name: name,
         });
         return res.status(201).json({
           status: "success",

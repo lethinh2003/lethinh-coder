@@ -37,7 +37,12 @@ const Notify = () => {
   const [dataNoti, setDataNoti] = useState([]);
   const [numberNotify, setNumberNotify] = useState(0);
 
-  useEffect(() => socketInitializer(), [status]);
+  useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+    };
+  }, [status]);
   const socketInitializer = () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     if (status === "authenticated") {
