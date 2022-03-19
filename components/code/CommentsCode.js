@@ -241,6 +241,7 @@ const CommentsCode = (props) => {
         {
           commentId: comment._id,
           commentAccount: comment.user[0].account,
+          commentAccountName: comment.user[0].name,
           accountCommentId: comment.user[0]._id,
         },
       ];
@@ -290,7 +291,7 @@ const CommentsCode = (props) => {
         >
           <Typography>
             Đang trả lời cho{" "}
-            {session.user.account !== replyComment[0].commentAccount ? replyComment[0].commentAccount : "chính tôi"}
+            {session.user.account !== replyComment[0].commentAccount ? replyComment[0].commentAccountName : "chính tôi"}
             <IconButton onClick={() => handleClickCancelReply()}>
               <CancelIcon />
             </IconButton>
@@ -375,10 +376,12 @@ const CommentsCode = (props) => {
             >
               <ListItem button={true}>
                 <ListItemAvatar>
-                  <Avatar alt={item.user[0].account}>{item.user[0].account.charAt(0)}</Avatar>
+                  <Avatar alt={item.user[0].name} src={item.user[0].avatar}>
+                    {item.user[0].name.charAt(0)}
+                  </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={`${item.user[0].account} - ${item.user[0].role === "admin" ? "Admin" : "Member"} `}
+                  primary={`${item.user[0].name} - ${item.user[0].role === "admin" ? "Admin" : "Member"} `}
                   secondary={item.content}
                 ></ListItemText>
                 <IconButton
@@ -450,10 +453,12 @@ const CommentsCode = (props) => {
                   <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
                     <ListItem button={true}>
                       <ListItemAvatar>
-                        <Avatar alt={replyItem.user[0].account}>{replyItem.user[0].account.charAt(0)}</Avatar>
+                        <Avatar alt={replyItem.user[0].name} src={replyItem.user[0].avatar}>
+                          {replyItem.user[0].name.charAt(0)}
+                        </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        primary={`${replyItem.user[0].account} - ${
+                        primary={`${replyItem.user[0].name} - ${
                           replyItem.user[0].role === "admin" ? "Admin" : "Member"
                         } `}
                         secondary={replyItem.content}

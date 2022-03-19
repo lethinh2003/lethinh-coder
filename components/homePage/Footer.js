@@ -13,8 +13,30 @@ import {
 } from "@mui/material";
 import { FaFacebookF } from "react-icons/fa";
 import { BsInstagram, BsTwitter } from "react-icons/bs";
+import { styled } from "@mui/material/styles";
 
 const Footer = () => {
+  const SocialButton = styled(Button)({
+    minWidth: "50px",
+    height: "50px",
+    backgroundColor: "#222326",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "25px",
+    color: "#fff",
+
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#222326",
+      borderColor: "#005cbf",
+    },
+
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
   return (
     <>
       <Box
@@ -150,51 +172,15 @@ const Footer = () => {
             gap: "10px",
           }}
         >
-          <Button
-            sx={{
-              minWidth: "50px",
-              height: "50px",
-              backgroundColor: "#222326",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "25px",
-              color: "#fff",
-            }}
-          >
+          <SocialButton>
             <FaFacebookF />
-          </Button>
-          <Button
-            sx={{
-              minWidth: "50px",
-              height: "50px",
-              backgroundColor: "#222326",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "25px",
-              color: "#fff",
-            }}
-          >
+          </SocialButton>
+          <SocialButton>
             <BsInstagram />
-          </Button>
-          <Button
-            sx={{
-              minWidth: "50px",
-              height: "50px",
-              backgroundColor: "#222326",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "25px",
-              color: "#fff",
-            }}
-          >
+          </SocialButton>
+          <SocialButton>
             <BsTwitter />
-          </Button>
+          </SocialButton>
         </Box>
       </Box>
     </>

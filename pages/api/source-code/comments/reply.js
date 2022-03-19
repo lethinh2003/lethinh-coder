@@ -78,7 +78,7 @@ const handle = async (req, res) => {
             link: linkNotify,
             account_send: [session.user.id],
             account_receive: [findComment[0].user[0]._id],
-            content: `${session.user.account} vừa reply: "${content}" tại comment: "${findComment[0].content}" của bạn.`,
+            content: `{name} vừa reply: "${content}" tại comment: "${findComment[0].content}" của bạn.`,
           });
           await Promise.all([updateComment, sendNotify]);
           let listSendNotifies = [];
@@ -90,7 +90,7 @@ const handle = async (req, res) => {
                 link: linkNotify,
                 account_send: [session.user.id],
                 account_receive: [item.user[0]._id],
-                content: `${session.user.account} vừa reply: "${content}" tại comment: "${findComment[0].content}" của ${findComment[0].user[0].account}.`,
+                content: `{name} vừa reply: "${content}" tại comment: "${findComment[0].content}" của ${findComment[0].user[0].name}.`,
               });
 
               listSendNotifies.push(newNotify);

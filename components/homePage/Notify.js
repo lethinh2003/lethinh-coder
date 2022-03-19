@@ -28,6 +28,8 @@ import convertToTime from "../../utils/convertTime";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import socketIOClient from "socket.io-client";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/material/styles";
+
 let socket;
 const Notify = () => {
   const { data: session, status } = useSession();
@@ -124,11 +126,16 @@ const Notify = () => {
       console.log(err);
     }
   };
+  const NotifyButton = styled(IconButton)({
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
   return (
     <>
       {status === "authenticated" && (
         <>
-          <IconButton
+          <NotifyButton
             onClick={() => handleClickNotify()}
             size="large"
             aria-label="show new notifications"
@@ -137,7 +144,7 @@ const Notify = () => {
             <Badge badgeContent={numberNotify} color="error">
               <NotificationsIcon />
             </Badge>
-          </IconButton>
+          </NotifyButton>
           <Dialog open={isClickNotify} onClose={handleClose}>
             <DialogTitle>{"Thông báo của bạn"}</DialogTitle>
             <DialogContent
@@ -176,28 +183,38 @@ const Notify = () => {
                   )}
                   {!isLoading &&
                     dataNoti.length > 0 &&
-                    dataNoti.map((item, i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          opacity: !item.status ? 1 : 0.6,
-                        }}
-                      >
-                        <ListItem button={true} className="box_notify">
-                          <ListItemAvatar>
-                            <Avatar alt={item.account_send[0].account}>{item.account_send[0].account.charAt(0)}</Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            onClick={(e) => handleClickLinkNotify(e, item.link)}
-                            primary={item.content}
-                            secondary={convertToTime(item.createdAt)}
-                          ></ListItemText>
-                          <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
-                            <DeleteIcon />
-                          </IconButton>
-                        </ListItem>
-                      </Box>
-                    ))}
+                    dataNoti.map((item, i) => {
+                      let newContent = item.content;
+                      const content = item.content;
+                      if (content.includes("{name}")) {
+                        newContent = newContent.replace("{name}", item.account_send[0].name);
+                      }
+
+                      return (
+                        <Box
+                          key={i}
+                          sx={{
+                            opacity: !item.status ? 1 : 0.6,
+                          }}
+                        >
+                          <ListItem button={true} className="box_notify">
+                            <ListItemAvatar>
+                              <Avatar alt={item.account_send[0].name} src={item.account_send[0].avatar}>
+                                {item.account_send[0].name.charAt(0)}
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              onClick={(e) => handleClickLinkNotify(e, item.link)}
+                              primary={newContent}
+                              secondary={convertToTime(item.createdAt)}
+                            ></ListItemText>
+                            <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItem>
+                        </Box>
+                      );
+                    })}
                 </Box>
               </Box>
             </DialogContent>

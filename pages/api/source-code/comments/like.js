@@ -73,7 +73,7 @@ const handle = async (req, res) => {
               link: linkNotify,
               account_send: [session.user.id],
               account_receive: [findComment[0].user[0]._id],
-              content: `${session.user.account} vừa like comment: "${findComment[0].content}" của bạn.`,
+              content: `{name} vừa like comment: "${findComment[0].content}" của bạn.`,
             });
           } else {
             await Comment.findByIdAndUpdate(commentId, {

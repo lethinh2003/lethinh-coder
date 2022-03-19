@@ -2,6 +2,7 @@ import { Box, Typography, CardContent, CardMedia, Button } from "@mui/material";
 import convertTime from "../../utils/convertTime";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "next/link";
+import { styled } from "@mui/material/styles";
 
 import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye, AiFillTags } from "react-icons/ai";
 import { FaMoneyCheckAlt } from "react-icons/fa";
@@ -11,7 +12,26 @@ import NumberFormat from "react-number-format";
 
 const InfoCode = (props) => {
   const { sourceCode } = props;
+  const CodeButton = styled(Button)({
+    boxShadow: "none",
+    fontSize: "14px",
+    borderRadius: "10px",
+    textTransform: "capitalize",
+    fontFamily: "Noto Sans",
+    color: "#0b9ad1",
+    fontWeight: "bold",
+    backgroundColor: "#fff",
 
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#fff",
+      borderColor: "#005cbf",
+    },
+
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
   return (
     <>
       {sourceCode.length > 0 && (
@@ -123,9 +143,9 @@ const InfoCode = (props) => {
                     }}
                   >
                     {sourceCode[0].labels.map((item, i) => (
-                      <Button key={i} variant="outlined">
+                      <CodeButton key={i} variant="outlined">
                         {item}
-                      </Button>
+                      </CodeButton>
                     ))}
                   </Box>
                 </Typography>

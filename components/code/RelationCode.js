@@ -3,11 +3,84 @@ import { Button, Box, Typography, Card, CardActions, CardContent, CardMedia } fr
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import { styled } from "@mui/material/styles";
 
 import NumberFormat from "react-number-format";
 
 const RelationCode = (props) => {
   const { sourceCodeRelationship } = props;
+  const CardCode = styled(Card)({
+    padding: "15px",
+    borderRadius: "20px",
+    minWidth: 300,
+    overflow: "unset",
+    scrollSnapAlign: "center",
+  });
+  const CardContentCode = styled(CardContent)({
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 0",
+  });
+  const CardContentCodeTitle = styled(Typography)({
+    fontFamily: "Noto Sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    cursor: "pointer",
+
+    "&:hover": {
+      opacity: 0.8,
+    },
+    "&:active, &:focus": {
+      color: "#0b9ad1",
+    },
+  });
+  const CodeTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "30px",
+    fontWeight: "bold",
+  });
+  const CodeTitleSecond = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    opacity: 0.8,
+    cursor: "pointer",
+
+    "&:hover": {
+      opacity: 0.7,
+    },
+
+    "&:active, &:focus": {
+      color: "#0b9ad1",
+    },
+  });
+  const BoxCodeTitle = styled(Box)({
+    width: "100%",
+    justifyContent: "space-between",
+    display: "flex",
+    alignItems: "center",
+  });
+  const CodeButton = styled(Button)({
+    boxShadow: "none",
+    fontSize: "14px",
+    borderRadius: "10px",
+    textTransform: "capitalize",
+    fontFamily: "Noto Sans",
+    color: "#0b9ad1",
+    fontWeight: "bold",
+    backgroundColor: "#fff",
+
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#fff",
+      borderColor: "#005cbf",
+    },
+
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
 
   return (
     <>
@@ -30,33 +103,27 @@ const RelationCode = (props) => {
           {sourceCodeRelationship.length > 0 &&
             sourceCodeRelationship.map((item, i) => {
               return (
-                <Card sx={{ minWidth: 300, overflow: "unset" }} key={i} className={`code-container`}>
+                <CardCode key={i}>
                   <CardMedia
                     className="code-container__image"
                     component="img"
                     height="140"
                     image={item.images[0]}
                     alt={item.title}
+                    sx={{
+                      borderRadius: "20px",
+                    }}
                   />
-                  <CardContent className="code-container__body">
-                    <Typography
-                      sx={{
-                        fontFamily: "Noto Sans",
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        textTransform: "capitalize",
-                      }}
-                      variant="h5"
-                      component="div"
-                    >
+                  <CardContentCode>
+                    <CardContentCodeTitle component="div" className="code-title">
                       {item.title}
-                    </Typography>
+                    </CardContentCodeTitle>
                     <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                       {item.desc}
                     </Typography>
-                    <Typography sx={{ marginTop: "20px" }}>
+                    <Typography sx={{ marginTop: "20px", display: "flex" }}>
                       {item.costs > 0 && (
-                        <Button variant="contained" color="success">
+                        <CodeButton variant="outlined">
                           <NumberFormat
                             value={item.costs}
                             displayType={"text"}
@@ -64,29 +131,12 @@ const RelationCode = (props) => {
                             decimalSeparator={","}
                             suffix={" VNĐ"}
                           />{" "}
-                        </Button>
+                        </CodeButton>
                       )}
-                      {item.costs === 0 && (
-                        <Button variant="contained">
-                          Free <MoneyOffIcon />
-                        </Button>
-                      )}
+                      {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                     </Typography>
-                  </CardContent>
-
-                  <CardActions
-                    sx={{
-                      paddingTop: "20px",
-                      paddingLeft: "16px",
-                    }}
-                  >
-                    <Link href={`/source-code/${item.slug}`}>
-                      <Button size="small" variant="outlined" color="primary">
-                        Chi tiết
-                      </Button>
-                    </Link>
-                  </CardActions>
-                </Card>
+                  </CardContentCode>
+                </CardCode>
               );
             })}
         </div>
@@ -107,34 +157,30 @@ const RelationCode = (props) => {
         {sourceCodeRelationship.length > 0 &&
           sourceCodeRelationship.map((item, i) => {
             return (
-              <Card sx={{ minWidth: 300 }} key={i} className={`code-container`}>
+              <CardCode key={i}>
                 <CardMedia
                   className="code-container__image"
                   component="img"
                   height="140"
                   image={item.images[0]}
                   alt={item.title}
+                  sx={{
+                    borderRadius: "20px",
+                  }}
                 />
-                <CardContent className="code-container__body">
-                  <Typography
-                    sx={{
-                      fontFamily: "Noto Sans",
-                      fontSize: "20px",
-                      fontWeight: "bold",
-                      textTransform: "capitalize",
-                    }}
-                    variant="h5"
-                    component="div"
-                  >
-                    {item.title}
-                  </Typography>
+                <CardContentCode>
+                  <Link href={`/source-code/${item.slug}`}>
+                    <CardContentCodeTitle component="div" className="code-title">
+                      {item.title}
+                    </CardContentCodeTitle>
+                  </Link>
 
                   <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                     {item.desc}
                   </Typography>
                   <Typography sx={{ marginTop: "20px" }}>
                     {item.costs > 0 && (
-                      <Button variant="contained" color="success">
+                      <CodeButton variant="outlined">
                         <NumberFormat
                           value={item.costs}
                           displayType={"text"}
@@ -142,29 +188,12 @@ const RelationCode = (props) => {
                           decimalSeparator={","}
                           suffix={" VNĐ"}
                         />
-                      </Button>
+                      </CodeButton>
                     )}
-                    {item.costs === 0 && (
-                      <Button variant="contained">
-                        Free <MoneyOffIcon />
-                      </Button>
-                    )}
+                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                   </Typography>
-                </CardContent>
-
-                <CardActions
-                  sx={{
-                    paddingTop: "20px",
-                    paddingLeft: "16px",
-                  }}
-                >
-                  <Link href={`/source-code/${item.slug}`}>
-                    <Button size="small" variant="outlined" color="primary">
-                      Chi tiết
-                    </Button>
-                  </Link>
-                </CardActions>
-              </Card>
+                </CardContentCode>
+              </CardCode>
             );
           })}
       </Box>

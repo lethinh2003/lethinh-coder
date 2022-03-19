@@ -91,7 +91,7 @@ const SummaryCode = (props) => {
           top: 5,
         }}
       >
-        <h1 className="title">Summary</h1>
+        <h1 className="title">Contents</h1>
         <Box
           sx={{
             display: "flex",

@@ -1,11 +1,14 @@
+import { SessionProvider } from "next-auth/react";
+import Head from "next/head";
+import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import rootReducer from "../redux/reducers";
 import "../styles/globals.css";
 import "../styles/layout.scss";
-import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
 
-import Head from "next/head";
-import { SessionProvider } from "next-auth/react";
+const store = createStore(rootReducer);
 
-import Sidebar from "../components/homePage/Sidebar";
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <>
@@ -35,7 +38,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <meta property="og:image:width" content="1280" />
           <meta property="og:image:height" content="720" />
         </Head>
-        <Component {...pageProps} />
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
       </SessionProvider>
     </>
   );

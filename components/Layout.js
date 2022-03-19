@@ -1,41 +1,17 @@
-import Sidebar from "./homePage/Sidebar";
-import SidebarMobile from "./homePage/SidebarMobile";
-import Navbar from "./homePage/Navbar";
+import { Box } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getDarkmode } from "../redux/actions";
 import Login from "./auth/Login";
 import Signup from "./auth/Signup";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import Head from "next/head";
-import Image from "next/image";
-
-import axios from "axios";
-import Link from "next/link";
-import { green, orange, purple, amber, deepOrange, grey } from "@mui/material/colors";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-
-import MenuIcon from "@mui/icons-material/Menu";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SourceIcon from "@mui/icons-material/Source";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
-import Fab from "@mui/material/Fab";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Zoom from "@mui/material/Zoom";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
+import BackToTop from "./homePage/BackToTop";
 import Footer from "./homePage/Footer";
+import Navbar from "./homePage/Navbar";
+import Sidebar from "./homePage/Sidebar";
+import SidebarMobile from "./homePage/SidebarMobile";
 
 const getDesignTokens = (mode) => ({
   typography: {
@@ -58,7 +34,7 @@ const getDesignTokens = (mode) => ({
             default: "#161515",
           }
         : {
-            default: "#f5f4f4",
+            default: "#edebeb",
           }),
     },
 
@@ -104,24 +80,15 @@ const getDesignTokens = (mode) => ({
 
 const Layout = (props) => {
   const { data: session, status } = useSession();
-
-  const [isDarkMode, SetIsDarkMore] = useState(false);
   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
   const [isLoginModal, setIsLoginModal] = useState(false);
   const [isSignupModal, setIsSignupModal] = useState(false);
-
-  useEffect(() => {
-    const getStatusTheme = localStorage.getItem("darkMore");
-    if (getStatusTheme) {
-      SetIsDarkMore(JSON.parse(getStatusTheme));
-    }
-  }, []);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const getStatusDarkmode = useSelector((state) => state.getDarkmode);
+  const dispatch = useDispatch();
   const handleClickSwitch = () => {
-    SetIsDarkMore(!isDarkMode);
-    localStorage.setItem("darkMore", !isDarkMode);
+    dispatch(getDarkmode(!getStatusDarkmode));
   };
-  const theme = createTheme(getDesignTokens(isDarkMode ? "dark" : "light"));
   const handleClickSidebarMobile = () => {
     setIsSidebarMobile(!isSidebarMobile);
   };
@@ -143,17 +110,12 @@ const Layout = (props) => {
     });
     localStorage.removeItem("listLikeComments");
   };
-  const trigger = useScrollTrigger({
-    disableHysteresis: true,
-    threshold: 100,
-  });
-  const scrollToTop = () => {
-    const c = document.documentElement.scrollTop || document.body.scrollTop;
-    if (c > 0) {
-      window.requestAnimationFrame(scrollToTop);
-      window.scrollTo(0, c - c / 8);
-    }
-  };
+  useEffect(() => {
+    const test = JSON.parse(localStorage.getItem("darkMode")) || false;
+    dispatch(getDarkmode(test));
+  }, []);
+  const theme = createTheme(getDesignTokens(getStatusDarkmode ? "dark" : "light"));
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -167,7 +129,6 @@ const Layout = (props) => {
           handleClickCloseSignup={handleClickCloseSignup}
           handleClickLogout={handleClickLogout}
           handleClickSwitch={handleClickSwitch}
-          theme={theme}
         />
         <Navbar />
         {isSidebarMobile && (
@@ -203,22 +164,7 @@ const Layout = (props) => {
           {props.children}
           <Footer />
         </Box>
-        <Zoom in={trigger}>
-          <Fab
-            color="success"
-            sx={{
-              position: "fixed",
-
-              borderRadius: "50%",
-              margin: "10px",
-              bottom: "0",
-              right: "0",
-            }}
-            onClick={scrollToTop}
-          >
-            <KeyboardArrowUpIcon />
-          </Fab>
-        </Zoom>
+        <BackToTop />
       </ThemeProvider>
     </>
   );

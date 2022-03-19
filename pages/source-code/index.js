@@ -1,57 +1,101 @@
-import { useRouter } from "next/router";
-import Layout from "../../components/Layout";
-import axios from "axios";
-import NumberFormat from "react-number-format";
-import ReactPaginate from "react-paginate";
-
+import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import {
-  Button,
+  Autocomplete,
   Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardMedia,
-  CardActionArea,
-  Backdrop,
-  CircularProgress,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Badge,
-  Input,
-  TextField,
-  Autocomplete,
   Skeleton,
-  Pagination,
-  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import LinkMUI from "@mui/material/Link";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import MailIcon from "@mui/icons-material/Mail";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import axios from "axios";
 import Head from "next/head";
-import Lightbox from "react-image-lightbox";
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye } from "react-icons/ai";
-import { useSession } from "next-auth/react";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { BsCloudDownload } from "react-icons/bs";
-import Modal from "../../components/homePage/Modal";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import NumberFormat from "react-number-format";
+import ReactPaginate from "react-paginate";
+import Layout from "../../components/Layout";
+import { styled } from "@mui/material/styles";
 
 const Items = ({ currentItems, isLoading }) => {
+  const CardCode = styled(Card)({
+    padding: "15px",
+    borderRadius: "20px",
+    minWidth: 300,
+    overflow: "unset",
+    scrollSnapAlign: "center",
+  });
+  const CardContentCode = styled(CardContent)({
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 0",
+  });
+  const CardContentCodeTitle = styled(Typography)({
+    fontFamily: "Noto Sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    cursor: "pointer",
+
+    "&:hover": {
+      opacity: 0.8,
+    },
+    "&:active, &:focus": {
+      color: "#0b9ad1",
+    },
+  });
+  const CodeTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "30px",
+    fontWeight: "bold",
+  });
+  const CodeTitleSecond = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    opacity: 0.8,
+    cursor: "pointer",
+
+    "&:hover": {
+      opacity: 0.7,
+    },
+
+    "&:active, &:focus": {
+      color: "#0b9ad1",
+    },
+  });
+  const BoxCodeTitle = styled(Box)({
+    width: "100%",
+    justifyContent: "space-between",
+    display: "flex",
+    alignItems: "center",
+  });
+  const CodeButton = styled(Button)({
+    boxShadow: "none",
+    fontSize: "14px",
+    borderRadius: "10px",
+    textTransform: "capitalize",
+    fontFamily: "Noto Sans",
+    color: "#0b9ad1",
+    fontWeight: "bold",
+    backgroundColor: "#fff",
+
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#fff",
+      borderColor: "#005cbf",
+    },
+
+    "&:focus": {
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+    },
+  });
   return (
     <>
       <Box
@@ -74,85 +118,63 @@ const Items = ({ currentItems, isLoading }) => {
       >
         {isLoading &&
           Array.from({ length: 4 }).map((item, i) => (
-            <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
-              <Skeleton variant="rectangular" width={"100%"} height={200} />
-              <Box sx={{ p: 2 }}>
-                <Skeleton />
-                <Skeleton />
+            <CardCode sx={{ minWidth: 200 }} key={i} className={`code-container`}>
+              <Skeleton
+                sx={{
+                  borderRadius: "20px",
+                }}
+                variant="rectangular"
+                width={"100%"}
+                height={200}
+              />
+              <Box sx={{ padding: "10px 0" }}>
+                <Skeleton height={50} />
+                <Skeleton height={20} />
               </Box>
-              <Box sx={{ p: 2, borderRadius: "20px" }}>
-                <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={50} />
+              <Box sx={{ padding: "10px 0", borderRadius: "20px" }}>
+                <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={30} />
               </Box>
-              <Box sx={{ p: 2, display: "flex", gap: "10px" }}>
-                <Skeleton variant="rectangular" width={100} height={40} />
-                <Skeleton variant="rectangular" width={100} height={40} />
-              </Box>
-            </Card>
+            </CardCode>
           ))}
         {!isLoading &&
           currentItems &&
           currentItems.length > 0 &&
           currentItems.map((item, i) => {
             return (
-              <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
+              <CardCode key={i}>
                 <CardMedia
                   className="code-container__image"
                   component="img"
                   height="140"
                   image={item.images[0]}
                   alt={item.title}
-                  loading="lazy"
+                  sx={{
+                    borderRadius: "20px",
+                  }}
                 />
-                <CardContent className="code-container__body">
-                  <Typography
-                    sx={{
-                      fontFamily: "Noto Sans",
-                      fontSize: "20px",
-                      fontWeight: "bold",
-                      textTransform: "capitalize",
-                    }}
-                    variant="h5"
-                    component="div"
-                  >
+                <CardContentCode>
+                  <CardContentCodeTitle component="div" className="code-title">
                     {item.title}
-                  </Typography>
-
+                  </CardContentCodeTitle>
                   <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                     {item.desc}
                   </Typography>
-                  <Typography sx={{ marginTop: "20px" }}>
+                  <Typography sx={{ marginTop: "20px", display: "flex" }}>
                     {item.costs > 0 && (
-                      <Button variant="contained" color="success">
+                      <CodeButton variant="outlined">
                         <NumberFormat
                           value={item.costs}
                           displayType={"text"}
                           thousandSeparator={"."}
                           decimalSeparator={","}
                           suffix={" VNĐ"}
-                        />
-                      </Button>
+                        />{" "}
+                      </CodeButton>
                     )}
-                    {item.costs === 0 && (
-                      <Button variant="contained">
-                        Free <MoneyOffIcon />
-                      </Button>
-                    )}
+                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                   </Typography>
-                </CardContent>
-
-                <CardActions
-                  sx={{
-                    paddingTop: "20px",
-                    paddingLeft: "16px",
-                  }}
-                >
-                  <Link href={`/source-code/${item.slug}`}>
-                    <Button size="small" variant="outlined" color="primary">
-                      Chi tiết
-                    </Button>
-                  </Link>
-                </CardActions>
-              </Card>
+                </CardContentCode>
+              </CardCode>
             );
           })}
       </Box>
@@ -226,9 +248,9 @@ const SourceCode = () => {
 
     try {
       setIsLoading(true);
-
       const result = await axios.get(`/api/source-code?sort=${newArraySort}&label=${inputValueLabels.toLowerCase()}`);
       setSourceCode(result.data.data);
+
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);

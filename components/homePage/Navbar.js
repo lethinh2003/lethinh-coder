@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import { SiZalo } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { useSession } from "next-auth/react";
+import AttachmentIcon from "@mui/icons-material/Attachment";
 import axios from "axios";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
@@ -55,20 +56,6 @@ const Navbar = (props) => {
 
   return (
     <>
-      <Modal title={"Thông tin hỗ trợ"} isModal={isModal} setIsModal={setIsModal}>
-        <DialogContentText>
-          <IconButton color="primary" aria-label="add to shopping cart">
-            <FacebookIcon />
-          </IconButton>
-          {data.length > 0 && <a href={data[0].myself_fb}>{data[0].myself_fb_name}</a>}
-        </DialogContentText>
-        <DialogContentText>
-          <IconButton color="primary" aria-label="add to shopping cart">
-            <SiZalo />
-          </IconButton>
-          {data.length > 0 && <a href={data[0].myself_zalo}>{data[0].myself_zalo_name}</a>}
-        </DialogContentText>
-      </Modal>
       <Box
         sx={{
           bgcolor: "header.background.default",
@@ -121,6 +108,35 @@ const Navbar = (props) => {
                 </Box>
               </Button>
             </Link>
+            <Link href="/source-code">
+              <Button
+                className={
+                  router.pathname === "/source-code"
+                    ? `ms-navbar__item active_${theme.palette.mode}`
+                    : "ms-navbar__item"
+                }
+                sx={{
+                  color: "text.primary",
+                }}
+              >
+                <Box
+                  className="ms-navbar__item--icon"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  <AttachmentIcon />
+                </Box>
+                <Box
+                  className="ms-navbar__item--title"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  Sources
+                </Box>
+              </Button>
+            </Link>
             {session && session.user.role === "admin" && (
               <Link href="/admin">
                 <Button
@@ -150,30 +166,6 @@ const Navbar = (props) => {
                 </Button>
               </Link>
             )}
-            <Button
-              onClick={handleClickSupport}
-              className="ms-navbar__item"
-              sx={{
-                color: "text.primary",
-              }}
-            >
-              <Box
-                className="ms-navbar__item--icon"
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                <ContactSupportIcon />
-              </Box>
-              <Box
-                className="ms-navbar__item--title"
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                Support
-              </Box>
-            </Button>
           </Typography>
         </Typography>
       </Box>

@@ -41,6 +41,8 @@
     "react-loading-icons": "^1.0.8",
     "react-number-format": "^4.9.1",
     "react-paginate": "^8.1.2",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
     "sass": "^1.49.9",
     "slugify": "^1.6.5",
     "socket.io": "^4.4.1",
