@@ -52,12 +52,12 @@ const ShowCodes = (props) => {
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "30px",
+    fontSize: "25px",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "20px",
+    fontSize: "18px",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",

@@ -21,6 +21,7 @@ import dbConnect from "../database/dbConnect";
 import Code from "../models/Code";
 import System from "../models/System";
 import Introduce from "../components/homePage/Introduce";
+import ContributeEmail from "../components/homePage/ContributeEmail";
 
 const Home = (props) => {
   let { newCode, mostDownloadsCode, mostViewsCode, systemData } = props;
@@ -43,6 +44,7 @@ const Home = (props) => {
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
         <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>
+        <ContributeEmail />
       </Layout>
     </>
   );
