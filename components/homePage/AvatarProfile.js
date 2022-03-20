@@ -32,6 +32,7 @@ const AvatarProfile = () => {
       redirect: false,
     });
     localStorage.removeItem("listLikeComments");
+    localStorage.removeItem("avatarProfile");
   };
 
   const handleCloseUserMenu = () => {

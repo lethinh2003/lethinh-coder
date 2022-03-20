@@ -124,6 +124,7 @@ const Layout = (props) => {
       redirect: false,
     });
     localStorage.removeItem("listLikeComments");
+    localStorage.removeItem("avatarProfile");
   };
   const trigger = useScrollTrigger({
     disableHysteresis: true,
