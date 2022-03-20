@@ -18,6 +18,9 @@ import {
   CardMedia,
   CardActionArea,
   Skeleton,
+  Modal,
+  Fade,
+  Backdrop,
 } from "@mui/material";
 import convertTime from "../../utils/convertTime";
 import { deepOrange, deepPurple } from "@mui/material/colors";
@@ -25,12 +28,14 @@ import axios from "axios";
 import Info from "../../components/users/Info";
 import Notifies from "../../components/users/Notifies";
 import Comments from "../../components/users/Comments";
+import { styled } from "@mui/material/styles";
 
 const AboutMe = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       return router.push("/");
@@ -40,17 +45,6 @@ const AboutMe = () => {
         return router.push("/");
       }
     }
-    const getUser = async () => {
-      try {
-        const result = await axios.get("/api/users?account=" + session.user.account);
-        setIsLoading(false);
-
-        setData(result.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getUser();
   }, [status]);
 
   return (
@@ -62,6 +56,7 @@ const AboutMe = () => {
           </Head>
         </>
       )}
+
       <Layout>
         <>
           <Box
@@ -76,9 +71,9 @@ const AboutMe = () => {
               padding: { xs: "40px 10px", md: "40px 20px" },
             }}
           >
-            <Info isLoading={isLoading} data={data.length > 0 ? data[0].userInfo : []} />
-            <Notifies isLoading={isLoading} data={data.length > 0 ? data[0].userNotifies : []} />
-            <Comments isLoading={isLoading} data={data.length > 0 ? data[0].userComments : []} />
+            <Info />
+            {/* <Notifies isLoading={isLoading} data={data.length > 0 ? data[0].userNotifies : []} /> */}
+            {/* <Comments isLoading={isLoading} data={data.length > 0 ? data[0].userComments : []} /> */}
           </Box>
         </>
       </Layout>

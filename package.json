@@ -25,6 +25,8 @@
     "lru-cache": "^7.4.1",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.4",
+    "multer": "^1.4.4",
+    "multer-storage-cloudinary": "^4.0.0",
     "next": "latest",
     "next-auth": "^4.2.1",
     "next-images": "^1.8.4",

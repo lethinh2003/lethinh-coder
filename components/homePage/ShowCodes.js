@@ -160,9 +160,11 @@ const ShowCodes = (props) => {
                       }}
                     />
                     <CardContentCode>
-                      <CardContentCodeTitle component="div" className="code-title">
-                        {item.title}
-                      </CardContentCodeTitle>
+                      <Link href={`/source-code/${item.slug}`}>
+                        <CardContentCodeTitle component="div" className="code-title">
+                          {item.title}
+                        </CardContentCodeTitle>
+                      </Link>
                       <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                         {item.desc}
                       </Typography>

@@ -1,13 +1,13 @@
 import { useTheme } from "@emotion/react";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Avatar, Box, Button, IconButton, Switch, Typography } from "@mui/material";
+import { Button, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
-
-import AvatarProfile from "./AvatarProfile";
-import Notify from "./Notify";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 const Sidebar = (props) => {
-  const { status, handleClickSidebarMobile, handleClickSwitch } = props;
+  const router = useRouter();
+  const { status, handleClickSidebarMobile, handleClickLogout, handleClickSwitch } = props;
   const theme = useTheme();
 
   const LoginButton = styled(Button)({
@@ -80,90 +80,28 @@ const Sidebar = (props) => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          bgcolor: "header.background.default",
-          padding: "10px",
-          justifyContent: "space-between",
-          color: "text.primary",
-          position: "fixed",
-          zIndex: 1000,
-          width: "100%",
-          height: "70px",
-        }}
-      >
-        <Typography
-          sx={{
-            paddingLeft: "4px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "20px",
-          }}
-          component="div"
-        >
-          <Link href="/">
-            <Button>
-              <Avatar
-                src="https://i.imgur.com/U0BdIic.png"
-                variant="square"
-                sx={{ width: "50px", height: "50px", objectFit: "cover" }}
-              />
-            </Button>
-          </Link>
-          <IconButton onClick={handleClickSidebarMobile}>
-            <MenuIcon
+      {status !== "authenticated" && (
+        <>
+          <Link href="/login">
+            <LoginButton
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: "none", md: "flex" },
               }}
-            />
-          </IconButton>
-        </Typography>
-        <Typography
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "20px",
-            paddingRight: "10px",
-          }}
-          component="div"
-        >
-          <MaterialUISwitch
-            sx={{ m: 1 }}
-            onClick={handleClickSwitch}
-            checked={theme.palette.mode === "dark" ? true : false}
-          />
-
-          <Notify />
-
-          <AvatarProfile />
-          {status === "unauthenticated" && (
-            <>
-              <Link href="/login">
-                <LoginButton
-                  sx={{
-                    display: { xs: "none", md: "flex" },
-                  }}
-                >
-                  Login
-                </LoginButton>
-              </Link>
-              <Link href="/signup">
-                <LoginButton
-                  sx={{
-                    display: { xs: "none", md: "flex" },
-                  }}
-                >
-                  Signup
-                </LoginButton>
-              </Link>
-            </>
-          )}
-        </Typography>
-      </Box>
+            >
+              Login
+            </LoginButton>
+          </Link>
+          <Link href="/signup">
+            <LoginButton
+              sx={{
+                display: { xs: "none", md: "flex" },
+              }}
+            >
+              Signup
+            </LoginButton>
+          </Link>
+        </>
+      )}
     </>
   );
 };

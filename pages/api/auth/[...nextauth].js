@@ -130,6 +130,7 @@ export default NextAuth({
         token.account = user.account;
         token.role = user.role;
         token.id = user._id;
+        token.avatar = user.avatar;
         token.access_token = generateToken;
       }
       return token;

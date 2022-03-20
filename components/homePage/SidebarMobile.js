@@ -1,48 +1,16 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  Slide,
-} from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import MenuIcon from "@mui/icons-material/Menu";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SourceIcon from "@mui/icons-material/Source";
-import Link from "next/link";
-import HomeIcon from "@mui/icons-material/Home";
-import { FaHome } from "react-icons/fa";
-import { AiOutlineLogin } from "react-icons/ai";
-import { RiLogoutCircleLine } from "react-icons/ri";
-import { CgProfile } from "react-icons/cg";
-import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import SourceIcon from "@mui/icons-material/Source";
+import { Box, Button, Slide, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useRef } from "react";
+import { AiOutlineLogin } from "react-icons/ai";
+import { CgProfile } from "react-icons/cg";
+import { FaHome } from "react-icons/fa";
 
 const SidebarMobile = (props) => {
-  const { data: session } = useSession();
-
-  const {
-    status,
-    handleClickSidebarMobile,
-    isSidebarMobile,
-    handleClickOpenLogin,
-    handleClickLogout,
-    handleClickOpenSignup,
-    handleClickCloseSignup,
-    handleClickSwitch,
-  } = props;
+  const { session, status, handleClickSidebarMobile, isSidebarMobile } = props;
   const theme = useTheme();
   const router = useRouter();
   const menuWrapper = useRef();
@@ -57,6 +25,7 @@ const SidebarMobile = (props) => {
   const handleClickOpenSignupMiddle = () => {
     handleClickSidebarMobile();
   };
+
   return (
     <>
       <Box
@@ -171,51 +140,7 @@ const SidebarMobile = (props) => {
                   </Link>
                 </>
               )}
-              {status === "authenticated" && (
-                <>
-                  <Button
-                    onClick={handleClickLogout}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                      gap: "5px",
-                      fontSize: "25px",
-                      fontWeight: "bold",
-                      padding: "5px",
-                      textTransform: "capitalize",
-                      fontWeight: 500,
-                    }}
-                    component="div"
-                  >
-                    <RiLogoutCircleLine style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                      Logout
-                    </Typography>
-                  </Button>
-                </>
-              )}
-              <Link href="/about-me">
-                <Button
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                    fontSize: "25px",
-                    fontWeight: "bold",
-                    padding: "5px",
-                    textTransform: "capitalize",
-                    fontWeight: 500,
-                  }}
-                  component="div"
-                >
-                  <CgProfile style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                  <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                    About me
-                  </Typography>
-                </Button>
-              </Link>
+
               <Link href="/source-code">
                 <Button
                   sx={{

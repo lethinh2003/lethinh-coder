@@ -1,12 +1,11 @@
 import { Box } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { signOut, useSession } from "next-auth/react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDarkmode } from "../redux/actions";
-import Login from "./auth/Login";
-import Signup from "./auth/Signup";
 import BackToTop from "./homePage/BackToTop";
 import Footer from "./homePage/Footer";
 import Navbar from "./homePage/Navbar";
@@ -80,10 +79,13 @@ const getDesignTokens = (mode) => ({
 
 const Layout = (props) => {
   const { data: session, status } = useSession();
+  if (session && session.user.access_token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${session.user.access_token}`;
+  } else {
+    axios.defaults.headers.common["Authorization"] = null;
+  }
   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
-  const [isLoginModal, setIsLoginModal] = useState(false);
-  const [isSignupModal, setIsSignupModal] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+
   const getStatusDarkmode = useSelector((state) => state.getDarkmode);
   const dispatch = useDispatch();
   const handleClickSwitch = () => {
@@ -92,24 +94,7 @@ const Layout = (props) => {
   const handleClickSidebarMobile = () => {
     setIsSidebarMobile(!isSidebarMobile);
   };
-  const handleClickOpenLogin = () => {
-    setIsLoginModal(true);
-  };
-  const handleClickCloseLogin = () => {
-    setIsLoginModal(false);
-  };
-  const handleClickOpenSignup = () => {
-    setIsSignupModal(true);
-  };
-  const handleClickCloseSignup = () => {
-    setIsSignupModal(false);
-  };
-  const handleClickLogout = async () => {
-    const data = await signOut({
-      redirect: false,
-    });
-    localStorage.removeItem("listLikeComments");
-  };
+
   useEffect(() => {
     const test = JSON.parse(localStorage.getItem("darkMode")) || false;
     dispatch(getDarkmode(test));
@@ -123,33 +108,18 @@ const Layout = (props) => {
           session={session}
           status={status}
           handleClickSidebarMobile={handleClickSidebarMobile}
-          handleClickOpenLogin={handleClickOpenLogin}
-          handleClickCloseLogin={handleClickCloseLogin}
-          handleClickOpenSignup={handleClickOpenSignup}
-          handleClickCloseSignup={handleClickCloseSignup}
-          handleClickLogout={handleClickLogout}
           handleClickSwitch={handleClickSwitch}
         />
         <Navbar />
         {isSidebarMobile && (
           <SidebarMobile
+            session={session}
             status={status}
             handleClickSidebarMobile={handleClickSidebarMobile}
             isSidebarMobile={isSidebarMobile}
-            handleClickOpenSignup={handleClickOpenSignup}
-            handleClickCloseSignup={handleClickCloseSignup}
-            handleClickOpenLogin={handleClickOpenLogin}
-            handleClickCloseLogin={handleClickCloseLogin}
-            handleClickLogout={handleClickLogout}
-            handleClickSwitch={handleClickSwitch}
           />
         )}
-        {isLoginModal && status !== "authenticated" && (
-          <Login isLoginModal={isLoginModal} setIsLoginModal={setIsLoginModal} status={status} />
-        )}
-        {isSignupModal && status !== "authenticated" && (
-          <Signup isSignupModal={isSignupModal} setIsSignupModal={setIsSignupModal} status={status} />
-        )}
+
         <Box
           sx={{
             bgcolor: "background.default",
