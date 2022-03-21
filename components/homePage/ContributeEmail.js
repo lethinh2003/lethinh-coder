@@ -12,6 +12,10 @@ import {
   CardContent,
   CardMedia,
   CardActionArea,
+  Tooltip,
+  Badge,
+  Fade,
+  Alert,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 import NumberFormat from "react-number-format";
@@ -23,7 +27,35 @@ import { styled } from "@mui/material/styles";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import socketIOClient from "socket.io-client";
+import CheckIcon from "@mui/icons-material/Check";
+
+let socket;
 const Introduce = (props) => {
+  const timeOutAlert = useRef();
+  const [data, setData] = useState([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+      clearTimeout(timeOutAlert.current);
+    };
+  }, []);
+  const socketInitializer = () => {
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+    socket.emit("join-homepage-express");
+    socket.emit("send-event-homepage-express");
+    socket.on("send-event-homepage-express", (data) => {
+      setData(data);
+      setIsSuccess(true);
+      clearTimeout(timeOutAlert.current);
+      timeOutAlert.current = setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+    });
+  };
   const IntroduceButton = styled(Button)({
     boxShadow: "none",
     fontSize: "14px",
@@ -57,6 +89,7 @@ const Introduce = (props) => {
   });
   const IconExpress1 = styled(ThumbUpOffAltIcon)({
     color: "#745544",
+    transition: "all 0.2s linear",
     "&:hover": {
       color: "#0043ff",
       transform: "scale(1.3)",
@@ -64,6 +97,7 @@ const Introduce = (props) => {
   });
   const IconExpress2 = styled(InsertEmoticonIcon)({
     color: "#745544",
+    transition: "all 0.2s linear",
     "&:hover": {
       color: "#fbff00",
       transform: "scale(1.3)",
@@ -71,6 +105,7 @@ const Introduce = (props) => {
   });
   const IconExpress3 = styled(SentimentSatisfiedIcon)({
     color: "#745544",
+    transition: "all 0.2s linear",
     "&:hover": {
       color: "#c000ff",
       transform: "scale(1.3)",
@@ -78,11 +113,25 @@ const Introduce = (props) => {
   });
   const IconExpress4 = styled(SentimentVeryDissatisfiedIcon)({
     color: "#745544",
+    transition: "all 0.2s linear",
     "&:hover": {
       color: "#f70d0d",
       transform: "scale(1.3)",
     },
   });
+  const AlertExpress = styled(Alert)({
+    fontFamily: "Noto Sans",
+    top: "7px",
+    position: "absolute",
+    opacity: 1,
+    left: "50%",
+    transform: "translateX(-50%)",
+    borderRadius: "10px",
+  });
+  const handleClickExpress = (id) => {
+    socket.emit("send-event-homepage-express", id);
+    setIsLoading(true);
+  };
 
   return (
     <>
@@ -121,9 +170,17 @@ const Introduce = (props) => {
               padding: "0 20px",
               boxShadow: "2px 3px 8px 0px #fea38e",
               border: "2px solid #fff",
+              position: "relative",
             }}
           >
             <Box>
+              {isLoading && (
+                <Fade in={isSuccess}>
+                  <AlertExpress icon={<CheckIcon fontSize="inherit" />} severity="success">
+                    Cảm ơn bạn đã đánh giá
+                  </AlertExpress>
+                </Fade>
+              )}
               <CardContent>
                 <IntroduceTitle
                   sx={{
@@ -142,20 +199,37 @@ const Introduce = (props) => {
                   padding: "0 16px",
                   display: "flex",
                   flexWrap: "wrap",
+                  gap: "5px",
                 }}
               >
-                <IconButton>
-                  <IconExpress1 />
-                </IconButton>
-                <IconButton>
-                  <IconExpress2 />
-                </IconButton>
-                <IconButton>
-                  <IconExpress3 />
-                </IconButton>
-                <IconButton>
-                  <IconExpress4 />
-                </IconButton>
+                <Tooltip title="Thích">
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express1 : 0}>
+                    <IconButton onClick={() => handleClickExpress(1)}>
+                      <IconExpress1 />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
+                <Tooltip title="Cực Thích">
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express2 : 0}>
+                    <IconButton onClick={() => handleClickExpress(2)}>
+                      <IconExpress2 />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
+                <Tooltip title="Bình thường">
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express3 : 0}>
+                    <IconButton onClick={() => handleClickExpress(3)}>
+                      <IconExpress3 />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
+                <Tooltip title="Chán">
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express4 : 0}>
+                    <IconButton onClick={() => handleClickExpress(4)}>
+                      <IconExpress4 />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
               </CardActions>
             </Box>
             <CardMedia

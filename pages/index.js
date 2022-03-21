@@ -15,16 +15,18 @@ import {
 } from "@mui/material";
 
 import ShowCodes from "../components/homePage/ShowCodes";
+import ShowBlogs from "../components/homePage/showBlogs";
 import Head from "next/head";
 import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
 import Code from "../models/Code";
+import Blog from "../models/Blog";
 import System from "../models/System";
 import Introduce from "../components/homePage/Introduce";
 import ContributeEmail from "../components/homePage/ContributeEmail";
 
 const Home = (props) => {
-  let { newCode, mostDownloadsCode, mostViewsCode, systemData } = props;
+  let { newCode, mostDownloadsCode, mostViewsCode, systemData, newBlog } = props;
   systemData = JSON.parse(systemData);
 
   return (
@@ -41,6 +43,7 @@ const Home = (props) => {
       )}
       <Layout>
         <Introduce />
+        {/* <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs> */}
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
         <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>
@@ -58,11 +61,13 @@ export const getServerSideProps = async () => {
   let mostDownloadsCode = [];
   let mostViewsCode = [];
   let systemData = [];
+  let newBlog = [];
   const test = await Promise.all([
     Code.find({}).limit(4).select("-link -__v").sort("-_id"),
     Code.find({}).sort("-downloads").limit(4).select("-link -__v"),
     Code.find({}).sort("-views").limit(4).select("-link -__v"),
     System.find({}).select("-__v"),
+    Blog.find({}).limit(4).select("-link -__v").sort("-_id"),
     System.updateMany(
       {},
       { $inc: { home_views: 1 } },
@@ -76,6 +81,7 @@ export const getServerSideProps = async () => {
       mostDownloadsCode = data[1];
       mostViewsCode = data[2];
       systemData = data[3];
+      newBlog = data[4];
     })
     .catch((err) => console.log(err));
   return {
@@ -84,6 +90,7 @@ export const getServerSideProps = async () => {
       mostDownloadsCode: JSON.stringify(mostDownloadsCode),
       mostViewsCode: JSON.stringify(mostViewsCode),
       systemData: JSON.stringify(systemData),
+      newBlog: JSON.stringify(newBlog),
     },
   };
 };

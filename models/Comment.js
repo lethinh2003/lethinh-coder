@@ -22,8 +22,10 @@ const commentSchema = new mongoose.Schema(
     code: {
       type: String,
       trim: true,
-      minlength: [6, "Code must lengths greater or equal 6"],
-      required: [true, "Missing code"],
+    },
+    blog: {
+      type: String,
+      trim: true,
     },
     content: {
       type: String,
