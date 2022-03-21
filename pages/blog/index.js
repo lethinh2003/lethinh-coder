@@ -11,7 +11,9 @@ import {
   CardMedia,
   Skeleton,
   TextField,
+  Paper,
   Typography,
+  Grid,
 } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import axios from "axios";
@@ -96,8 +98,53 @@ const Items = ({ currentItems, isLoading }) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  }));
+  const GridBlog = styled(Box)({
+    display: "grid",
+    gridTemplateAreas: `
+  'main main main second'
+  'main main main third'
+  '. . . four'`,
+    gap: "10px",
+  });
+  const GridBlogFirst = styled(Box)({
+    backgroundColor: "red",
+    gridArea: "main",
+
+    width: "200px",
+  });
+  const GridBlogSecond = styled(Box)({
+    backgroundColor: "blue",
+    gridArea: "second",
+    height: "200px",
+    width: "200px",
+  });
+  const GridBlogThird = styled(Box)({
+    backgroundColor: "green",
+    gridArea: "third",
+    height: "200px",
+    width: "200px",
+  });
+  const GridBlogFour = styled(Box)({
+    backgroundColor: "yellow",
+    gridArea: "four",
+    height: "200px",
+    width: "200px",
+  });
   return (
     <>
+      {/* <GridBlog>
+        <GridBlogFirst />
+        <GridBlogSecond />
+        <GridBlogThird />
+        <GridBlogFour />
+      </GridBlog> */}
       <Box
         sx={{
           width: "100%",
@@ -153,27 +200,13 @@ const Items = ({ currentItems, isLoading }) => {
                   }}
                 />
                 <CardContentCode>
-                  <Link href={`/source-code/${item.slug}`}>
+                  <Link href={`/blog/${item.slug}`}>
                     <CardContentCodeTitle component="div" className="code-title">
                       {item.title}
                     </CardContentCodeTitle>
                   </Link>
                   <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                     {item.desc}
-                  </Typography>
-                  <Typography sx={{ marginTop: "20px", display: "flex" }}>
-                    {item.costs > 0 && (
-                      <CodeButton variant="outlined">
-                        <NumberFormat
-                          value={item.costs}
-                          displayType={"text"}
-                          thousandSeparator={"."}
-                          decimalSeparator={","}
-                          suffix={" VNĐ"}
-                        />{" "}
-                      </CodeButton>
-                    )}
-                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                   </Typography>
                 </CardContentCode>
               </CardCode>
@@ -184,38 +217,19 @@ const Items = ({ currentItems, isLoading }) => {
   );
 };
 const SourceCode = () => {
-  const optionsPrice = [
-    { label: "Giá giảm dần", key: "-costs" },
-    { label: "Giá tăng dần", key: "costs" },
-  ];
-  const optionsLabel = [
-    { label: "PHP", key: "php" },
-    { label: "REACTJS", key: "reactjs" },
-  ];
-  const optionsDate = [
-    { label: "Mới nhất", key: "-createdAt" },
-    { label: "Cũ nhất", key: "createdAt" },
-  ];
   const [isLoading, setIsLoading] = useState(true);
-  const [sourceCode, setSourceCode] = useState([]);
-  const [sourceCodeAll, setSourceCodeAll] = useState([]);
-  const [valueCosts, setValueCosts] = useState("");
-  const [inputValueCosts, setInputValueCosts] = useState("");
-  const [valueLabels, setValueLabels] = useState("");
-  const [inputValueLabels, setInputValueLabels] = useState("");
-  const [valueDate, setValueDate] = useState(optionsDate[1]);
-  const [inputValueDate, setInputValueDate] = useState("");
+  const [blogData, setBlogData] = useState([]);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const AllSourceCodeRef = useRef();
   useEffect(() => {
     const getSourceCode = async () => {
       try {
         setIsLoading(true);
         const results = await axios.get("/api/blog");
-        setSourceCode(results.data.data);
+        setBlogData(results.data.data);
         setSourceCodeAll(results.data.data);
         setIsLoading(false);
       } catch (err) {
@@ -227,38 +241,16 @@ const SourceCode = () => {
   }, []);
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(sourceCode.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(sourceCode.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, sourceCode]);
+    setCurrentItems(blogData.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(blogData.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, blogData]);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % sourceCode.length;
+    const newOffset = (event.selected * itemsPerPage) % blogData.length;
     setItemOffset(newOffset);
     window.scrollTo(0, AllSourceCodeRef.current.offsetTop);
   };
 
-  const handleClickFilter = async () => {
-    const arraySort = [];
-    if (valueCosts) {
-      arraySort.push(valueCosts.key);
-    }
-    if (valueDate) {
-      arraySort.push(valueDate.key);
-    }
-
-    const newArraySort = arraySort.join(",");
-
-    try {
-      setIsLoading(true);
-      const result = await axios.get(`/api/source-code?sort=${newArraySort}&label=${inputValueLabels.toLowerCase()}`);
-      setSourceCode(result.data.data);
-
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      console.log(err);
-    }
-  };
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "25px",
@@ -303,105 +295,9 @@ const SourceCode = () => {
               padding: { xs: "0 10px", md: "0 20px" },
             }}
           >
-            New Blog
+            Blog
           </BlogTitle>
-          {/* <Box
-            sx={{
-              width: "100%",
-              flexWrap: "wrap",
-              bgcolor: "background.default",
-              justifyContent: "space-between",
-              color: "text.primary",
-              gap: "10px",
-              padding: "40px 20px",
-              display: "grid",
-              gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
-            }}
-          >
-            {isLoading &&
-              Array.from({ length: 4 }).map((item, i) => (
-                <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
-                  <Skeleton variant="rectangular" width={"100%"} height={200} />
-                  <Box sx={{ p: 2 }}>
-                    <Skeleton />
-                    <Skeleton />
-                  </Box>
-                  <Box sx={{ p: 2, borderRadius: "20px" }}>
-                    <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={50} />
-                  </Box>
-                  <Box sx={{ p: 2, display: "flex", gap: "10px" }}>
-                    <Skeleton variant="rectangular" width={100} height={40} />
-                    <Skeleton variant="rectangular" width={100} height={40} />
-                  </Box>
-                </Card>
-              ))}
-            {!isLoading &&
-              sourceCode.length > 0 &&
-              sourceCode.map((item, i) => {
-                return (
-                  <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
-                    <CardMedia
-                      className="code-container__image"
-                      component="img"
-                      height="140"
-                      image={item.images[0]}
-                      alt={item.title}
-                    />
-                    <CardContent className="code-container__body">
-                      <Typography
-                        sx={{
-                          fontFamily: "Noto Sans",
-                          fontSize: "20px",
-                          fontWeight: "bold",
-                          textTransform: "capitalize",
-                        }}
-                        variant="h5"
-                        component="div"
-                      >
-                        {item.title}
-                      </Typography>
 
-                      <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                        {item.desc}
-                      </Typography>
-                      <Typography sx={{ marginTop: "20px" }}>
-                        {item.costs > 0 && (
-                          <Button variant="contained" color="success">
-                            <NumberFormat
-                              value={item.costs}
-                              displayType={"text"}
-                              thousandSeparator={"."}
-                              decimalSeparator={","}
-                              suffix={" VNĐ"}
-                            />
-                          </Button>
-                        )}
-                        {item.costs === 0 && (
-                          <Button variant="contained">
-                            Free <MoneyOffIcon />
-                          </Button>
-                        )}
-                      </Typography>
-                    </CardContent>
-
-                    <CardActions
-                      sx={{
-                        paddingTop: "20px",
-                      }}
-                    >
-                      <Button size="small" color="primary">
-                        Share
-                      </Button>
-                      <Link href={`/source-code/${item.slug}`}>
-                        <Button size="small" color="primary">
-                          Chi tiết
-                        </Button>
-                      </Link>
-                    </CardActions>
-                  </Card>
-                );
-              })}
-          </Box> */}
           <Items currentItems={currentItems} isLoading={isLoading} />
           <Box>
             <ReactPaginate
