@@ -72,7 +72,7 @@ const DetailSourceCode = (props) => {
                 justifyContent: "center",
                 color: "text.primary",
                 gap: "10px",
-                padding: "40px 0",
+                padding: "20px 0",
               }}
             >
               <Box
@@ -84,7 +84,7 @@ const DetailSourceCode = (props) => {
                   justifyContent: "center",
                   color: "text.primary",
                   gap: "10px",
-                  padding: "40px 0",
+                  padding: " 0",
                 }}
               >
                 <InfoBlog blogData={blogData} />

@@ -214,7 +214,7 @@ const SourceCode = () => {
     const getSourceCode = async () => {
       try {
         setIsLoading(true);
-        const results = await axios.get("/api/source-code");
+        const results = await axios.get("/api/blog");
         setSourceCode(results.data.data);
         setSourceCodeAll(results.data.data);
         setIsLoading(false);
@@ -259,20 +259,19 @@ const SourceCode = () => {
       console.log(err);
     }
   };
+  const BlogTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
+    fontWeight: "bold",
+  });
 
   return (
     <>
       <Head>
-        <title>{`Danh sách source code miễn phí và có phí - LT Blog`}</title>
-        <meta
-          name="description"
-          content="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
-        />
-        <meta property="og:title" content={`Danh sách source code miễn phí và có phí - LT Blog`} />
-        <meta
-          property="og:description"
-          content="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
-        />
+        <title>{`Blog cuộc sống lập trình viên - LT Blog`}</title>
+        <meta name="description" content="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog" />
+        <meta property="og:title" content={`Blog cuộc sống lập trình viên - LT Blog`} />
+        <meta property="og:description" content="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://i.imgur.com/1YZrvwt.png" />
         <meta property="og:image:width" content="600" />
@@ -296,70 +295,16 @@ const SourceCode = () => {
               Home
             </Link>
 
-            <Typography color="text.primary">Source code</Typography>
+            <Typography color="text.primary">Blog</Typography>
           </Breadcrumbs>
-          <Typography
+          <BlogTitle
             component="h1"
-            className="title"
-            sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
-            ref={AllSourceCodeRef}
+            sx={{
+              padding: { xs: "0 10px", md: "0 20px" },
+            }}
           >
-            All Source Code
-          </Typography>
-          {!isLoading && (
-            <>
-              <Box sx={{ p: 2, display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-                <Autocomplete
-                  disablePortal
-                  value={valueCosts}
-                  onChange={(event, newValue) => {
-                    setValueCosts(newValue);
-                  }}
-                  inputValue={inputValueCosts}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueCosts(newInputValue);
-                  }}
-                  options={optionsPrice}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Giá" />}
-                />
-                <Autocomplete
-                  disablePortal
-                  value={valueLabels}
-                  onChange={(event, newValue) => {
-                    setValueLabels(newValue);
-                  }}
-                  inputValue={inputValueLabels}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueLabels(newInputValue);
-                  }}
-                  options={optionsLabel}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Labels" />}
-                />
-                <Autocomplete
-                  disablePortal
-                  value={valueDate}
-                  onChange={(event, newValue) => {
-                    setValueDate(newValue);
-                  }}
-                  inputValue={inputValueDate}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueDate(newInputValue);
-                  }}
-                  options={optionsDate}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Thời gian" />}
-                />
-              </Box>
-              <Button variant="contained" onClick={handleClickFilter}>
-                Lọc
-              </Button>
-            </>
-          )}
+            New Blog
+          </BlogTitle>
           {/* <Box
             sx={{
               width: "100%",
