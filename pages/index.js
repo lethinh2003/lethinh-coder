@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 
 import ShowCodes from "../components/homePage/ShowCodes";
-import ShowBlogs from "../components/homePage/showBlogs";
+import ShowBlogs from "../components/homePage/ShowBlogs";
 import Head from "next/head";
 import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
@@ -43,7 +43,7 @@ const Home = (props) => {
       )}
       <Layout>
         <Introduce />
-        <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
+        {/* <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs> */}
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
         <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>
