@@ -43,7 +43,7 @@ const Home = (props) => {
       )}
       <Layout>
         <Introduce />
-        <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
+        {/* <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs> */}
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
         <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>
