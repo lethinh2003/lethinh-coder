@@ -14,7 +14,7 @@ import SidebarMobile from "./homePage/SidebarMobile";
 
 const getDesignTokens = (mode) => ({
   typography: {
-    fontFamily: ["League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "Noto Sans", "sans-serif"].join(","),
+    fontFamily: ["Noto Sans", "League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "sans-serif"].join(","),
   },
   palette: {
     mode,

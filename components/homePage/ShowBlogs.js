@@ -19,6 +19,7 @@ import Link from "next/link";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
+import { GrFormView } from "react-icons/gr";
 
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
@@ -104,20 +105,13 @@ const ShowBlogs = (props) => {
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
-          bgcolor: "background.default",
+
           justifyContent: "center",
           color: "text.primary",
           gap: "10px",
           padding: "40px 0",
         }}
       >
-        {/* <Typography
-            component="h1"
-            className="title"
-            sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
-          >
-            {props.title}
-          </Typography> */}
         <BoxCodeTitle>
           <CodeTitle
             component="h1"
@@ -138,13 +132,19 @@ const ShowBlogs = (props) => {
           </Link>
         </BoxCodeTitle>
         <Box
-          className="box-code_mobile"
           sx={{
-            padding: { xs: "0 10px", md: "0 20px" },
-            display: { xs: "block", md: "none" },
+            padding: { xs: "10px", md: "20px" },
+            width: "100%",
+            bgcolor: "background.default",
           }}
         >
-          <div className="box-code_mobile__wrapper">
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)" },
+              gap: "10px",
+            }}
+          >
             {blogData.length > 0 &&
               blogData.map((item, i) => {
                 return (
@@ -165,10 +165,21 @@ const ShowBlogs = (props) => {
                           {item.title}
                         </CardContentCodeTitle>
                       </Link>
+
                       <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                         {item.desc}
+
+                        <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                          <Typography
+                            sx={{
+                              fontSize: { xs: "14px", md: "16px" },
+                            }}
+                          >
+                            <GrFormView /> {item.readTime} phút đọc/{item.views} views
+                          </Typography>
+                        </Typography>
                       </Typography>
-                      <Typography sx={{ marginTop: "20px", display: "flex" }}>
+                      <Typography sx={{ marginTop: "20px" }}>
                         {item.costs > 0 && (
                           <CodeButton variant="outlined">
                             <NumberFormat
@@ -177,7 +188,7 @@ const ShowBlogs = (props) => {
                               thousandSeparator={"."}
                               decimalSeparator={","}
                               suffix={" VNĐ"}
-                            />{" "}
+                            />
                           </CodeButton>
                         )}
                         {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
@@ -186,63 +197,7 @@ const ShowBlogs = (props) => {
                   </CardCode>
                 );
               })}
-          </div>
-        </Box>
-        <Box
-          sx={{
-            width: "100%",
-            flexWrap: "wrap",
-            bgcolor: "background.default",
-            justifyContent: "space-between",
-            color: "text.primary",
-            gap: "10px",
-            padding: "40px 20px",
-            display: { xs: "none", md: "grid" },
-            gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
-          }}
-        >
-          {blogData.length > 0 &&
-            blogData.map((item, i) => {
-              return (
-                <CardCode key={i}>
-                  <CardMedia
-                    className="code-container__image"
-                    component="img"
-                    height="140"
-                    image={item.images[0]}
-                    alt={item.title}
-                    sx={{
-                      borderRadius: "20px",
-                    }}
-                  />
-                  <CardContentCode>
-                    <Link href={`/blog/${item.slug}`}>
-                      <CardContentCodeTitle component="div" className="code-title">
-                        {item.title}
-                      </CardContentCodeTitle>
-                    </Link>
-
-                    <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                      {item.desc}
-                    </Typography>
-                    <Typography sx={{ marginTop: "20px" }}>
-                      {item.costs > 0 && (
-                        <CodeButton variant="outlined">
-                          <NumberFormat
-                            value={item.costs}
-                            displayType={"text"}
-                            thousandSeparator={"."}
-                            decimalSeparator={","}
-                            suffix={" VNĐ"}
-                          />
-                        </CodeButton>
-                      )}
-                      {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                    </Typography>
-                  </CardContentCode>
-                </CardCode>
-              );
-            })}
+          </Box>
         </Box>
       </Box>
     </>

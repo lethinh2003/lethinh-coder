@@ -24,21 +24,18 @@ import NumberFormat from "react-number-format";
 import ReactPaginate from "react-paginate";
 import Layout from "../../components/Layout";
 import { styled } from "@mui/material/styles";
+import dbConnect from "../../database/dbConnect";
+import Blog from "../../models/Blog";
+import System from "../../models/System";
+import convertTime from "../../utils/convertTime";
+import { GrFormView } from "react-icons/gr";
 
-const Items = ({ currentItems, isLoading }) => {
-  const CardCode = styled(Card)({
-    padding: "15px",
-    borderRadius: "20px",
-    minWidth: 300,
-    overflow: "unset",
-    scrollSnapAlign: "center",
-  });
-  const CardContentCode = styled(CardContent)({
+const Items = ({ currentItems, isLoading, AllBlog }) => {
+  const BoxChild2NewBlog = styled(Box)({
     display: "flex",
-    flexDirection: "column",
-    padding: "20px 0",
+    gap: "10px",
   });
-  const CardContentCodeTitle = styled(Typography)({
+  const ChildTitleNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
     fontSize: "20px",
     fontWeight: "bold",
@@ -48,103 +45,28 @@ const Items = ({ currentItems, isLoading }) => {
     "&:hover": {
       opacity: 0.8,
     },
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
   });
-  const CodeTitle = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "30px",
-    fontWeight: "bold",
-  });
-  const CodeTitleSecond = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "20px",
-    fontWeight: "bold",
-    opacity: 0.8,
-    cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.7,
-    },
-
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
-  });
-  const BoxCodeTitle = styled(Box)({
+  const ChildImageNewBlog = styled(CardMedia)({
     width: "100%",
-    justifyContent: "space-between",
-    display: "flex",
-    alignItems: "center",
+    height: "100%",
   });
-  const CodeButton = styled(Button)({
-    boxShadow: "none",
-    fontSize: "14px",
+  const Child2ImageNewBlog = styled(CardMedia)({
+    minWidth: "250px",
+    height: "150px",
     borderRadius: "10px",
-    textTransform: "capitalize",
-    fontFamily: "Noto Sans",
-    color: "#0b9ad1",
+  });
+  const BlogTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
     fontWeight: "bold",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#fff",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
-  });
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: theme.palette.text.secondary,
-  }));
-  const GridBlog = styled(Box)({
-    display: "grid",
-    gridTemplateAreas: `
-  'main main main second'
-  'main main main third'
-  '. . . four'`,
-    gap: "10px",
-  });
-  const GridBlogFirst = styled(Box)({
-    backgroundColor: "red",
-    gridArea: "main",
-
-    width: "200px",
-  });
-  const GridBlogSecond = styled(Box)({
-    backgroundColor: "blue",
-    gridArea: "second",
-    height: "200px",
-    width: "200px",
-  });
-  const GridBlogThird = styled(Box)({
-    backgroundColor: "green",
-    gridArea: "third",
-    height: "200px",
-    width: "200px",
-  });
-  const GridBlogFour = styled(Box)({
-    backgroundColor: "yellow",
-    gridArea: "four",
-    height: "200px",
-    width: "200px",
   });
   return (
     <>
-      {/* <GridBlog>
-        <GridBlogFirst />
-        <GridBlogSecond />
-        <GridBlogThird />
-        <GridBlogFour />
-      </GridBlog> */}
+      {/* <ImageGrid image="https://i.imgur.com/wneKXkz.png" />
+          <ContentGrid>
+            <TitleGrid>Tôi Đã Đến Với Lập Trình Website Như Thế Nào</TitleGrid>
+          </ContentGrid> */}
+
       <Box
         sx={{
           width: "100%",
@@ -153,79 +75,90 @@ const Items = ({ currentItems, isLoading }) => {
           justifyContent: "space-between",
           color: "text.primary",
           gap: "10px",
-          padding: "40px 20px",
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(1, 1fr)",
-            sm: "repeat(2, 1fr)",
-            md: "repeat(3, 1fr)",
-            lg: "repeat(4, 1fr)",
-          },
+          padding: { xs: "20px 10px", md: "20px 20px" },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
+        <BlogTitle component="h1" ref={AllBlog}>
+          All Blog
+        </BlogTitle>
         {isLoading &&
-          Array.from({ length: 4 }).map((item, i) => (
-            <CardCode sx={{ minWidth: 200 }} key={i} className={`code-container`}>
+          Array.from({ length: 20 }).map((item, i) => (
+            <BoxChild2NewBlog key={i}>
               <Skeleton
                 sx={{
-                  borderRadius: "20px",
+                  minWidth: { xs: "150px", md: "250px" },
+                  height: { xs: "100px", md: "150px" },
+                  borderRadius: "10px",
                 }}
                 variant="rectangular"
-                width={"100%"}
-                height={200}
               />
-              <Box sx={{ padding: "10px 0" }}>
-                <Skeleton height={50} />
-                <Skeleton height={20} />
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                <Skeleton height={20} width={100} />
+                <Skeleton height={50} width={200} />
               </Box>
-              <Box sx={{ padding: "10px 0", borderRadius: "20px" }}>
-                <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={30} />
-              </Box>
-            </CardCode>
+            </BoxChild2NewBlog>
           ))}
         {!isLoading &&
           currentItems &&
           currentItems.length > 0 &&
           currentItems.map((item, i) => {
             return (
-              <CardCode key={i}>
-                <CardMedia
-                  className="code-container__image"
-                  component="img"
-                  height="140"
-                  image={item.images[0]}
-                  alt={item.title}
+              <BoxChild2NewBlog key={i}>
+                <Child2ImageNewBlog
                   sx={{
-                    borderRadius: "20px",
+                    minWidth: { xs: "150px", md: "250px" },
+                    height: { xs: "100px", md: "150px" },
                   }}
+                  image={item.images[0]}
                 />
-                <CardContentCode>
-                  <Link href={`/blog/${item.slug}`}>
-                    <CardContentCodeTitle component="div" className="code-title">
-                      {item.title}
-                    </CardContentCodeTitle>
-                  </Link>
-                  <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                    {item.desc}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "14px", md: "16px" },
+                    }}
+                  >
+                    {convertTime(item.createdAt)}
                   </Typography>
-                </CardContentCode>
-              </CardCode>
+                  <ChildTitleNewBlog
+                    sx={{
+                      fontSize: { xs: "16px", md: "18px" },
+                    }}
+                  >
+                    {item.title}
+                  </ChildTitleNewBlog>
+                  <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "14px", md: "16px" },
+                      }}
+                    >
+                      <GrFormView /> {item.readTime} phút đọc/{item.views} views
+                    </Typography>
+                  </Typography>
+                </Box>
+              </BoxChild2NewBlog>
             );
           })}
       </Box>
     </>
   );
 };
-const SourceCode = () => {
+const BlogComponent = (props) => {
+  let { newBlog } = props;
+  newBlog = JSON.parse(newBlog);
+
   const [isLoading, setIsLoading] = useState(true);
   const [blogData, setBlogData] = useState([]);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
-  const AllSourceCodeRef = useRef();
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const AllBlog = useRef();
   useEffect(() => {
-    const getSourceCode = async () => {
+    const getBlog = async () => {
       try {
         setIsLoading(true);
         const results = await axios.get("/api/blog");
@@ -237,7 +170,7 @@ const SourceCode = () => {
         setIsLoading(false);
       }
     };
-    getSourceCode();
+    getBlog();
   }, []);
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -248,13 +181,48 @@ const SourceCode = () => {
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % blogData.length;
     setItemOffset(newOffset);
-    window.scrollTo(0, AllSourceCodeRef.current.offsetTop);
+    window.scrollTo(0, AllBlog.current.offsetTop - AllBlog.current.offsetHeight * 2);
   };
 
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "25px",
     fontWeight: "bold",
+  });
+  const BoxNewBlog = styled(Box)({
+    display: "flex",
+    width: "100%",
+    justifyContent: "space-between",
+    gap: "10px",
+  });
+  const BoxChild1NewBlog = styled(Box)({
+    display: "flex",
+    flexDirection: "column",
+
+    gap: "10px",
+  });
+  const BoxChild2NewBlog = styled(Box)({
+    display: "flex",
+    gap: "10px",
+  });
+  const ChildTitleNewBlog = styled(Typography)({
+    fontFamily: "Noto Sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    cursor: "pointer",
+    "&:hover": {
+      opacity: 0.8,
+    },
+  });
+  const ChildImageNewBlog = styled(CardMedia)({
+    width: "100%",
+    height: "100%",
+  });
+  const Child2ImageNewBlog = styled(CardMedia)({
+    minWidth: "250px",
+    height: "150px",
+    borderRadius: "10px",
   });
 
   return (
@@ -293,12 +261,102 @@ const SourceCode = () => {
             component="h1"
             sx={{
               padding: { xs: "0 10px", md: "0 20px" },
+              alignSelf: "flex-start",
             }}
           >
-            Blog
+            New Blog
           </BlogTitle>
 
-          <Items currentItems={currentItems} isLoading={isLoading} />
+          <BoxNewBlog
+            sx={{
+              padding: { xs: "0 10px", md: "0 20px" },
+              flexDirection: { xs: "column", md: "row" },
+            }}
+          >
+            {newBlog && newBlog.length > 0 && (
+              <BoxChild1NewBlog
+                sx={{
+                  width: { xs: "100%", md: "70%" },
+                }}
+              >
+                <CardMedia
+                  sx={{
+                    width: "100%",
+                    height: "310px",
+                    borderRadius: "10px",
+                  }}
+                  image={newBlog[0].images[0]}
+                />
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "14px", md: "16px" },
+                    }}
+                  >
+                    {convertTime(newBlog[0].createdAt)}
+                  </Typography>
+                  <ChildTitleNewBlog
+                    sx={{
+                      fontSize: { xs: "16px", md: "18px" },
+                    }}
+                  >
+                    {newBlog[0].title}
+                  </ChildTitleNewBlog>
+                  <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "14px", md: "16px" },
+                      }}
+                    >
+                      <GrFormView /> {newBlog[0].readTime} phút đọc/{newBlog[0].views} views
+                    </Typography>
+                  </Typography>
+                </Box>
+              </BoxChild1NewBlog>
+            )}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {newBlog &&
+                newBlog.slice(1).map((item, i) => (
+                  <BoxChild2NewBlog key={i}>
+                    <Child2ImageNewBlog
+                      sx={{
+                        minWidth: { xs: "150px", md: "250px" },
+                        height: { xs: "100px", md: "150px" },
+                      }}
+                      image={item.images[0]}
+                    />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "14px", md: "16px" },
+                        }}
+                      >
+                        {convertTime(item.createdAt)}
+                      </Typography>
+                      <ChildTitleNewBlog
+                        sx={{
+                          fontSize: { xs: "16px", md: "18px" },
+                        }}
+                      >
+                        {item.title}
+                      </ChildTitleNewBlog>
+
+                      <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                        <Typography
+                          sx={{
+                            fontSize: { xs: "14px", md: "16px" },
+                          }}
+                        >
+                          <GrFormView /> {item.readTime} phút đọc/{item.views} views
+                        </Typography>
+                      </Typography>
+                    </Box>
+                  </BoxChild2NewBlog>
+                ))}
+            </Box>
+          </BoxNewBlog>
+
+          <Items currentItems={currentItems} isLoading={isLoading} AllBlog={AllBlog} />
           <Box>
             <ReactPaginate
               containerClassName="pagination"
@@ -320,4 +378,27 @@ const SourceCode = () => {
     </>
   );
 };
-export default SourceCode;
+export default BlogComponent;
+export const getServerSideProps = async () => {
+  await dbConnect();
+  let newBlog = [];
+  const test = await Promise.all([
+    Blog.find({}).limit(4).select("-link -__v").sort("-_id"),
+    System.updateMany(
+      {},
+      { $inc: { home_views: 1 } },
+      {
+        new: true,
+      }
+    ),
+  ])
+    .then((data) => {
+      newBlog = data[0];
+    })
+    .catch((err) => console.log(err));
+  return {
+    props: {
+      newBlog: JSON.stringify(newBlog),
+    },
+  };
+};

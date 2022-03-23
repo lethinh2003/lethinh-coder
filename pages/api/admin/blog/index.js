@@ -26,13 +26,14 @@ const handle = async (req, res) => {
             message: "You can't access this router",
           });
         } else {
-          const { title, content, images, desc } = req.body;
+          const { title, content, images, desc, keywords, readTime } = req.body;
           const result = await Blog.create({
             title: title,
             content: content,
-
+            keywords: keywords,
             images: images,
             desc: desc,
+            readTime: readTime,
           });
           return res.status(201).json({
             status: "success",

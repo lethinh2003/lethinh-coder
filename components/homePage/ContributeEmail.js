@@ -203,28 +203,28 @@ const Introduce = (props) => {
                 }}
               >
                 <Tooltip title="Thích">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express1 : 0}>
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express1 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(1)}>
                       <IconExpress1 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Cực Thích">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express2 : 0}>
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express2 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(2)}>
                       <IconExpress2 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Bình thường">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express3 : 0}>
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express3 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(3)}>
                       <IconExpress3 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Chán">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express4 : 0}>
+                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express4 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(4)}>
                       <IconExpress4 />
                     </IconButton>

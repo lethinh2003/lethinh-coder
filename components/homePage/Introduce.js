@@ -160,7 +160,7 @@ const Introduce = (props) => {
                     padding: "10 16px",
                   }}
                 >
-                  <Link href="/#">
+                  <Link href="/blog">
                     <IntroduceButton size="small" variant="contained">
                       Xem ngay
                     </IntroduceButton>
@@ -199,7 +199,7 @@ const Introduce = (props) => {
                     padding: "10 16px",
                   }}
                 >
-                  <Link href="/#">
+                  <Link href="/blog">
                     <IntroduceButton size="small" variant="contained">
                       Xem ngay
                     </IntroduceButton>

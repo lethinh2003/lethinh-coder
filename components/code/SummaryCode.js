@@ -58,7 +58,7 @@ const SummaryCode = (props) => {
         setIsContentPos("");
       } else {
         listContents.map((item) => {
-          if (c >= item.offsetTop - 60) {
+          if (c >= item.offsetTop - item.offsetHeight * 2) {
             setIsContentPos(item.innerText);
           }
         });
@@ -71,7 +71,7 @@ const SummaryCode = (props) => {
   }, [listContents]);
 
   const handleClickContent = (item) => {
-    window.scrollTo(0, item.offsetTop - 60);
+    window.scrollTo(0, item.offsetTop - item.offsetHeight * 2);
   };
 
   return (

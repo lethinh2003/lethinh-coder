@@ -250,31 +250,25 @@
     box-sizing: border-box;
     min-width: 32px;
     height: 32px;
-    padding: 0 8px;
-    margin: 0 3px;
-    border: 1px solid black;
-    &:focus {
-      box-shadow: 0 0 0 0.2rem #7fbdff;
-    }
-
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s linear;
     &.light {
-      color: #212121;
+      color: #fff;
       transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
       border: 1px solid rgba(0, 0, 0, 0.23);
     }
 
     &.dark {
-      color: #fff;
+      color: black;
       transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
       border: 1px solid rgba(255, 255, 255, 0.23);
     }
 
     &.active {
-      background-color: rgba(255, 255, 255, 0.16);
-    }
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.24);
+      background-color: #778bef;
     }
   }
 }

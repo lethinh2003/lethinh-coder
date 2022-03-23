@@ -30,7 +30,8 @@ export default function MyEditor() {
   const [desc, setDesc] = useState("");
   const [link, setLink] = useState("");
   const [images, setImages] = useState("");
-  const [costs, setCosts] = useState(0);
+  const [keywords, setKeywords] = useState("");
+  const [readTime, setReadTime] = useState(0);
   const [isModal, setIsModal] = useState(false);
   const [text, setText] = useState("");
   useEffect(() => {
@@ -45,17 +46,19 @@ export default function MyEditor() {
       setIsLoading(true);
       const data = localStorage.getItem("postDataBlog") || null;
       const imagesArray = images.split(", ");
+      const keywordsArray = keywords.split(", ");
 
       const response = await axios.post("/api/admin/blog", {
         title: title,
         content: data,
         images: imagesArray,
+        keywords: keywordsArray,
         desc: desc,
+        readTime: readTime,
       });
       setIsModal(true);
       setText(response.data.message);
       setTitle("");
-
       setDesc("");
 
       setImages("");
@@ -77,13 +80,12 @@ export default function MyEditor() {
   const handleChangeImages = (e) => {
     setImages(e.target.value);
   };
-  const upload = async (e) => {
-    // Convert the FileList into an array and iterate
-    let files = Array.from(e.target.files).map((file) => file);
 
-    // At this point you'll have an array of results
-
-    console.log(files);
+  const handleChangeKeywords = (e) => {
+    setKeywords(e.target.value);
+  };
+  const handleChangeReadTime = (e) => {
+    setReadTime(e.target.value);
   };
 
   return (
@@ -141,6 +143,23 @@ export default function MyEditor() {
                 variant="outlined"
                 value={images}
                 onChange={(e) => handleChangeImages(e)}
+              />
+              <TextField
+                fullWidth
+                id="keywords"
+                label="Keywords"
+                variant="outlined"
+                value={keywords}
+                onChange={(e) => handleChangeKeywords(e)}
+              />
+              <TextField
+                fullWidth
+                id="readTime"
+                label="Phút đọc"
+                variant="outlined"
+                type={"number"}
+                value={readTime}
+                onChange={(e) => handleChangeReadTime(e)}
               />
 
               <Box sx={{ width: "100%", color: "black" }}>
