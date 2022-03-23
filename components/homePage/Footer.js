@@ -10,12 +10,44 @@ import {
   Card,
   CardActions,
   CardContent,
+  BottomNavigation,
+  BottomNavigationAction,
 } from "@mui/material";
-import { FaFacebookF } from "react-icons/fa";
-import { BsInstagram, BsTwitter } from "react-icons/bs";
+import { FaFacebookF, FaBlog } from "react-icons/fa";
+import { BsInstagram, BsTwitter, BsFillFileCodeFill } from "react-icons/bs";
 import { styled } from "@mui/material/styles";
+import FolderIcon from "@mui/icons-material/Folder";
+import AttachmentIcon from "@mui/icons-material/Attachment";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { AiFillHome, AiOutlineFileZip } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Footer = () => {
+  const router = useRouter();
+  const [value, setValue] = useState("");
+
+  const handleChange = (event, newValue) => {
+    if (newValue === "home") {
+      router.push("/");
+    } else if (newValue === "code") {
+      router.push("/source-code");
+    } else if (newValue === "blog") {
+      router.push("/blog");
+    }
+    setValue(newValue);
+  };
+  useEffect(() => {
+    if (router.pathname === "/") {
+      setValue("home");
+    } else if (router.pathname === "/source-code") {
+      setValue("code");
+    } else if (router.pathname === "/blog") {
+      setValue("blog");
+    }
+  }, [router.pathname]);
   const SocialButton = styled(Button)({
     minWidth: "50px",
     height: "50px",
@@ -37,8 +69,55 @@ const Footer = () => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
+  const BottomNavigationComponent = styled(BottomNavigation)(({ theme }) => ({
+    position: "fixed",
+    bottom: 0,
+    right: 0,
+    left: 0,
+    borderTop: theme.palette.mode === "light" ? "1px solid #ccc" : "1px solid #a8b3cf33",
+    height: "70px",
+    zIndex: 1002,
+    gap: "10px",
+  }));
+  const BottomNavigationActionComponent = styled(BottomNavigationAction)(({ theme }) => ({
+    fontSize: "40px",
+
+    "&.Mui-selected": {
+      color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
+
+      backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
+      borderRadius: "20px",
+      position: "relative",
+
+      "&::before": {
+        position: "absolute",
+        content: `""`,
+        top: 0,
+        backgroundColor: theme.palette.mode === "dark" ? "#ffffff" : "#20262d",
+        width: "50%",
+        height: "2px",
+      },
+    },
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
+      borderRadius: "20px",
+    },
+  }));
   return (
     <>
+      <BottomNavigationComponent
+        sx={{
+          display: { xs: "flex", md: "none" },
+        }}
+        value={value}
+        onChange={handleChange}
+      >
+        <BottomNavigationActionComponent value="home" icon={<AiFillHome />} />
+
+        <BottomNavigationActionComponent value="code" icon={<BsFillFileCodeFill />} />
+
+        <BottomNavigationActionComponent value="blog" icon={<FaBlog />} />
+      </BottomNavigationComponent>
       <Box
         className="footer"
         sx={{

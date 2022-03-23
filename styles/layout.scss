@@ -278,7 +278,7 @@
   transition: all 0.25s linear;
 
   &.active {
-    color: #3ddbbd;
+    color: #0cc5e3;
   }
 }
 .box_notify {
@@ -309,4 +309,19 @@
   -webkit-line-clamp: 2; /* number of lines to show */
   line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+.tableofcontents {
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 2px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+}
+.bottom-active {
+  color: #0e1217;
 }

@@ -258,7 +258,11 @@ const Login = () => {
                           fullWidth
                           error={errors.account ? true : false}
                           helperText={errors.account ? errors.account.message : ""}
-                          {...field}
+                          // {...(field,
+                          // {
+                          //   required: "Account is a required",
+                          //   minLength: { value: 5, message: "Min-length 5, please re-enter" },
+                          // })}
                           {...register("account", {
                             required: "Account is a required",
                             minLength: { value: 5, message: "Min-length 5, please re-enter" },

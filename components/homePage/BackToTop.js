@@ -16,20 +16,29 @@ const BackToTop = () => {
       window.scrollTo(0, c - c / 8);
     }
   };
-  const ArrowButton = styled(KeyboardArrowUpIcon)({});
+  const ArrowButton = styled(KeyboardArrowUpIcon)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
+
+    fontSize: "80px",
+    fontWeight: "bold",
+
+    path: {
+      color: theme.palette.mode === "light" ? "#ffffff" : "#0e1217",
+    },
+  }));
   const ArrowButtonParent = styled(Fab)({
     position: "fixed",
     backgroundColor: "#0cc5e3",
-
+    overflow: "hidden",
     bottom: "0",
     right: "0",
-    width: 40,
-    height: 40,
-    borderRadius: "5px",
+    width: 80,
+    height: 80,
+    borderRadius: "15px",
 
     "&:hover": {
       backgroundColor: "#0cc5e3",
-      opacity: 0.8,
+      opacity: 0.96,
     },
   });
   return (
@@ -37,7 +46,7 @@ const BackToTop = () => {
       <Zoom in={trigger}>
         <ArrowButtonParent
           sx={{
-            margin: { xs: "10px", md: "20px" },
+            margin: { xs: "80px 10px", md: "20px" },
           }}
           onClick={scrollToTop}
         >

@@ -122,13 +122,15 @@ const Items = ({ currentItems, isLoading, AllBlog }) => {
                   >
                     {convertTime(item.createdAt)}
                   </Typography>
-                  <ChildTitleNewBlog
-                    sx={{
-                      fontSize: { xs: "16px", md: "18px" },
-                    }}
-                  >
-                    {item.title}
-                  </ChildTitleNewBlog>
+                  <Link href={`blog/${item.slug}`}>
+                    <ChildTitleNewBlog
+                      sx={{
+                        fontSize: { xs: "16px", md: "18px" },
+                      }}
+                    >
+                      {item.title}
+                    </ChildTitleNewBlog>
+                  </Link>
                   <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <Typography
                       sx={{
@@ -295,13 +297,15 @@ const BlogComponent = (props) => {
                   >
                     {convertTime(newBlog[0].createdAt)}
                   </Typography>
-                  <ChildTitleNewBlog
-                    sx={{
-                      fontSize: { xs: "16px", md: "18px" },
-                    }}
-                  >
-                    {newBlog[0].title}
-                  </ChildTitleNewBlog>
+                  <Link href={`blog/${newBlog[0].slug}`}>
+                    <ChildTitleNewBlog
+                      sx={{
+                        fontSize: { xs: "16px", md: "18px" },
+                      }}
+                    >
+                      {newBlog[0].title}
+                    </ChildTitleNewBlog>
+                  </Link>
                   <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <Typography
                       sx={{
@@ -333,14 +337,15 @@ const BlogComponent = (props) => {
                       >
                         {convertTime(item.createdAt)}
                       </Typography>
-                      <ChildTitleNewBlog
-                        sx={{
-                          fontSize: { xs: "16px", md: "18px" },
-                        }}
-                      >
-                        {item.title}
-                      </ChildTitleNewBlog>
-
+                      <Link href={`blog/${item.slug}`}>
+                        <ChildTitleNewBlog
+                          sx={{
+                            fontSize: { xs: "16px", md: "18px" },
+                          }}
+                        >
+                          {item.title}
+                        </ChildTitleNewBlog>
+                      </Link>
                       <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                         <Typography
                           sx={{

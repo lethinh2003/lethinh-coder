@@ -27,7 +27,7 @@ const CommentsBlog = (props) => {
   const [listCommentsAll, setListCommentAll] = useState([]);
   const [replyComment, setReplyComment] = useState([]);
   const [isLoadMoreComments, setIsLoadMoreComments] = useState(false);
-  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [comment, setComment] = useState("");
   const [isComment, setIsComment] = useState(false);

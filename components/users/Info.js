@@ -26,7 +26,8 @@ import LoadingBox from "../homePage/LoadingBox";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAvatar } from "../../redux/actions";
-
+import socketIOClient from "socket.io-client";
+let socket;
 const Info = (props) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -57,6 +58,17 @@ const Info = (props) => {
       getUser();
     }
   }, [status, isReFetch]);
+  useEffect(() => {
+    socketInitializer();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [status]);
+  const socketInitializer = () => {
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+  };
+
   const StyleModal = styled(Box)({
     position: "absolute",
     top: "50%",
@@ -112,8 +124,13 @@ const Info = (props) => {
         avatar: uploadCloudinary.data.data,
         name: session.user.name,
       });
+      const data = {
+        idRoom: session.user.id,
+        dataImage: uploadCloudinary.data.data,
+      };
+      socket.emit("update-avatar-profile", data);
+      localStorage.setItem("avatarProfile", uploadCloudinary.data.data);
 
-      dispatch(getAvatar(uploadCloudinary.data.data));
       setAvatarUpload("");
       setIsLoadingUpload(false);
       setIsSuccessUpload(true);
@@ -140,7 +157,13 @@ const Info = (props) => {
         avatar: "",
         name: session.user.name,
       });
-      dispatch(getAvatar("empty"));
+      const data = {
+        idRoom: session.user.id,
+        dataImage: "",
+      };
+      socket.emit("update-avatar-profile", data);
+
+      localStorage.removeItem("avatarProfile");
       setIsLoadingUpload(false);
       setIsSuccessUpload(true);
       setIsReFetch(true);

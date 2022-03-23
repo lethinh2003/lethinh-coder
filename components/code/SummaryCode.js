@@ -57,11 +57,13 @@ const SummaryCode = (props) => {
       if (c <= listContents[0].offsetTop - 150) {
         setIsContentPos("");
       } else {
-        listContents.map((item) => {
-          if (c >= item.offsetTop - item.offsetHeight * 2) {
-            setIsContentPos(item.innerText);
-          }
-        });
+        if (listContents.length > 0) {
+          listContents.map((item) => {
+            if (c >= item.offsetTop - item.offsetHeight) {
+              setIsContentPos(item.innerText);
+            }
+          });
+        }
       }
     };
     document.addEventListener("scroll", eventScroll);
@@ -71,7 +73,7 @@ const SummaryCode = (props) => {
   }, [listContents]);
 
   const handleClickContent = (item) => {
-    window.scrollTo(0, item.offsetTop - item.offsetHeight * 2);
+    window.scrollTo(0, item.offsetTop - item.offsetHeight);
   };
 
   return (
@@ -93,6 +95,7 @@ const SummaryCode = (props) => {
       >
         <h1 className="title">Contents</h1>
         <Box
+          className="tableofcontents"
           sx={{
             display: "flex",
             alignItems: "flex-start",
@@ -104,6 +107,8 @@ const SummaryCode = (props) => {
             padding: { xs: "10px", md: "20px" },
             minWidth: "300px",
             borderLeft: "1px solid #ccc",
+            maxHeight: "calc(100vh - 200px)",
+            overflowY: "auto",
           }}
         >
           {listContents.length > 0 &&

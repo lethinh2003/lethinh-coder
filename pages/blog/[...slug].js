@@ -40,7 +40,7 @@ const DetailSourceCode = (props) => {
       }
     };
     fetchAPI();
-  }, [router.query.slug, status]);
+  }, [router.query.slug]);
 
   return (
     <>
@@ -89,7 +89,6 @@ const DetailSourceCode = (props) => {
               >
                 <InfoBlog blogData={blogData} />
                 <Box
-                  className="thinhle"
                   sx={{
                     display: "flex",
                     alignItems: "flex-start",
@@ -98,7 +97,6 @@ const DetailSourceCode = (props) => {
                     justifyContent: "center",
                     color: "text.primary",
                     gap: "10px",
-                    padding: "40px 0",
                   }}
                 >
                   <DescBlog blogData={blogData} status={status} />

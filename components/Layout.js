@@ -128,6 +128,7 @@ const Layout = (props) => {
               xs: "0px",
               md: "90px",
             },
+            position: "relative",
           }}
           className="box-container"
         >

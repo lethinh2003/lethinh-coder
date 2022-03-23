@@ -3,6 +3,9 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import socketIOClient from "socket.io-client";
+let socket;
+
 const AvatarProfile = () => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -10,23 +13,31 @@ const AvatarProfile = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [avatar, setAvatar] = useState("");
   const isMenuUser = Boolean(anchorEl);
-
   useEffect(() => {
+    socketInitializer();
     if (status === "authenticated") {
-      if (getAvatar === "") {
-        const geta = localStorage.getItem("avatarProfile");
-        if (geta) {
-          setAvatar(geta);
-        } else {
-          localStorage.setItem("avatarProfile", session.user.avatar);
-          setAvatar(session.user.avatar);
-        }
-      } else {
-        const geta = localStorage.getItem("avatarProfile");
-        setAvatar(geta);
+      const getAvatarLocal = localStorage.getItem("avatarProfile");
+      if (getAvatarLocal) {
+        setAvatar(getAvatarLocal);
       }
     }
-  }, [getAvatar, status]);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [status]);
+  const socketInitializer = () => {
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+    if (status === "authenticated") {
+      socket.emit("join-profile", session.user.id);
+      socket.emit("get-avatar-profile", session.user.id);
+      socket.on("update-avatar-profile", (data) => {
+        setAvatar(data);
+        localStorage.setItem("avatarProfile", data);
+      });
+    }
+  };
+
   const handleClickLogout = async () => {
     const data = await signOut({
       redirect: false,
