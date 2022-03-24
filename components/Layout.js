@@ -11,6 +11,19 @@ import Footer from "./homePage/Footer";
 import Navbar from "./homePage/Navbar";
 import Sidebar from "./homePage/Sidebar";
 import SidebarMobile from "./homePage/SidebarMobile";
+import { createGlobalStyle } from "styled-components";
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${({ theme }) => theme.palette.background.default};
+  }
+  ::-webkit-scrollbar-thumb {
+  background-color:  ${({ theme }) => theme.palette.iconColor.default};
+
+  &:hover {
+    background-color:  ${({ theme }) => theme.palette.iconColor.hover};
+  }
+}
+`;
 
 const getDesignTokens = (mode) => ({
   typography: {
@@ -40,9 +53,11 @@ const getDesignTokens = (mode) => ({
       ...(mode === "dark"
         ? {
             default: "#a8b3cf",
+            hover: "#ffffff",
           }
         : {
             default: "#525866",
+            hover: "black",
           }),
     },
 
@@ -166,6 +181,7 @@ const Layout = (props) => {
   return (
     <>
       <ThemeProvider theme={theme}>
+        <GlobalStyle theme={theme} />
         <Sidebar
           session={session}
           status={status}

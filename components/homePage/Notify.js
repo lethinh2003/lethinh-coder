@@ -132,6 +132,7 @@ const Notify = () => {
       borderRadius: "20px",
       backgroundColor: theme.palette.dialog.bgColor.default,
       border: `1px solid ${theme.palette.dialog.borderColor.default}`,
+      margin: 0,
     },
   }));
   const DialogTitleComponent = styled(DialogTitle)(({ theme }) => ({
@@ -184,7 +185,8 @@ const Notify = () => {
                         button={true}
                         key={i}
                         sx={{
-                          minWidth: "300px",
+                          maxWidth: "400px",
+                          width: "100vw",
                         }}
                       >
                         <ListItemAvatar>

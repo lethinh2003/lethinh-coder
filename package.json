@@ -49,6 +49,7 @@
     "slugify": "^1.6.5",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
+    "styled-components": "^5.3.3",
     "swr": "^1.2.2",
     "uniqid": "^5.4.0",
     "validator": "^13.7.0"

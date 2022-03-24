@@ -7,22 +7,11 @@ import sendEmail from "../../utils/email";
 import Notify from "../../models/Notify";
 import Cors from "cors";
 import initMiddleware from "../../lib/init-middleware";
-import { getToken } from "next-auth/jwt";
 const secret = process.env.NEXTAUTH_SECRET;
-const cors = initMiddleware(
-  Cors({
-    origin: process.env.NEXTAUTH_URL,
-    methods: ["GET", "POST"],
-  })
-);
 
 const handle = async (req, res) => {
   try {
     const session = await getSession({ req });
-    const token = await getToken({ req });
-    console.log(session);
-
-    await cors(req, res);
     await dbConnect();
 
     if (session && session.user) {
