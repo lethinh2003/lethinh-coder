@@ -74,10 +74,11 @@ const Footer = () => {
     bottom: 0,
     right: 0,
     left: 0,
-    borderTop: theme.palette.mode === "light" ? "1px solid #ccc" : "1px solid #a8b3cf33",
+    backgroundColor: theme.palette.header.background.default,
     height: "70px",
     zIndex: 1002,
     gap: "10px",
+    borderTop: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
   }));
   const BottomNavigationActionComponent = styled(BottomNavigationAction)(({ theme }) => ({
     fontSize: "40px",

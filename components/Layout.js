@@ -30,10 +30,19 @@ const getDesignTokens = (mode) => ({
     background: {
       ...(mode === "dark"
         ? {
-            default: "#161515",
+            default: "#0e1217",
           }
         : {
-            default: "#edebeb",
+            default: "#ffffff",
+          }),
+    },
+    iconColor: {
+      ...(mode === "dark"
+        ? {
+            default: "#a8b3cf",
+          }
+        : {
+            default: "#525866",
           }),
     },
 
@@ -44,7 +53,60 @@ const getDesignTokens = (mode) => ({
               default: "#ffffff",
             }
           : {
-              default: "#020000",
+              default: "#0e1217",
+            }),
+      },
+    },
+    card: {
+      borderColor: {
+        ...(mode === "light"
+          ? {
+              default: "#a4a6a9",
+              hover: "#19191a8a",
+            }
+          : {
+              default: "#383d47",
+              hover: "#a8b3cf66",
+            }),
+      },
+      bgColor: {
+        ...(mode === "light"
+          ? {
+              default: "#f5f8fc",
+            }
+          : {
+              default: "#1c1f26",
+            }),
+      },
+    },
+    dialog: {
+      borderColor: {
+        ...(mode === "light"
+          ? {
+              default: "#1d1e1ec9",
+              bottom: "#dcdee0",
+            }
+          : {
+              default: "#707683c4",
+              bottom: "#4b4c4e",
+            }),
+      },
+      bgColor: {
+        ...(mode === "light"
+          ? {
+              default: "#edf0f7",
+            }
+          : {
+              default: "#17191f",
+            }),
+      },
+      closeIcon: {
+        ...(mode === "light"
+          ? {
+              default: "#525866",
+            }
+          : {
+              default: "#a8b3cf",
             }),
       },
     },

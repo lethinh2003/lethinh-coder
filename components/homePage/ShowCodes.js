@@ -24,13 +24,19 @@ const ShowCodes = (props) => {
   const [sourceCode, setSourceCode] = useState(JSON.parse(props.sourceCode));
 
   const theme = useTheme();
-  const CardCode = styled(Card)({
+  const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
     minWidth: 300,
     overflow: "unset",
     scrollSnapAlign: "center",
-  });
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
+
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
   const CardContentCode = styled(CardContent)({
     display: "flex",
     flexDirection: "column",
@@ -42,13 +48,6 @@ const ShowCodes = (props) => {
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.8,
-    },
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",

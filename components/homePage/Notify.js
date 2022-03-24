@@ -29,7 +29,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import socketIOClient from "socket.io-client";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/material/styles";
-
+import CloseIcon from "@mui/icons-material/Close";
 let socket;
 const Notify = () => {
   const { data: session, status } = useSession();
@@ -126,11 +126,18 @@ const Notify = () => {
       console.log(err);
     }
   };
-  const NotifyButton = styled(IconButton)({
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+  const NotifyButton = styled(IconButton)({});
+  const DialogComponent = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialog-paper": {
+      borderRadius: "20px",
+      backgroundColor: theme.palette.dialog.bgColor.default,
+      border: `1px solid ${theme.palette.dialog.borderColor.default}`,
     },
-  });
+  }));
+  const DialogTitleComponent = styled(DialogTitle)(({ theme }) => ({
+    borderBottom: `1px solid ${theme.palette.dialog.borderColor.bottom}`,
+    fontWeight: "bold",
+  }));
   return (
     <>
       {status === "authenticated" && (
@@ -139,14 +146,31 @@ const Notify = () => {
             onClick={() => handleClickNotify()}
             size="large"
             aria-label="show new notifications"
-            color="inherit"
+            sx={{
+              color: (theme) => theme.palette.iconColor.default,
+            }}
           >
-            <Badge badgeContent={numberNotify} color="error">
+            <Badge badgeContent={numberNotify} color="error" max={10}>
               <NotificationsIcon />
             </Badge>
           </NotifyButton>
-          <Dialog open={isClickNotify} onClose={handleClose}>
-            <DialogTitle>{"Thông báo của bạn"}</DialogTitle>
+          <DialogComponent open={isClickNotify} onClose={handleClose}>
+            <DialogTitleComponent>
+              {"Thông báo của bạn"}
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                  fontWeight: "bold",
+                  color: (theme) => theme.palette.dialog.closeIcon.default,
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitleComponent>
             <DialogContent
               sx={{
                 padding: "20px 10px",
@@ -218,10 +242,10 @@ const Notify = () => {
                 </Box>
               </Box>
             </DialogContent>
-            <DialogActions>
+            {/* <DialogActions>
               <Button onClick={handleClose}>Ok</Button>
-            </DialogActions>
-          </Dialog>
+            </DialogActions> */}
+          </DialogComponent>
         </>
       )}
     </>

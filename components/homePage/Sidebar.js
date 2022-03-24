@@ -77,23 +77,22 @@ const Sidebar = (props) => {
       borderRadius: 20 / 2,
     },
   }));
+  const BoxMenuSideBar = styled(Box)(({ theme }) => ({
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: theme.palette.header.background.default,
+    padding: "10px",
+    justifyContent: "space-between",
+    position: "fixed",
+    zIndex: 1000,
+    width: "100%",
+    height: "70px",
+    borderBottom: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
+  }));
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          bgcolor: "header.background.default",
-          padding: "10px",
-          justifyContent: "space-between",
-          color: "text.primary",
-          position: "fixed",
-          zIndex: 1000,
-          width: "100%",
-          height: "70px",
-        }}
-      >
+      <BoxMenuSideBar>
         <Typography
           sx={{
             paddingLeft: "4px",
@@ -105,7 +104,11 @@ const Sidebar = (props) => {
           component="div"
         >
           <Link href="/">
-            <Button>
+            <Button
+              sx={{
+                display: { xs: "none", md: "block" },
+              }}
+            >
               <Avatar
                 src="https://i.imgur.com/U0BdIic.png"
                 variant="square"
@@ -163,7 +166,7 @@ const Sidebar = (props) => {
             </>
           )}
         </Typography>
-      </Box>
+      </BoxMenuSideBar>
     </>
   );
 };

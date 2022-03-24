@@ -12,7 +12,7 @@ const store = createStore(rootReducer);
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <>
-      <SessionProvider session={session} refetchOnWindowFocus={true}>
+      <SessionProvider session={session} refetchOnWindowFocus={false}>
         <Head>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
           <title> LT Blog - Nơi chia sẻ kinh nghiệm, source code giá rẻ - chất lượng - uy tín</title>

@@ -31,6 +31,8 @@ import { SiZalo } from "react-icons/si";
 import { GrUserAdmin } from "react-icons/gr";
 import { useSession } from "next-auth/react";
 import AttachmentIcon from "@mui/icons-material/Attachment";
+import { styled } from "@mui/material/styles";
+
 import axios from "axios";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
@@ -53,13 +55,16 @@ const Navbar = (props) => {
     };
     fetchSystem();
   }, []);
+  const BoxMenuNavBar = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.header.background.default,
+
+    borderRight: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
+  }));
 
   return (
     <>
-      <Box
+      <BoxMenuNavBar
         sx={{
-          bgcolor: "header.background.default",
-          color: "text.primary",
           display: {
             xs: "none",
             md: "flex",
@@ -168,7 +173,7 @@ const Navbar = (props) => {
             )}
           </Typography>
         </Typography>
-      </Box>
+      </BoxMenuNavBar>
     </>
   );
 };

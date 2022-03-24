@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import socketIOClient from "socket.io-client";
+import { styled } from "@mui/material/styles";
+import PersonIcon from "@mui/icons-material/Person";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 let socket;
 
 const AvatarProfile = () => {
@@ -56,18 +59,45 @@ const AvatarProfile = () => {
     handleClickLogout();
     handleCloseUserMenu();
   };
-
+  const AvatarComponent = styled(Avatar)({
+    borderRadius: "10px",
+  });
+  const MenuAvatarComponent = styled(Menu)(({ theme }) => ({
+    "& .MuiPaper-root": {
+      borderRadius: "15px",
+      backgroundColor: theme.palette.mode === "light" ? "#f5f8fc" : "#1c1f26",
+      border: "1px solid #a4a6a9",
+    },
+  }));
+  const MenuAvatarItemComponent = styled(MenuItem)(({ theme }) => ({
+    "&.MuiMenuItem-root": {
+      "&:hover": {
+        backgroundColor: theme.palette.mode === "light" ? "#e1e5e9" : "#2d313a",
+        borderRadius: "10px",
+      },
+    },
+    "&.MuiMenuItem-root .MuiTypography-root": {
+      fontSize: "15px",
+      color: theme.palette.mode === "light" ? "#515254" : "#a8b3cf",
+    },
+  }));
+  const MenuItemComponent = styled(Typography)({
+    display: "flex",
+    alignItems: "center",
+    gap: "5px",
+    justifyContent: "space-between",
+  });
   return (
     <>
       {status === "authenticated" && (
         <>
           <IconButton onClick={(e) => handleOpenUserMenu(e)}>
-            <Avatar alt={session.user.name} src={avatar}>
+            <AvatarComponent alt={session.user.name} src={avatar}>
               {session.user.name.charAt(0)}
-            </Avatar>
+            </AvatarComponent>
           </IconButton>
 
-          <Menu
+          <MenuAvatarComponent
             sx={{ mt: "45px" }}
             id="menu-appbar"
             anchorEl={anchorEl}
@@ -83,17 +113,41 @@ const AvatarProfile = () => {
             open={isMenuUser}
             onClose={handleCloseUserMenu}
           >
-            <MenuItem>
-              <Link href={"/users/" + session.user.account}>
-                <Typography textAlign="center">Profile</Typography>
+            <MenuAvatarItemComponent>
+              <Link href={"/users/" + session.user.account} onClick={handleCloseUserMenu}>
+                <MenuItemComponent>
+                  <PersonIcon
+                    sx={{
+                      width: "30px",
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      flex: "1",
+                    }}
+                  >
+                    Profile
+                  </Typography>
+                </MenuItemComponent>
               </Link>
-            </MenuItem>
-            <MenuItem>
-              <Typography textAlign="center" onClick={handleClickLogoutMiddle}>
-                Logout
-              </Typography>
-            </MenuItem>
-          </Menu>
+            </MenuAvatarItemComponent>
+            <MenuAvatarItemComponent>
+              <MenuItemComponent onClick={handleClickLogoutMiddle}>
+                <MeetingRoomIcon
+                  sx={{
+                    width: "30px",
+                  }}
+                />
+                <Typography
+                  sx={{
+                    flex: "1",
+                  }}
+                >
+                  Logout
+                </Typography>
+              </MenuItemComponent>
+            </MenuAvatarItemComponent>
+          </MenuAvatarComponent>
         </>
       )}
     </>

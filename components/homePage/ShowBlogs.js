@@ -20,22 +20,32 @@ import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
 import { GrFormView } from "react-icons/gr";
-
+import convertTime from "../../utils/convertTime";
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
 
   const theme = useTheme();
-  const CardCode = styled(Card)({
+  const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
-    minWidth: 300,
+    maxWidth: 400,
+    width: "100%",
     overflow: "unset",
     scrollSnapAlign: "center",
-  });
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
+    justifySelf: "center",
+
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
   const CardContentCode = styled(CardContent)({
     display: "flex",
     flexDirection: "column",
     padding: "20px 0",
+    maxHeight: "145px",
+    height: "100%",
   });
   const CardContentCodeTitle = styled(Typography)({
     fontFamily: "Noto Sans",
@@ -43,13 +53,6 @@ const ShowBlogs = (props) => {
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.8,
-    },
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
@@ -141,7 +144,7 @@ const ShowBlogs = (props) => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)" },
+              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(3, 1fr)" },
               gap: "10px",
             }}
           >
@@ -149,16 +152,6 @@ const ShowBlogs = (props) => {
               blogData.map((item, i) => {
                 return (
                   <CardCode key={i}>
-                    <CardMedia
-                      className="code-container__image"
-                      component="img"
-                      height="140"
-                      image={item.images[0]}
-                      alt={item.title}
-                      sx={{
-                        borderRadius: "20px",
-                      }}
-                    />
                     <CardContentCode>
                       <Link href={`/blog/${item.slug}`}>
                         <CardContentCodeTitle component="div" className="code-title">
@@ -167,15 +160,13 @@ const ShowBlogs = (props) => {
                       </Link>
 
                       <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                        {item.desc}
-
                         <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                           <Typography
                             sx={{
                               fontSize: { xs: "14px", md: "16px" },
                             }}
                           >
-                            <GrFormView /> {item.readTime} phút đọc/{item.views} views
+                            {convertTime(item.createdAt)} - {item.readTime} phút đọc/{item.views} views
                           </Typography>
                         </Typography>
                       </Typography>
@@ -194,6 +185,16 @@ const ShowBlogs = (props) => {
                         {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                       </Typography>
                     </CardContentCode>
+                    <CardMedia
+                      className="code-container__image"
+                      component="img"
+                      height="140"
+                      image={item.images[0]}
+                      alt={item.title}
+                      sx={{
+                        borderRadius: "20px",
+                      }}
+                    />
                   </CardCode>
                 );
               })}
