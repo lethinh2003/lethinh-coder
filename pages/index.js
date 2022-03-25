@@ -63,11 +63,11 @@ export const getServerSideProps = async () => {
   let systemData = [];
   let newBlog = [];
   const test = await Promise.all([
-    Code.find({}).limit(4).select("-link -__v").sort("-_id"),
-    Code.find({}).sort("-downloads").limit(4).select("-link -__v"),
-    Code.find({}).sort("-views").limit(4).select("-link -__v"),
+    Code.find({}).limit(6).select("-link -__v").sort("-_id"),
+    Code.find({}).sort("-downloads").limit(6).select("-link -__v"),
+    Code.find({}).sort("-views").limit(6).select("-link -__v"),
     System.find({}).select("-__v"),
-    Blog.find({}).limit(4).select("-link -__v").sort("-_id"),
+    Blog.find({}).limit(6).select("-link -__v").sort("-_id"),
     System.updateMany(
       {},
       { $inc: { home_views: 1 } },

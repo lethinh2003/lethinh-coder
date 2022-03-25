@@ -21,6 +21,9 @@ import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
 import { GrFormView } from "react-icons/gr";
 import convertTime from "../../utils/convertTime";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import CommentIcon from "@mui/icons-material/Comment";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
 
@@ -144,7 +147,7 @@ const ShowBlogs = (props) => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(3, 1fr)" },
+              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
               gap: "10px",
             }}
           >

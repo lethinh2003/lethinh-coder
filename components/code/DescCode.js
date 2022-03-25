@@ -67,7 +67,7 @@ const DescCode = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  {status === "authenticated" ? (
+                  {status === "authenticated" && sourceCode[0].costs === 0 ? (
                     <Button variant="outlined" onClick={() => handleClickOpenEmail()}>
                       Download Code
                     </Button>

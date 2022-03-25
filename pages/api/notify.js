@@ -16,9 +16,15 @@ const handle = async (req, res) => {
 
     if (session && session.user) {
       if (req.method === "GET") {
+        const page = req.query.page || 1;
+        const results = req.query.results || 10;
+        const skip = (page - 1) * results;
+
         const findNotifies = await Notify.find({
           account_receive: { $in: [session.user.id] },
         })
+          .skip(skip)
+          .limit(results)
           .sort("-_id")
           .select("-__v")
           .populate({
@@ -30,6 +36,7 @@ const handle = async (req, res) => {
             select: "-__v -password",
           });
         return res.status(200).json({
+          length: findNotifies.length,
           status: "success",
           data: findNotifies,
         });
