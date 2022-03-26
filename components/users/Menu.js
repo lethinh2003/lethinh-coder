@@ -1,42 +1,14 @@
-import { useSession } from "next-auth/react";
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-  Modal,
-  Fade,
-  Backdrop,
-  Tabs,
-  Tab,
-} from "@mui/material";
-
-import { TabPanel, TabContext, TabList } from "@mui/lab";
-import PhoneIcon from "@mui/icons-material/Phone";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import PersonPinIcon from "@mui/icons-material/PersonPin";
-
-import convertTime from "../../utils/convertTime";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Avatar, Box, Tab, Tabs, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import LoadingBox from "../homePage/LoadingBox";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getAvatar } from "../../redux/actions";
 import socketIOClient from "socket.io-client";
-import Notifies from "./Notifies";
 import Activities from "./Activities";
+import Notifies from "./Notifies";
+
 let socket;
 const Info = (props) => {
   const dispatch = useDispatch();

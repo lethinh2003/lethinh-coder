@@ -61,7 +61,7 @@ const Notify = () => {
   useEffect(() => {
     socketInitializer();
     return () => {
-      socket.disconnect();
+      //socket.disconnect();
     };
   }, [status]);
 

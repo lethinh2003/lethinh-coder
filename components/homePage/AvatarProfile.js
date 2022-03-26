@@ -1,14 +1,13 @@
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import socketIOClient from "socket.io-client";
-import { styled } from "@mui/material/styles";
-import PersonIcon from "@mui/icons-material/Person";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 let socket;
-
 const AvatarProfile = () => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();

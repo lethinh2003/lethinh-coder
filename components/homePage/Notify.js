@@ -13,23 +13,20 @@ import {
   ListItemText,
   Skeleton,
   Typography,
-  Zoom,
-  Collapse,
 } from "@mui/material";
-
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
 import socketIOClient from "socket.io-client";
 import NotifyContent from "./NotifyContent";
-import Link from "next/link";
 
 let socket;
-
 const Notify = () => {
+  const hostServer = process.env.HOST_SOCKET;
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isClickNotify, setIsClickNotify] = useState(false);
@@ -56,7 +53,7 @@ const Notify = () => {
     };
   }, [status]);
 
-  const socketInitializer = () => {
+  const socketInitializer = async () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     if (status === "authenticated") {
       socket.emit("join-notify", session.user.id);
@@ -84,8 +81,8 @@ const Notify = () => {
         setIsLoading(true);
         setDataNoti([]);
         setIsError(false);
-        const results = await axios.get(`/api/notify?page=${currentPage}&results=${limitResults}`);
-        socket.emit("read-notify", session.user.id);
+        const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
+        await socket.emit("read-notify", session.user.id);
         const dataNotify = results.data.data;
         // setNumberNotify(0);
         setDataNoti(dataNotify);
@@ -120,7 +117,7 @@ const Notify = () => {
   const handleClickDelete = async (id) => {
     setIsError(false);
     try {
-      await axios.post("/api/notify", {
+      await axios.post(`${hostServer}/api/v1/notifies`, {
         notifyId: id,
       });
       const newArray = [...dataNoti];

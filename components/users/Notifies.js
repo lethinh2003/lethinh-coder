@@ -1,12 +1,8 @@
-import CloseIcon from "@mui/icons-material/Close";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import {
   Alert,
   AlertTitle,
-  Badge,
   Box,
   Dialog,
-  DialogContent,
   DialogTitle,
   Fade,
   IconButton,
@@ -25,10 +21,11 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import socketIOClient from "socket.io-client";
 import NotifyContent from "../../components/homePage/NotifyContent";
-import Layout from "../../components/Layout";
 let socket;
 const Signup = () => {
+  const hostServer = process.env.HOST_SOCKET;
   const { data: session, status } = useSession();
+
   const router = useRouter();
   const [isClickNotify, setIsClickNotify] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -46,7 +43,7 @@ const Signup = () => {
     return () => {
       socket.disconnect();
     };
-  }, [status]);
+  }, []);
   const socketInitializer = () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     if (status === "authenticated") {
@@ -58,7 +55,7 @@ const Signup = () => {
     const fetchAPI = async () => {
       try {
         setIsLoading(true);
-        const results = await axios.get(`/api/notify?page=${currentPage}&results=${limitResults}`);
+        const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
         socket.emit("read-notify", session.user.id);
         if (results.data.length === limitResults) {
           setCurrentPage(currentPage + 1);
@@ -76,11 +73,11 @@ const Signup = () => {
     if (status === "authenticated") {
       fetchAPI();
     }
-  }, [status]);
+  }, []);
 
   const reFetch = async () => {
     try {
-      const results = await axios.get(`/api/notify?page=${currentPage}&results=${limitResults}`);
+      const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
       if (results.data.length === limitResults) {
         setCurrentPage(currentPage + 1);
         setHasMore(true);
@@ -94,15 +91,9 @@ const Signup = () => {
       setDataNoti(newData);
     } catch (err) {}
   };
-  console.log("render");
-  const handleClose = () => {
-    setCurrentPage(1);
-    setHasMore(false);
-  };
-
   const handleClickDelete = async (id) => {
     try {
-      await axios.post("/api/notify", {
+      await axios.post(`${hostServer}/api/v1/notifies`, {
         notifyId: id,
       });
       const newArray = [...dataNoti];

@@ -26,8 +26,7 @@ import LoadingBox from "../homePage/LoadingBox";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAvatar } from "../../redux/actions";
-import socketIOClient from "socket.io-client";
-let socket;
+
 const Info = (props) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -58,16 +57,6 @@ const Info = (props) => {
       getUser();
     }
   }, [status, isReFetch]);
-  useEffect(() => {
-    socketInitializer();
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [status]);
-  const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
-  };
 
   const StyleModal = styled(Box)({
     position: "absolute",

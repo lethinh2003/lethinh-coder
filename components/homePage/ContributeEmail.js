@@ -1,35 +1,25 @@
+import CheckIcon from "@mui/icons-material/Check";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import {
-  Button,
+  Alert,
+  Badge,
   Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
+  Button,
   Card,
   CardActions,
   CardContent,
   CardMedia,
-  CardActionArea,
-  Tooltip,
-  Badge,
   Fade,
-  Alert,
+  IconButton,
+  Tooltip,
+  Typography,
 } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
-import NumberFormat from "react-number-format";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { useTheme } from "@mui/material/styles";
-import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import { styled } from "@mui/material/styles";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
-import CheckIcon from "@mui/icons-material/Check";
-
 let socket;
 const Introduce = (props) => {
   const timeOutAlert = useRef();
@@ -42,12 +32,13 @@ const Introduce = (props) => {
       socket.disconnect();
       clearTimeout(timeOutAlert.current);
     };
-  }, []);
+  }, [socket]);
   const socketInitializer = () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-homepage-express");
     socket.emit("send-event-homepage-express");
     socket.on("send-event-homepage-express", (data) => {
+      console.log("send-data");
       setData(data);
       setIsSuccess(true);
       clearTimeout(timeOutAlert.current);

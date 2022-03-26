@@ -16,7 +16,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import convertToTime from "../../utils/convertTime";
 import { memo } from "react";
-let socket;
 
 const NotifyContent = (props) => {
   const { item, i, newContent, handleClickDelete, handleClickNotify } = props;
@@ -34,37 +33,39 @@ const NotifyContent = (props) => {
 
   return (
     <>
-      <Box
-        key={i}
-        sx={{
-          opacity: !item.status ? 1 : 0.6,
-        }}
-      >
-        <ListItem button={true} className="box_notify">
-          <ListItemAvatar>
-            <Avatar
+      {item && (
+        <Box
+          key={i}
+          sx={{
+            opacity: !item.status ? 1 : 0.6,
+          }}
+        >
+          <ListItem button={true} className="box_notify">
+            <ListItemAvatar>
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.avatar.default,
+                }}
+                alt={item.account_send[0].name}
+                src={item.account_send[0].avatar}
+              >
+                {item.account_send[0].name.charAt(0)}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              onClick={(e) => handleClickLinkNotify(e, item.link)}
               sx={{
-                backgroundColor: (theme) => theme.palette.avatar.default,
+                color: (theme) => theme.palette.iconColor.default,
               }}
-              alt={item.account_send[0].name}
-              src={item.account_send[0].avatar}
-            >
-              {item.account_send[0].name.charAt(0)}
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            onClick={(e) => handleClickLinkNotify(e, item.link)}
-            sx={{
-              color: (theme) => theme.palette.iconColor.default,
-            }}
-            primary={newContent}
-            secondary={convertToTime(item.createdAt)}
-          ></ListItemText>
-          <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
-            <DeleteIcon />
-          </IconButton>
-        </ListItem>
-      </Box>
+              primary={newContent}
+              secondary={convertToTime(item.createdAt)}
+            ></ListItemText>
+            <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        </Box>
+      )}
     </>
   );
 };

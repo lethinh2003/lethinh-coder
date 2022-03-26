@@ -1,31 +1,10 @@
-import CloseIcon from "@mui/icons-material/Close";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  Alert,
-  AlertTitle,
-  Badge,
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Fade,
-  IconButton,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Skeleton,
-  Typography,
-} from "@mui/material";
+import { Box, Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { ThreeDots } from "react-loading-icons";
 import socketIOClient from "socket.io-client";
-import NotifyContent from "../../components/homePage/NotifyContent";
-import Layout from "../../components/Layout";
 let socket;
 const Signup = () => {
   const { data: session, status } = useSession();

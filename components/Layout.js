@@ -5,13 +5,14 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { createGlobalStyle } from "styled-components";
 import { getDarkmode } from "../redux/actions";
 import BackToTop from "./homePage/BackToTop";
 import Footer from "./homePage/Footer";
 import Navbar from "./homePage/Navbar";
 import Sidebar from "./homePage/Sidebar";
 import SidebarMobile from "./homePage/SidebarMobile";
-import { createGlobalStyle } from "styled-components";
+
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.palette.background.default};
