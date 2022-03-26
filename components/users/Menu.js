@@ -19,7 +19,15 @@ import {
   Modal,
   Fade,
   Backdrop,
+  Tabs,
+  Tab,
 } from "@mui/material";
+
+import { TabPanel, TabContext, TabList } from "@mui/lab";
+import PhoneIcon from "@mui/icons-material/Phone";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PersonPinIcon from "@mui/icons-material/PersonPin";
+
 import convertTime from "../../utils/convertTime";
 import { styled } from "@mui/material/styles";
 import LoadingBox from "../homePage/LoadingBox";
@@ -27,10 +35,13 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAvatar } from "../../redux/actions";
 import socketIOClient from "socket.io-client";
+import Notifies from "./Notifies";
+import Activities from "./Activities";
 let socket;
 const Info = (props) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
+  const [value, setValue] = useState("0");
 
   const avatarInput = useRef(null);
   const [avatarUpload, setAvatarUpload] = useState("");
@@ -183,132 +194,108 @@ const Info = (props) => {
       position: "absolute",
     },
   });
+
+  const AntTabs = styled(Tabs)({
+    borderBottom: "1px solid #e8e8e8",
+    "& .MuiTabs-indicator": {
+      backgroundColor: "#1890ff",
+    },
+  });
+
+  const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+    },
+    marginRight: theme.spacing(1),
+    color: "rgba(0, 0, 0, 0.85)",
+
+    "&:hover": {
+      color: "#40a9ff",
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: "#1890ff",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  }));
+  const styledTabs = styled(Tabs)({
+    ".MuiTabs-root": {
+      backgroundColor: "red",
+    },
+  });
+
+  const StyledTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
+    textTransform: "none",
+    fontWeight: "600",
+    fontSize: theme.typography.pxToRem(15),
+    marginRight: theme.spacing(1),
+    color: theme.palette.iconColor.default,
+    "&.Mui-selected": {
+      color: theme.palette.mode === "dark" ? "#fff" : "black",
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "rgba(100, 95, 228, 0.32)",
+    },
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
+      borderRadius: "20px",
+    },
+  }));
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <>
       <Box
         sx={{
-          minHeight: "340px",
           width: "100%",
-
-          padding: { xs: "40px 10px", md: "40px 20px" },
+          padding: { xs: "0 10px", md: "0 20px" },
           gap: "20px",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          flexDirection: { xs: "column", md: "row" },
+          justifyContent: "flex-start",
+          flexDirection: { xs: "column", md: "column" },
           flexWrap: "wrap",
+          borderBottom: (theme) => (theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e"),
         }}
       >
-        <LoadingBox isLoading={isLoadingUpload} isSuccess={isSuccessUpload} />
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={isOpenModal}
-          onClose={handleClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={isOpenModal}>
-            <StyleModal>
-              <ModalText>
-                <div className="input-file" style={{ display: "none" }}>
-                  <input type="file" name="file" ref={avatarInput} id="file" onChange={(e) => handleFileUpload(e)} />
-                </div>
-                <label
-                  style={{
-                    width: "100%",
-                    display: "inline-block",
-                  }}
-                  htmlFor="file"
-                  className="input-label"
-                >
-                  Add the avatar
-                </label>
-              </ModalText>
-              <ModalText onClick={() => hanldeClickRemoveAvatar()}>Remove the current avatar</ModalText>
-              <Typography
-                sx={{
-                  textAlign: "center",
-                }}
-              >
-                <ModalText onClick={handleClose}>Cancel</ModalText>
-              </Typography>
-            </StyleModal>
-          </Fade>
-        </Modal>
-        {isLoading && <Skeleton variant="circular" width={150} height={150} />}
-        {!isLoading && data.length > 0 && (
-          <Box
+        <TabContext value={value}>
+          <TabList
+            onChange={handleChange}
             sx={{
-              backgroundColor: (theme) => theme.palette.dialog.bgColor.default,
-              borderRadius: "20px",
-              padding: "10px",
-              height: "150px",
+              width: "100%",
+
+              borderBottom: (theme) => (theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e"),
             }}
           >
-            <AvatarPersonal
-              sx={{
-                borderRadius: "10px",
-                backgroundColor: (theme) => theme.palette.avatar.default,
-              }}
-              onClick={handleOpen}
-              alt={data[0].name}
-              src={data[0].avatar}
-            >
-              {data[0].name.charAt(0)}
-            </AvatarPersonal>
-          </Box>
-        )}
-        <Box
-          sx={{
-            flex: "1 1",
-            display: "flex",
-            flexDirection: "column",
-            fontFamily: "Noto Sans",
-            gap: "5px",
-          }}
-        >
-          {isLoading && (
-            <>
-              <Skeleton variant="text" width={100} />
-              <Skeleton variant="text" width={150} />
-              <Skeleton variant="text" width={150} />
-            </>
-          )}
-          {!isLoading && data.length > 0 && (
-            <>
-              <Typography
-                sx={{
-                  fontSize: "30px",
-                  fontWeight: "700",
-                }}
-              >
-                {data[0].name}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "20px",
-                  fontWeight: "500",
-                  color: (theme) => theme.palette.iconColor.default,
-                }}
-              >
-                @{data[0].account}
-              </Typography>
-              <Typography
-                sx={{
-                  textTransform: "capitalize",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                }}
-              >
-                Tham gia: {convertTime(data[0].createdAt)}
-              </Typography>
-            </>
-          )}
-        </Box>
+            <StyledTab label="Activity" value="0" />
+            <StyledTab label="Notification" value="1" />
+          </TabList>
+
+          <TabPanel
+            sx={{
+              padding: 0,
+              width: "100%",
+            }}
+            value="0"
+          >
+            <Activities />
+          </TabPanel>
+          <TabPanel
+            sx={{
+              padding: 0,
+              width: "100%",
+            }}
+            value="1"
+          >
+            <Notifies />
+          </TabPanel>
+        </TabContext>
       </Box>
     </>
   );

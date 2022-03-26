@@ -92,7 +92,13 @@ const AvatarProfile = () => {
       {status === "authenticated" && (
         <>
           <IconButton onClick={(e) => handleOpenUserMenu(e)}>
-            <AvatarComponent alt={session.user.name} src={avatar}>
+            <AvatarComponent
+              sx={{
+                backgroundColor: (theme) => theme.palette.avatar.default,
+              }}
+              alt={session.user.name}
+              src={avatar}
+            >
               {session.user.name.charAt(0)}
             </AvatarComponent>
           </IconButton>

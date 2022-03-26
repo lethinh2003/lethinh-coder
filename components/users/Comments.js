@@ -46,7 +46,14 @@ const Items = ({ currentItems, isLoading }) => {
         currentItems.map((item, i) => (
           <ListItem button={true} key={i}>
             <ListItemAvatar>
-              <Avatar alt={item.user[0].account}>{item.user[0].account.charAt(0)}</Avatar>
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.avatar.default,
+                }}
+                alt={item.user[0].account}
+              >
+                {item.user[0].account.charAt(0)}
+              </Avatar>
             </ListItemAvatar>
             <ListItemText primary={item.user[0].account} secondary={item.content}></ListItemText>
           </ListItem>

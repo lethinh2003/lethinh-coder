@@ -6,6 +6,15 @@ import { createStore } from "redux";
 import rootReducer from "../redux/reducers";
 import "../styles/globals.css";
 import "../styles/layout.scss";
+import "nprogress/nprogress.css";
+import dynamic from "next/dynamic";
+
+const TopProgressBar = dynamic(
+  () => {
+    return import("../components/TopProgressBar");
+  },
+  { ssr: false }
+);
 
 const store = createStore(rootReducer);
 
@@ -39,6 +48,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <meta property="og:image:height" content="720" />
         </Head>
         <Provider store={store}>
+          <TopProgressBar />
           <Component {...pageProps} />
         </Provider>
       </SessionProvider>

@@ -1,54 +1,59 @@
-import axios from "axios";
-import Link from "next/link";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  FormControl,
-  InputLabel,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  TextField,
-  CardMedia,
-  Input,
-  Backdrop,
-  CircularProgress,
   Alert,
   AlertTitle,
+  Box,
+  Button,
+  CardMedia,
   Fade,
-  Snackbar,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  TextField,
+  Typography,
 } from "@mui/material";
-
-import ShowCodes from "../components/homePage/ShowCodes";
-import Head from "next/head";
-import Layout from "../components/Layout";
-import { FcGoogle } from "react-icons/fc";
-import { BsCheckSquare } from "react-icons/bs";
-import Introduce from "../components/homePage/Introduce";
 import { styled } from "@mui/material/styles";
-import { useForm, Controller } from "react-hook-form";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useState, useRef } from "react";
-import { Bars } from "react-loading-icons";
+import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
+import * as Yup from "yup";
 import LoadingBox from "../components/homePage/LoadingBox";
+import Layout from "../components/Layout";
 
 const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshLoading = useRef();
   const refreshError = useRef();
+
+  // form validation rules
+  const validationSchema = Yup.object().shape({
+    account: Yup.string()
+      .required("Account is required")
+      .min(5, "Min-length 5, please re-enter")
+      .trim("Account invalid")
+      .matches(/^\S*$/, "Account invalid")
+      .strict(true),
+    password: Yup.string()
+      .required("Password is required")
+      .trim("Password invalid")
+      .matches(/^\S*$/, "Password invalid")
+      .strict(true),
+  });
+  const formOptions = { resolver: yupResolver(validationSchema) };
 
   const {
     control,
@@ -56,7 +61,7 @@ const Login = () => {
     formState: { errors },
     register,
     reset,
-  } = useForm();
+  } = useForm(formOptions);
   useEffect(() => {
     return () => {
       clearTimeout(refreshLoading.current);
@@ -140,7 +145,14 @@ const Login = () => {
       opacity: 0.8,
     },
   });
-
+  const ErrorPassWord = styled(Typography)({
+    fontWeight: "400",
+    fontSize: "0.75rem",
+    lineHeight: 1.66,
+    textAlign: "left",
+    margin: "4px 14px 0 14px",
+    color: "#f44336",
+  });
   return (
     <>
       {status !== "authenticated" && (
@@ -177,7 +189,8 @@ const Login = () => {
                   color: "text.primary",
                   gap: "10px",
                   padding: "40px 0",
-                  minWidth: "300px",
+                  maxWidth: "400px",
+                  width: "100%",
                 }}
               >
                 <LoginTitle>LeThinh Blog</LoginTitle>
@@ -221,7 +234,8 @@ const Login = () => {
                     <Fade in={isError}>
                       <Alert
                         sx={{
-                          minWidth: "300px",
+                          maxWidth: "400px",
+                          width: "100%",
                         }}
                         severity="error"
                       >
@@ -258,15 +272,7 @@ const Login = () => {
                           fullWidth
                           error={errors.account ? true : false}
                           helperText={errors.account ? errors.account.message : ""}
-                          // {...(field,
-                          // {
-                          //   required: "Account is a required",
-                          //   minLength: { value: 5, message: "Min-length 5, please re-enter" },
-                          // })}
-                          {...register("account", {
-                            required: "Account is a required",
-                            minLength: { value: 5, message: "Min-length 5, please re-enter" },
-                          })}
+                          {...field}
                         />
                       )}
                       defaultValue=""
@@ -300,20 +306,29 @@ const Login = () => {
                       name="password"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          type="password"
+                        <OutlinedInput
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          type={showPassword ? "text" : "password"}
                           size="small"
                           fullWidth
                           error={errors.password ? true : false}
                           helperText={errors.password ? errors.password.message : ""}
                           {...field}
-                          {...register("password", {
-                            required: "Password is a required",
-                          })}
                         />
                       )}
                       defaultValue=""
                     />
+                    <ErrorPassWord>{errors.password ? errors.password.message : ""}</ErrorPassWord>
                   </FormControl>
                   <ButtonLogin type="submit" onClick={handleSubmit(onSubmit)} variant="contained">
                     Sign in

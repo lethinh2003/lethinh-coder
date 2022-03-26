@@ -26,7 +26,7 @@ import convertTime from "../../utils/convertTime";
 import { deepOrange, deepPurple } from "@mui/material/colors";
 import axios from "axios";
 import Info from "../../components/users/Info";
-import Notifies from "../../components/users/Notifies";
+import Menu from "../../components/users/Menu";
 import Comments from "../../components/users/Comments";
 import { styled } from "@mui/material/styles";
 
@@ -68,10 +68,10 @@ const AboutMe = () => {
               justifyContent: "center",
               color: "text.primary",
               gap: "10px",
-              padding: { xs: "40px 10px", md: "40px 20px" },
             }}
           >
             <Info />
+            <Menu />
             {/* <Notifies isLoading={isLoading} data={data.length > 0 ? data[0].userNotifies : []} /> */}
             {/* <Comments isLoading={isLoading} data={data.length > 0 ? data[0].userComments : []} /> */}
           </Box>

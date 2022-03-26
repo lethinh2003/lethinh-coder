@@ -52,7 +52,13 @@ const AboutMe = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Avatar sx={{ bgcolor: deepOrange[500] }}>{session.user.account.charAt(0)}</Avatar>
+                    <Avatar
+                      sx={{
+                        backgroundColor: (theme) => theme.palette.avatar.default,
+                      }}
+                    >
+                      {session.user.account.charAt(0)}
+                    </Avatar>
                   </Box>
                   <h1>Hello {session.user.account}</h1>
                 </Box>

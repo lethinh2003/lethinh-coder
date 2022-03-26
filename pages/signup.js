@@ -23,6 +23,8 @@ import {
   AlertTitle,
   Fade,
   Snackbar,
+  InputAdornment,
+  OutlinedInput,
 } from "@mui/material";
 
 import ShowCodes from "../components/homePage/ShowCodes";
@@ -38,25 +40,51 @@ import { useEffect, useState, useRef } from "react";
 import { Bars } from "react-loading-icons";
 import { useRouter } from "next/router";
 import LoadingBox from "../components/homePage/LoadingBox";
-
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 const Signup = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshLoading = useRef();
   const refreshError = useRef();
-
+  // form validation rules
+  const validationSchema = Yup.object().shape({
+    account: Yup.string()
+      .required("Account is required")
+      .min(5, "Min-length 5, please re-enter")
+      .trim("Account invalid")
+      .matches(/^\S*$/, "Account invalid")
+      .strict(true),
+    name: Yup.string()
+      .required("Name is required")
+      .min(2, "Min-length 2, please re-enter")
+      .trim("Name invalid")
+      .strict(true),
+    password: Yup.string()
+      .required("Password is required")
+      .trim("Password invalid")
+      .matches(/^\S*$/, "Password invalid")
+      .strict(true),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
+  });
+  const formOptions = { resolver: yupResolver(validationSchema) };
   const {
     control,
     handleSubmit,
     formState: { errors },
     register,
     reset,
-  } = useForm();
+  } = useForm(formOptions);
   useEffect(() => {
     return () => {
       clearTimeout(refreshLoading.current);
@@ -78,7 +106,7 @@ const Signup = () => {
         const result = await axios.post("/api/auth/signup", {
           account: data.account,
           password: data.password,
-          confirmPassword: data.password,
+          confirmPassword: data.confirmPassword,
           name: data.name,
         });
         setIsSuccess(true);
@@ -139,6 +167,14 @@ const Signup = () => {
       opacity: 0.8,
     },
   });
+  const ErrorPassWord = styled(Typography)({
+    fontWeight: "400",
+    fontSize: "0.75rem",
+    lineHeight: 1.66,
+    textAlign: "left",
+    margin: "4px 14px 0 14px",
+    color: "#f44336",
+  });
 
   return (
     <>
@@ -171,7 +207,8 @@ const Signup = () => {
                   color: "text.primary",
                   gap: "10px",
                   padding: "40px 0",
-                  minWidth: "300px",
+                  maxWidth: "400px",
+                  width: "100%",
                 }}
               >
                 <LoginTitle>LeThinh Blog</LoginTitle>
@@ -215,7 +252,8 @@ const Signup = () => {
                     <Fade in={isError}>
                       <Alert
                         sx={{
-                          maxWidth: "300px",
+                          maxWidth: "400px",
+                          width: "100%",
                         }}
                         severity="error"
                       >
@@ -253,10 +291,6 @@ const Signup = () => {
                           error={errors.account ? true : false}
                           helperText={errors.account ? errors.account.message : ""}
                           {...field}
-                          {...register("account", {
-                            required: "Account is a required",
-                            minLength: { value: 5, message: "Min-length 5, please re-enter" },
-                          })}
                         />
                       )}
                       defaultValue=""
@@ -280,10 +314,6 @@ const Signup = () => {
                           error={errors.name ? true : false}
                           helperText={errors.name ? errors.name.message : ""}
                           {...field}
-                          {...register("name", {
-                            required: "Name is a required",
-                            minLength: { value: 2, message: "Min-length 2, please re-enter" },
-                          })}
                         />
                       )}
                       defaultValue=""
@@ -308,20 +338,72 @@ const Signup = () => {
                       name="password"
                       control={control}
                       render={({ field }) => (
-                        <TextField
-                          type="password"
+                        <OutlinedInput
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          type={showPassword ? "text" : "password"}
                           size="small"
                           fullWidth
                           error={errors.password ? true : false}
                           helperText={errors.password ? errors.password.message : ""}
                           {...field}
-                          {...register("password", {
-                            required: "Password is a required",
-                          })}
                         />
                       )}
                       defaultValue=""
                     />
+                    <ErrorPassWord>{errors.password ? errors.password.message : ""}</ErrorPassWord>
+                  </FormControl>
+                  <FormControl
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <LabelInput>Password</LabelInput>
+                    </Box>
+                    <Controller
+                      name="confirmPassword"
+                      control={control}
+                      render={({ field }) => (
+                        <OutlinedInput
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => setShowPassword(!showPassword)}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          type={showPassword ? "text" : "password"}
+                          size="small"
+                          fullWidth
+                          error={errors.confirmPassword ? true : false}
+                          helperText={errors.confirmPassword ? errors.confirmPassword.message : ""}
+                          {...field}
+                        />
+                      )}
+                      defaultValue=""
+                    />
+                    <ErrorPassWord>{errors.confirmPassword ? errors.confirmPassword.message : ""}</ErrorPassWord>
                   </FormControl>
 
                   <ButtonLogin type="submit" onClick={handleSubmit(onSubmit)} variant="contained">

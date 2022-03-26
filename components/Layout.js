@@ -60,7 +60,17 @@ const getDesignTokens = (mode) => ({
             hover: "black",
           }),
     },
-
+    avatar: {
+      ...(mode === "dark"
+        ? {
+            default: "#a8b3cf",
+            hover: "#ffffff",
+          }
+        : {
+            default: "#525866",
+            hover: "black",
+          }),
+    },
     header: {
       background: {
         ...(mode === "light"

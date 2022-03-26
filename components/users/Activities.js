@@ -112,6 +112,11 @@ const Signup = () => {
       console.log(err);
     }
   };
+  const ActivitiesTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
+    fontWeight: "bold",
+  });
   const NotifyButton = styled(IconButton)({});
   const DialogComponent = styled(Dialog)(({ theme }) => ({
     "& .MuiDialog-paper": {
@@ -134,88 +139,68 @@ const Signup = () => {
               paddingTop: "16px",
             }}
           >
-            <InfiniteScroll
-              dataLength={dataNoti.length}
-              next={reFetch}
-              hasMore={hasMore}
-              loader={
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ThreeDots fill="#06bcee" width={30} height={30} />
-                </Box>
-              }
-              height={400}
-              endMessage={
-                <p style={{ textAlign: "center" }}>
-                  <b>Đã hết thông báo</b>
-                </p>
-              }
-            >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {isLoading &&
-                  Array.from({ length: 4 }).map((item, i) => (
-                    <ListItem
-                      button={true}
-                      key={i}
-                      sx={{
-                        width: "100%",
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Skeleton variant="circular" width={40} height={40} />
-                      </ListItemAvatar>
-                      <ListItemText>
-                        <Skeleton variant="text" height={70} />
-                        <Skeleton variant="text" width={100} />
-                      </ListItemText>
-                    </ListItem>
-                  ))}
-                {isError && (
-                  <Fade in={isError}>
-                    <Alert
-                      sx={{
-                        maxWidth: "400px",
-                        width: "100%",
-                        borderRadius: "20px",
-                        border: "1px solid #914b31",
-                      }}
-                      severity="error"
-                    >
-                      <AlertTitle>Error</AlertTitle>
-                      {messageError} — <strong>try again!</strong>
-                    </Alert>
-                  </Fade>
-                )}
-                {!isLoading && dataNoti.length === 0 && !isError && (
-                  <Typography
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <ActivitiesTitle>Đăng nhập</ActivitiesTitle>
+              <ActivitiesTitle>Bình luận</ActivitiesTitle>
+              {/* {isLoading &&
+                Array.from({ length: 4 }).map((item, i) => (
+                  <ListItem
+                    button={true}
+                    key={i}
                     sx={{
-                      maxWidth: "400px",
-                      width: "100vw",
-                      textAlign: "center",
+                      width: "100%",
                     }}
                   >
-                    Thông báo trống
-                  </Typography>
-                )}
-                {!isLoading &&
-                  dataNoti.length > 0 &&
-                  dataNoti.map((item, i) => {
-                    let newContent = item.content;
-                    const content = item.content;
-                    if (content.includes("{name}")) {
-                      newContent = newContent.replace("{name}", item.account_send[0].name);
-                    }
+                    <ListItemAvatar>
+                      <Skeleton variant="circular" width={40} height={40} />
+                    </ListItemAvatar>
+                    <ListItemText>
+                      <Skeleton variant="text" height={70} />
+                      <Skeleton variant="text" width={100} />
+                    </ListItemText>
+                  </ListItem>
+                ))}
+              {isError && (
+                <Fade in={isError}>
+                  <Alert
+                    sx={{
+                      maxWidth: "400px",
+                      width: "100%",
+                      borderRadius: "20px",
+                      border: "1px solid #914b31",
+                    }}
+                    severity="error"
+                  >
+                    <AlertTitle>Error</AlertTitle>
+                    {messageError} — <strong>try again!</strong>
+                  </Alert>
+                </Fade>
+              )}
+              {!isLoading && dataNoti.length === 0 && !isError && (
+                <Typography
+                  sx={{
+                    maxWidth: "400px",
+                    width: "100vw",
+                    textAlign: "center",
+                  }}
+                >
+                  Thông báo trống
+                </Typography>
+              )}
+              {!isLoading &&
+                dataNoti.length > 0 &&
+                dataNoti.map((item, i) => {
+                  let newContent = item.content;
+                  const content = item.content;
+                  if (content.includes("{name}")) {
+                    newContent = newContent.replace("{name}", item.account_send[0].name);
+                  }
 
-                    return (
-                      <NotifyContent item={item} i={i} newContent={newContent} handleClickDelete={handleClickDelete} />
-                    );
-                  })}
-              </Box>
-            </InfiniteScroll>
+                  return (
+                    <NotifyContent item={item} i={i} newContent={newContent} handleClickDelete={handleClickDelete} />
+                  );
+                })} */}
+            </Box>
           </Box>
         </>
       )}

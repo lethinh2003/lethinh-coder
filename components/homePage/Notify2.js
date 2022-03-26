@@ -1,32 +1,41 @@
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
 import {
-  Alert,
-  AlertTitle,
-  Badge,
+  Avatar,
   Box,
+  Button,
   Dialog,
+  DialogActions,
+  DialogContent,
   DialogTitle,
-  Fade,
-  IconButton,
+  FormControl,
+  InputAdornment,
   ListItem,
   ListItemAvatar,
   ListItemText,
+  OutlinedInput,
   Skeleton,
   Typography,
-  Zoom,
-  Collapse,
+  IconButton,
+  Badge,
+  Menu,
+  MenuItem,
+  Alert,
+  AlertTitle,
+  Fade,
 } from "@mui/material";
-
-import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { TransitionGroup } from "react-transition-group";
+import { useEffect, useState, useRef } from "react";
+import convertToTime from "../../utils/convertTime";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import socketIOClient from "socket.io-client";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
 import NotifyContent from "./NotifyContent";
-import Link from "next/link";
-
+import InfiniteScroll from "react-infinite-scroll-component";
+import { ThreeDots } from "react-loading-icons";
 let socket;
 
 const Notify = () => {
@@ -72,9 +81,9 @@ const Notify = () => {
           setNumberNotify(notifyNum);
         }
       });
-      socket.on("read-notify", () => {
-        setNumberNotify(0);
-      });
+      // socket.on("read-notify", () => {
+      //   setNumberNotify(0);
+      // });
     }
   };
 
@@ -85,9 +94,15 @@ const Notify = () => {
         setDataNoti([]);
         setIsError(false);
         const results = await axios.get(`/api/notify?page=${currentPage}&results=${limitResults}`);
+        if (results.data.length === limitResults) {
+          setCurrentPage(currentPage + 1);
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+        }
         socket.emit("read-notify", session.user.id);
         const dataNotify = results.data.data;
-        // setNumberNotify(0);
+        setNumberNotify(0);
         setDataNoti(dataNotify);
         setIsLoading(false);
       } catch (err) {
@@ -107,25 +122,21 @@ const Notify = () => {
     }
   }, [isClickNotify, status]);
 
-  const handleClose = () => {
-    setIsClickNotify(false);
-  };
-
-  const handleClickNotify = () => {
-    setIsLoading(true);
-    setDataNoti([]);
-    setIsClickNotify(!isClickNotify);
-  };
-
-  const handleClickDelete = async (id) => {
-    setIsError(false);
+  const reFetch = async () => {
     try {
-      await axios.post("/api/notify", {
-        notifyId: id,
-      });
-      const newArray = [...dataNoti];
-      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataNoti(newArrayRemoveItem);
+      setIsError(false);
+      const results = await axios.get(`/api/notify?page=${currentPage}&results=${limitResults}`);
+      if (results.data.length === limitResults) {
+        setCurrentPage(currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+
+      const dataNotify = results.data.data;
+      const newData = [...dataNoti, ...dataNotify];
+
+      setDataNoti(newData);
     } catch (err) {
       if (err.response) {
         setMessageError(err.response.data.message);
@@ -135,6 +146,30 @@ const Notify = () => {
           setMessageError("");
         }, 5000);
       }
+    }
+  };
+  const handleClose = () => {
+    setIsClickNotify(false);
+    setCurrentPage(1);
+    setHasMore(false);
+  };
+
+  const handleClickNotify = () => {
+    setIsLoading(true);
+    setDataNoti([]);
+    setIsClickNotify(!isClickNotify);
+  };
+
+  const handleClickDelete = async (id) => {
+    try {
+      await axios.post("/api/notify", {
+        notifyId: id,
+      });
+      const newArray = [...dataNoti];
+      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
+      setDataNoti(newArrayRemoveItem);
+    } catch (err) {
+      console.log(err);
     }
   };
   const NotifyButton = styled(IconButton)({});
@@ -150,22 +185,6 @@ const Notify = () => {
     borderBottom: `1px solid ${theme.palette.dialog.borderColor.bottom}`,
     fontWeight: "bold",
   }));
-
-  const NotifyContainer = styled(Box)(({ theme }) => ({
-    overflow: "auto",
-    backgroundColor: theme.palette.dialog.bgColor.default,
-    height: "400px",
-    maxWidth: "600px",
-    width: "100%",
-    position: "fixed",
-    top: "70px",
-    right: "0",
-    borderRadius: "20px",
-    border: `1px solid ${theme.palette.dialog.borderColor.default}`,
-    boxShadow:
-      "0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)",
-  }));
-
   return (
     <>
       {status === "authenticated" && (
@@ -176,105 +195,12 @@ const Notify = () => {
             aria-label="show new notifications"
             sx={{
               color: (theme) => theme.palette.iconColor.default,
-              border: isClickNotify ? "2px solid rgb(0 123 255 / 50%)" : null,
             }}
           >
             <Badge badgeContent={numberNotify} color="error" max={10}>
               <NotificationsIcon />
             </Badge>
           </NotifyButton>
-
-          {isClickNotify && (
-            <Fade in={isClickNotify}>
-              <NotifyContainer>
-                <TransitionGroup>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      marginTop: "20px",
-                      color: (theme) => theme.palette.iconColor.default,
-                    }}
-                  >
-                    {isLoading &&
-                      Array.from({ length: 4 }).map((item, i) => (
-                        <ListItem
-                          button={true}
-                          key={i}
-                          sx={{
-                            width: "100%",
-                          }}
-                        >
-                          <ListItemAvatar>
-                            <Skeleton variant="circular" width={40} height={40} />
-                          </ListItemAvatar>
-                          <ListItemText>
-                            <Skeleton variant="text" height={70} />
-                            <Skeleton variant="text" width={100} />
-                          </ListItemText>
-                        </ListItem>
-                      ))}
-                    {isError && (
-                      <Fade in={isError}>
-                        <Alert
-                          sx={{
-                            width: "100%",
-                            borderRadius: "20px",
-                            border: "1px solid #914b31",
-                          }}
-                          severity="error"
-                        >
-                          <AlertTitle>Error</AlertTitle>
-                          {messageError} — <strong>try again!</strong>
-                        </Alert>
-                      </Fade>
-                    )}
-                    {!isLoading && dataNoti.length === 0 && !isError && (
-                      <Typography
-                        sx={{
-                          textAlign: "center",
-                        }}
-                      >
-                        Thông báo trống
-                      </Typography>
-                    )}
-                    {!isLoading &&
-                      dataNoti.length > 0 &&
-                      dataNoti.map((item, i) => {
-                        let newContent = item.content;
-                        const content = item.content;
-                        if (content.includes("{name}")) {
-                          newContent = newContent.replace("{name}", item.account_send[0].name);
-                        }
-
-                        return (
-                          <NotifyContent
-                            item={item}
-                            i={i}
-                            handleClickNotify={handleClickNotify}
-                            handleClickDelete={handleClickDelete}
-                            newContent={newContent}
-                          />
-                        );
-                      })}
-                    {dataNoti.length >= 10 && (
-                      <Link href={`/users/${session.user.account}`}>
-                        <Typography
-                          sx={{
-                            textAlign: "center",
-                          }}
-                        >
-                          Xem thêm
-                        </Typography>
-                      </Link>
-                    )}
-                  </Box>
-                </TransitionGroup>
-              </NotifyContainer>
-            </Fade>
-          )}
-          {/* 
           <DialogComponent open={isClickNotify} onClose={handleClose}>
             <DialogTitleComponent>
               {"Thông báo của bạn"}
@@ -385,7 +311,7 @@ const Notify = () => {
                 </InfiniteScroll>
               </Box>
             </DialogContent>
-          </DialogComponent> */}
+          </DialogComponent>
         </>
       )}
     </>

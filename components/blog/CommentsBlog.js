@@ -366,7 +366,13 @@ const CommentsBlog = (props) => {
             >
               <ListItem button={true}>
                 <ListItemAvatar>
-                  <Avatar alt={item.user[0].name} src={item.user[0].avatar}>
+                  <Avatar
+                    sx={{
+                      backgroundColor: (theme) => theme.palette.avatar.default,
+                    }}
+                    alt={item.user[0].name}
+                    src={item.user[0].avatar}
+                  >
                     {item.user[0].name.charAt(0)}
                   </Avatar>
                 </ListItemAvatar>
@@ -443,7 +449,13 @@ const CommentsBlog = (props) => {
                   <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
                     <ListItem button={true}>
                       <ListItemAvatar>
-                        <Avatar alt={replyItem.user[0].name} src={replyItem.user[0].avatar}>
+                        <Avatar
+                          sx={{
+                            backgroundColor: (theme) => theme.palette.avatar.default,
+                          }}
+                          alt={replyItem.user[0].name}
+                          src={replyItem.user[0].avatar}
+                        >
                           {replyItem.user[0].name.charAt(0)}
                         </Avatar>
                       </ListItemAvatar>

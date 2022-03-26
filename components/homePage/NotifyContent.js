@@ -15,10 +15,11 @@ import {
 import axios from "axios";
 import { useRouter } from "next/router";
 import convertToTime from "../../utils/convertTime";
+import { memo } from "react";
 let socket;
 
 const NotifyContent = (props) => {
-  const { dataNoti, isLoading, isError, messageError, handleClickNotify, setDataNoti } = props;
+  const { item, i, newContent, handleClickDelete, handleClickNotify } = props;
   const router = useRouter();
 
   const handleClickLinkNotify = (e, item) => {
@@ -26,107 +27,45 @@ const NotifyContent = (props) => {
     if (item) {
       router.push(item);
     }
-    handleClickNotify();
-  };
-
-  const handleClickDelete = async (id) => {
-    try {
-      await axios.post("/api/notify", {
-        notifyId: id,
-      });
-      const newArray = [...dataNoti];
-      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataNoti(newArrayRemoveItem);
-    } catch (err) {
-      console.log(err);
+    if (handleClickNotify) {
+      handleClickNotify();
     }
   };
 
   return (
     <>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {isLoading &&
-          Array.from({ length: 4 }).map((item, i) => (
-            <ListItem
-              button={true}
-              key={i}
+      <Box
+        key={i}
+        sx={{
+          opacity: !item.status ? 1 : 0.6,
+        }}
+      >
+        <ListItem button={true} className="box_notify">
+          <ListItemAvatar>
+            <Avatar
               sx={{
-                maxWidth: "400px",
-                width: "100vw",
+                backgroundColor: (theme) => theme.palette.avatar.default,
               }}
+              alt={item.account_send[0].name}
+              src={item.account_send[0].avatar}
             >
-              <ListItemAvatar>
-                <Skeleton variant="circular" width={40} height={40} />
-              </ListItemAvatar>
-              <ListItemText>
-                <Skeleton variant="text" height={70} />
-                <Skeleton variant="text" width={100} />
-              </ListItemText>
-            </ListItem>
-          ))}
-        {isError && (
-          <Fade in={isError}>
-            <Alert
-              sx={{
-                maxWidth: "400px",
-                width: "100%",
-                borderRadius: "20px",
-                border: "1px solid #914b31",
-              }}
-              severity="error"
-            >
-              <AlertTitle>Error</AlertTitle>
-              {messageError} — <strong>try again!</strong>
-            </Alert>
-          </Fade>
-        )}
-        {!isLoading && dataNoti.length === 0 && !isError && (
-          <Typography
+              {item.account_send[0].name.charAt(0)}
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            onClick={(e) => handleClickLinkNotify(e, item.link)}
             sx={{
-              maxWidth: "400px",
-              width: "100vw",
-              textAlign: "center",
+              color: (theme) => theme.palette.iconColor.default,
             }}
-          >
-            Thông báo trống
-          </Typography>
-        )}
-        {!isLoading &&
-          dataNoti.length > 0 &&
-          dataNoti.map((item, i) => {
-            let newContent = item.content;
-            const content = item.content;
-            if (content.includes("{name}")) {
-              newContent = newContent.replace("{name}", item.account_send[0].name);
-            }
-
-            return (
-              <Box
-                key={i}
-                sx={{
-                  opacity: !item.status ? 1 : 0.6,
-                }}
-              >
-                <ListItem button={true} className="box_notify">
-                  <ListItemAvatar>
-                    <Avatar alt={item.account_send[0].name} src={item.account_send[0].avatar}>
-                      {item.account_send[0].name.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    onClick={(e) => handleClickLinkNotify(e, item.link)}
-                    primary={newContent}
-                    secondary={convertToTime(item.createdAt)}
-                  ></ListItemText>
-                  <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItem>
-              </Box>
-            );
-          })}
+            primary={newContent}
+            secondary={convertToTime(item.createdAt)}
+          ></ListItemText>
+          <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
+            <DeleteIcon />
+          </IconButton>
+        </ListItem>
       </Box>
     </>
   );
 };
-export default NotifyContent;
+export default memo(NotifyContent);
