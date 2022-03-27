@@ -45,6 +45,7 @@ const NotifyContent = (props) => {
               <Avatar
                 sx={{
                   backgroundColor: (theme) => theme.palette.avatar.default,
+                  borderRadius: "10px",
                 }}
                 alt={item.account_send[0].name}
                 src={item.account_send[0].avatar}

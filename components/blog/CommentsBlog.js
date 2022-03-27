@@ -21,6 +21,8 @@ import socketIOClient from "socket.io-client";
 import convertTime from "../../utils/convertTime";
 let socket;
 const CommentsBlog = (props) => {
+  const hostServer = process.env.HOST_SOCKET;
+
   const { status, session, blogData, router } = props;
   const getPSComment = useRef();
   const [listComments, setListComment] = useState([]);
@@ -56,7 +58,7 @@ const CommentsBlog = (props) => {
     });
     socket.on("send-room-history-likes", async () => {
       if (status === "authenticated") {
-        const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
+        const getHistoryCommentsLiked = await axios.get(`${hostServer}/api/v1/comments/history-like`);
         if (getHistoryCommentsLiked.data.data.length > 0) {
           const newArrayToPush = [];
           const listCommentsLiked = getHistoryCommentsLiked.data.data;
@@ -80,7 +82,7 @@ const CommentsBlog = (props) => {
       if (isGetListComments === false) {
         setIsLoadingComments(true);
         document.removeEventListener("scroll", eventScrollCommentsBox);
-        const getComments = await axios.get("/api/blog/comments/" + blogData[0]._id);
+        const getComments = await axios.get(`${hostServer}/api/v1/comments/detail/` + blogData[0]._id);
         if (isLoadMoreComments) {
           setListComment(getComments.data.data);
         } else {
@@ -109,7 +111,7 @@ const CommentsBlog = (props) => {
 
         if (status === "authenticated") {
           socket.emit("join-room-history-likes", session.user.id);
-          const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
+          const getHistoryCommentsLiked = await axios.get(`${hostServer}/api/v1/comments/history-like`);
           if (getHistoryCommentsLiked.data.data.length > 0) {
             const newArrayToPush = [];
             const listCommentsLiked = getHistoryCommentsLiked.data.data;
@@ -135,11 +137,12 @@ const CommentsBlog = (props) => {
       try {
         setIsPostingComment(true);
         if (replyComment.length === 0) {
-          const result = await axios.post("/api/blog/comments/" + blogData[0]._id, {
+          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + blogData[0]._id, {
             content: comment,
+            type: "blog",
           });
         } else {
-          const result = await axios.post("/api/blog/comments/reply", {
+          const result = await axios.post(`${hostServer}/api/v1/comments/reply`, {
             commentId: replyComment[0].commentId,
             content: comment,
             linkNotify: `/blog/${blogData[0].slug}`,
@@ -170,7 +173,7 @@ const CommentsBlog = (props) => {
     if (status === "authenticated") {
       try {
         setIsLoading(true);
-        const result = await axios.post("/api/blog/comments/like", {
+        const result = await axios.post(`${hostServer}/api/v1/comments/like`, {
           commentId: commentId,
           accountId: accountId,
           linkNotify: `/blog/${blogData[0].slug}`,
@@ -249,9 +252,8 @@ const CommentsBlog = (props) => {
       if (!session || !(session.user.id === item.user[0]._id)) {
         throw new Error("Co loi xay ra!");
       } else {
-        await axios.post("/api/blog/comments/delete", {
+        await axios.post(`${hostServer}/api/v1/comments/delete`, {
           commentId: item._id,
-          userId: session.user.id,
         });
         socket.emit("get-all-comments", blogData[0]._id);
       }

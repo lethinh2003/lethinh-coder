@@ -1,116 +1,268 @@
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
-  Button,
+  Alert,
+  AlertTitle,
   Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  Dialog,
+  DialogTitle,
+  Fade,
   IconButton,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Skeleton,
   Typography,
   Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-  ListItemAvatar,
-  ListItem,
-  ListItemText,
 } from "@mui/material";
-import convertTime from "../../utils/convertTime";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import ReactPaginate from "react-paginate";
-const Items = ({ currentItems, isLoading }) => {
-  return (
-    <>
-      {isLoading &&
-        Array.from({ length: 4 }).map((item, i) => (
-          <ListItem button={true} key={i}>
-            <ListItemAvatar>
-              <Skeleton variant="circular" width={40} height={40} />
-            </ListItemAvatar>
-            <ListItemText>
-              <Skeleton variant="text" width={100} />
-              <Skeleton variant="text" />
-            </ListItemText>
-          </ListItem>
-        ))}
-      {!isLoading &&
-        currentItems &&
-        currentItems.length > 0 &&
-        currentItems.map((item, i) => (
-          <ListItem button={true} key={i}>
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  backgroundColor: (theme) => theme.palette.avatar.default,
-                }}
-                alt={item.user[0].account}
-              >
-                {item.user[0].account.charAt(0)}
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={item.user[0].account} secondary={item.content}></ListItemText>
-          </ListItem>
-        ))}
-    </>
-  );
-};
-const Comments = (props) => {
-  const { data, isLoading } = props;
-  console.log(data);
-  const [currentItems, setCurrentItems] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [itemOffset, setItemOffset] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
-  useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(data.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(data.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, data]);
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { ThreeDots } from "react-loading-icons";
+import socketIOClient from "socket.io-client";
+import convertToTime from "../../utils/convertTime";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % data.length;
-    setItemOffset(newOffset);
+let socket;
+const Comments = () => {
+  const router = useRouter();
+
+  const hostServer = process.env.HOST_SOCKET;
+  const { data: session, status } = useSession();
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataComment, setDataComment] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limitResults, setLimitResults] = useState(5);
+  const [isError, setIsError] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const refreshError = useRef();
+  useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+      clearTimeout(refreshError.current);
+    };
+  }, []);
+  const socketInitializer = () => {
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+    if (status === "authenticated") {
+    }
+  };
+  useEffect(() => {
+    const fetchAPI = async () => {
+      try {
+        setIsError(false);
+        setIsLoading(true);
+        const results = await axios.get(`${hostServer}/api/v1/comments?page=${currentPage}&results=${limitResults}`);
+        if (results.data.length === limitResults) {
+          setCurrentPage(currentPage + 1);
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+        }
+        const dataNotify = results.data.data;
+        setDataComment(dataNotify);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        if (err.response) {
+          setMessageError(err.response.data.message);
+          setIsError(true);
+          refreshError.current = setTimeout(() => {
+            setIsError(false);
+            setMessageError("");
+          }, 5000);
+        }
+      }
+    };
+    if (status === "authenticated") {
+      fetchAPI();
+    }
+  }, []);
+
+  const reFetch = async () => {
+    try {
+      setIsError(false);
+      const results = await axios.get(`${hostServer}/api/v1/comments?page=${currentPage}&results=${limitResults}`);
+      if (results.data.length === limitResults) {
+        setCurrentPage(currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+
+      const dataNotify = results.data.data;
+      const newData = [...dataComment, ...dataNotify];
+
+      setDataComment(newData);
+    } catch (err) {
+      if (err.response) {
+        setMessageError(err.response.data.message);
+        setIsError(true);
+        refreshError.current = setTimeout(() => {
+          setIsError(false);
+          setMessageError("");
+        }, 5000);
+      }
+    }
+  };
+  const handleClickDelete = async (id, codeId) => {
+    try {
+      setIsError(false);
+      await axios.post(`${hostServer}/api/v1/comments`, {
+        commentId: id,
+      });
+      socket.emit("get-all-comments", codeId);
+      const newArray = [...dataComment];
+      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
+      setDataComment(newArrayRemoveItem);
+    } catch (err) {
+      if (err.response) {
+        setMessageError(err.response.data.message);
+        setIsError(true);
+        refreshError.current = setTimeout(() => {
+          setIsError(false);
+          setMessageError("");
+        }, 5000);
+      }
+    }
+  };
+  const ActivitiesTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
+    fontWeight: "bold",
+  });
+  const handleClickLinkComment = (item) => {
+    if (item && item.code[0]) {
+      router.push(`/source-code/${item.code[0].slug}`);
+    } else if (item && item.blog[0]) {
+      router.push(`/blog/${item.blog[0].slug}`);
+    }
   };
 
   return (
     <>
-      <h1 className="title">Comments</h1>
+      <ActivitiesTitle>Bình luận</ActivitiesTitle>
 
-      <Box
-        sx={{
-          width: "100%",
+      {status === "authenticated" && (
+        <>
+          <Box
+            sx={{
+              paddingTop: "16px",
+            }}
+          >
+            <InfiniteScroll
+              dataLength={dataComment.length}
+              next={reFetch}
+              hasMore={hasMore}
+              loader={
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ThreeDots fill="#06bcee" width={30} height={30} />
+                </Box>
+              }
+              height={400}
+              endMessage={
+                <p style={{ textAlign: "center" }}>
+                  <b>Đã hết danh sách</b>
+                </p>
+              }
+            >
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {isLoading &&
+                  Array.from({ length: 4 }).map((item, i) => (
+                    <ListItem
+                      button={true}
+                      key={i}
+                      sx={{
+                        width: "100%",
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Skeleton variant="circular" width={40} height={40} />
+                      </ListItemAvatar>
+                      <ListItemText>
+                        <Skeleton variant="text" height={70} />
+                        <Skeleton variant="text" width={100} />
+                      </ListItemText>
+                    </ListItem>
+                  ))}
+                {isError && (
+                  <Fade in={isError}>
+                    <Alert
+                      sx={{
+                        width: "100%",
+                        borderRadius: "20px",
+                        border: "1px solid #914b31",
+                      }}
+                      severity="error"
+                    >
+                      <AlertTitle>Error</AlertTitle>
+                      {messageError} — <strong>try again!</strong>
+                    </Alert>
+                  </Fade>
+                )}
+                {!isLoading && dataComment.length === 0 && !isError && (
+                  <Typography
+                    sx={{
+                      width: "100%",
+                      textAlign: "center",
+                    }}
+                  >
+                    Danh sách trống
+                  </Typography>
+                )}
+                {!isLoading &&
+                  dataComment.length > 0 &&
+                  dataComment.map((item, i) => {
+                    let newContent = item.content;
+                    const content = item.content;
 
-          gap: "20px",
-          display: "flex",
-
-          flexDirection: "column",
-        }}
-      >
-        <Items currentItems={currentItems} isLoading={isLoading} />
-        <Box>
-          <ReactPaginate
-            containerClassName="pagination"
-            pageLinkClassName="button"
-            activeLinkClassName="active"
-            previousLinkClassName="button"
-            nextLinkClassName="button"
-            breakLabel="..."
-            nextLabel={<NavigateNextIcon />}
-            onPageChange={handlePageClick}
-            pageRangeDisplayed={5}
-            pageCount={pageCount}
-            previousLabel={<NavigateBeforeIcon />}
-            renderOnZeroPageCount={null}
-          />
-        </Box>
-      </Box>
+                    return (
+                      <Box key={i}>
+                        <ListItem button={true}>
+                          <ListItemAvatar>
+                            <Avatar
+                              sx={{
+                                backgroundColor: (theme) => theme.palette.avatar.default,
+                                borderRadius: "10px",
+                              }}
+                              alt={item.code[0] ? item.code[0].title : item.blog[0].title}
+                              src={item.code[0] ? item.code[0].images[0] : item.blog[0].images[0]}
+                            >
+                              {item.code[0] ? item.code[0].title.charAt(0) : item.blog[0].title.charAt(0)}
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            onClick={(e) => handleClickLinkComment(item)}
+                            sx={{
+                              color: (theme) => theme.palette.iconColor.default,
+                            }}
+                            primary={newContent}
+                            secondary={convertToTime(item.createdAt)}
+                          ></ListItemText>
+                          <IconButton
+                            onClick={() =>
+                              handleClickDelete(item._id, item.code[0] ? item.code[0]._id : item.blog[0]._id)
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItem>
+                      </Box>
+                    );
+                  })}
+              </Box>
+            </InfiniteScroll>
+          </Box>
+        </>
+      )}
     </>
   );
 };

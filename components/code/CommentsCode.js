@@ -35,6 +35,7 @@ const CommentsCode = (props) => {
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isTypingComment, setIsTypingComment] = useState(false);
   const inputComment = useRef();
+  const hostServer = process.env.HOST_SOCKET;
 
   useEffect(() => {
     socketInitializer();
@@ -57,7 +58,7 @@ const CommentsCode = (props) => {
     });
     socket.on("send-room-history-likes", async () => {
       if (status === "authenticated") {
-        const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
+        const getHistoryCommentsLiked = await axios.get(`${hostServer}/api/v1/comments/history-like`);
         if (getHistoryCommentsLiked.data.data.length > 0) {
           const newArrayToPush = [];
           const listCommentsLiked = getHistoryCommentsLiked.data.data;
@@ -81,7 +82,7 @@ const CommentsCode = (props) => {
       if (isGetListComments === false) {
         setIsLoadingComments(true);
         document.removeEventListener("scroll", eventScrollCommentsBox);
-        const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
+        const getComments = await axios.get(`${hostServer}/api/v1/comments/detail/` + sourceCode[0]._id);
         if (isLoadMoreComments) {
           setListComment(getComments.data.data);
         } else {
@@ -110,7 +111,7 @@ const CommentsCode = (props) => {
 
         if (status === "authenticated") {
           socket.emit("join-room-history-likes", session.user.id);
-          const getHistoryCommentsLiked = await axios.get("/api/history/history-like");
+          const getHistoryCommentsLiked = await axios.get(`${hostServer}/api/v1/comments/history-like`);
           if (getHistoryCommentsLiked.data.data.length > 0) {
             const newArrayToPush = [];
             const listCommentsLiked = getHistoryCommentsLiked.data.data;
@@ -136,11 +137,12 @@ const CommentsCode = (props) => {
       try {
         setIsPostingComment(true);
         if (replyComment.length === 0) {
-          const result = await axios.post("/api/source-code/comments/" + sourceCode[0]._id, {
+          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + sourceCode[0]._id, {
             content: comment,
+            type: "code",
           });
         } else {
-          const result = await axios.post("/api/source-code/comments/reply", {
+          const result = await axios.post(`${hostServer}/api/v1/comments/reply`, {
             commentId: replyComment[0].commentId,
             content: comment,
             linkNotify: `/source-code/${sourceCode[0].slug}`,
@@ -154,15 +156,6 @@ const CommentsCode = (props) => {
 
         setIsPostingComment(false);
         socket.emit("get-all-comments", sourceCode[0]._id);
-
-        // const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
-        // if (isLoadMoreComments) {
-        //   setListComment(getComments.data.data);
-        // } else {
-        //   setListComment(getComments.data.data.slice(0, 5));
-        // }
-
-        // setListCommentAll(getComments.data.data);
       } catch (err) {
         setIsPostingComment(false);
         console.log(err);
@@ -180,7 +173,7 @@ const CommentsCode = (props) => {
     if (status === "authenticated") {
       try {
         setIsLoading(true);
-        const result = await axios.post("/api/source-code/comments/like", {
+        const result = await axios.post(`${hostServer}/api/v1/comments/like`, {
           commentId: commentId,
           accountId: accountId,
           linkNotify: `/source-code/${sourceCode[0].slug}`,
@@ -259,9 +252,8 @@ const CommentsCode = (props) => {
       if (!session || !(session.user.id === item.user[0]._id)) {
         throw new Error("Co loi xay ra!");
       } else {
-        await axios.post("/api/source-code/comments/delete", {
+        await axios.post(`${hostServer}/api/v1/comments/delete`, {
           commentId: item._id,
-          userId: session.user.id,
         });
         socket.emit("get-all-comments", sourceCode[0]._id);
       }

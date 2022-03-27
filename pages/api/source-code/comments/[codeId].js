@@ -25,7 +25,7 @@ const handle = async (req, res) => {
     await limiter.check(res, 20, "CACHE_TOKEN"); // 20 requests per minute
     if (req.method === "GET") {
       const results = await Comment.find({
-        code: codeId,
+        code: { $in: [codeId] },
       })
         .populate({
           path: "user",
@@ -34,6 +34,10 @@ const handle = async (req, res) => {
         .populate({
           path: "reply",
           select: "-__v -password",
+        })
+        .populate({
+          path: "code",
+          select: "-__v -link",
         })
 
         .sort("-_id")
@@ -47,10 +51,8 @@ const handle = async (req, res) => {
         const { content } = req.body;
         const saveToDB = await Comment.create({
           user: [session.user.id],
-          code: codeId,
+          code: [codeId],
           content: content,
-          account: session.user.account,
-          role: session.user.role,
         });
         return res.status(200).json({
           status: "success",

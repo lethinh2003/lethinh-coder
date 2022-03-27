@@ -19,12 +19,6 @@ const repCommentSchema = new mongoose.Schema(
     content: {
       type: String,
       trim: true,
-      minlength: [5, "content must lengths greater or equal 5"],
-      required: [true, "Missing content"],
-    },
-    content: {
-      type: String,
-      trim: true,
       minlength: [5, "Content must lengths greater or equal 5"],
       required: [true, "Missing content"],
     },

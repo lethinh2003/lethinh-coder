@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
-import slugify from "slugify";
-import validator from "validator";
-import uniqid from "uniqid";
 import RepComment from "./RepComment";
+import Code from "./Code";
+import Blog from "./Blog";
 const commentSchema = new mongoose.Schema(
   {
     user: [
@@ -18,15 +17,18 @@ const commentSchema = new mongoose.Schema(
         ref: RepComment,
       },
     ],
-
-    code: {
-      type: String,
-      trim: true,
-    },
-    blog: {
-      type: String,
-      trim: true,
-    },
+    code: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: Code,
+      },
+    ],
+    blog: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: Blog,
+      },
+    ],
     content: {
       type: String,
       trim: true,

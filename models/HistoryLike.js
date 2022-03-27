@@ -1,31 +1,27 @@
 import mongoose from "mongoose";
-import slugify from "slugify";
-import validator from "validator";
-import ip from "ip";
+import User from "./User";
+import Comment from "./Comment";
+
 const HistoryLikeSchema = new mongoose.Schema({
-  account: {
-    type: String,
-    trim: true,
-    minlength: [6, "Account must lengths greater or equal 6"],
-    required: [true, "Missing account"],
-  },
+  user: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: User,
+      required: [true, "Missing user"],
+    },
+  ],
   comment: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: "Comment",
+      ref: Comment,
+      required: [true, "Missing comment"],
     },
   ],
-  ipAddress: {
-    type: String,
-  },
   createdAt: {
     type: String,
     default: () => new Date().toISOString(),
   },
 });
-HistoryLikeSchema.pre("save", async function (next) {
-  this.ipAddress = ip.address();
-  next();
-});
+
 const HistoryLike = mongoose.models.HistoryLike || mongoose.model("HistoryLike", HistoryLikeSchema);
 export default HistoryLike;

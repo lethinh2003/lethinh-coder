@@ -11,6 +11,7 @@ import {
   ListItemText,
   Skeleton,
   Typography,
+  Avatar,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
@@ -20,24 +21,23 @@ import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import socketIOClient from "socket.io-client";
-import NotifyContent from "../../components/homePage/NotifyContent";
+import convertToTime from "../../utils/convertTime";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 let socket;
-const Signup = () => {
+const Comments = () => {
+  const router = useRouter();
+
   const hostServer = process.env.HOST_SOCKET;
   const { data: session, status } = useSession();
-
-  const router = useRouter();
-  const [isClickNotify, setIsClickNotify] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dataNoti, setDataNoti] = useState([]);
-  const [numberNotify, setNumberNotify] = useState(0);
+  const [dataComment, setDataComment] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [limitResults, setLimitResults] = useState(5);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
-  const refreshSocket = useRef();
   useEffect(() => {
     socketInitializer();
     return () => {
@@ -48,8 +48,6 @@ const Signup = () => {
   const socketInitializer = () => {
     socket = socketIOClient.connect(process.env.HOST_SOCKET);
     if (status === "authenticated") {
-      socket.emit("join-notify", session.user.id);
-      socket.emit("get-notify", session.user.id);
     }
   };
   useEffect(() => {
@@ -57,8 +55,9 @@ const Signup = () => {
       try {
         setIsError(false);
         setIsLoading(true);
-        const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-        socket.emit("read-notify", session.user.id);
+        const results = await axios.get(
+          `${hostServer}/api/v1/reply-comments?page=${currentPage}&results=${limitResults}`
+        );
         if (results.data.length === limitResults) {
           setCurrentPage(currentPage + 1);
           setHasMore(true);
@@ -66,7 +65,8 @@ const Signup = () => {
           setHasMore(false);
         }
         const dataNotify = results.data.data;
-        setDataNoti(dataNotify);
+
+        setDataComment(dataNotify);
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
@@ -88,7 +88,9 @@ const Signup = () => {
   const reFetch = async () => {
     try {
       setIsError(false);
-      const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
+      const results = await axios.get(
+        `${hostServer}/api/v1/reply-comments?page=${currentPage}&results=${limitResults}`
+      );
       if (results.data.length === limitResults) {
         setCurrentPage(currentPage + 1);
         setHasMore(true);
@@ -97,9 +99,9 @@ const Signup = () => {
       }
 
       const dataNotify = results.data.data;
-      const newData = [...dataNoti, ...dataNotify];
+      const newData = [...dataComment, ...dataNotify];
 
-      setDataNoti(newData);
+      setDataComment(newData);
     } catch (err) {
       if (err.response) {
         setMessageError(err.response.data.message);
@@ -111,15 +113,17 @@ const Signup = () => {
       }
     }
   };
-  const handleClickDelete = async (id) => {
+  const handleClickDelete = async (id, codeId) => {
     try {
       setIsError(false);
-      await axios.post(`${hostServer}/api/v1/notifies`, {
-        notifyId: id,
+      await axios.post(`${hostServer}/api/v1/reply-comments`, {
+        commentId: id,
       });
-      const newArray = [...dataNoti];
+      socket.emit("get-all-comments", codeId);
+
+      const newArray = [...dataComment];
       const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataNoti(newArrayRemoveItem);
+      setDataComment(newArrayRemoveItem);
     } catch (err) {
       if (err.response) {
         setMessageError(err.response.data.message);
@@ -131,21 +135,23 @@ const Signup = () => {
       }
     }
   };
-  const NotifyButton = styled(IconButton)({});
-  const DialogComponent = styled(Dialog)(({ theme }) => ({
-    "& .MuiDialog-paper": {
-      borderRadius: "20px",
-      backgroundColor: theme.palette.dialog.bgColor.default,
-      border: `1px solid ${theme.palette.dialog.borderColor.default}`,
-      margin: 0,
-    },
-  }));
-  const DialogTitleComponent = styled(DialogTitle)(({ theme }) => ({
-    borderBottom: `1px solid ${theme.palette.dialog.borderColor.bottom}`,
+  const ActivitiesTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
     fontWeight: "bold",
-  }));
+  });
+  const handleClickLinkComment = (item) => {
+    if (item && item.comment[0].code[0]) {
+      router.push(`/source-code/${item.comment[0].code[0].slug}`);
+    } else if (item && item.comment[0].blog[0]) {
+      router.push(`/blog/${item.comment[0].blog[0].slug}`);
+    }
+  };
+
   return (
     <>
+      <ActivitiesTitle>Rep Bình luận</ActivitiesTitle>
+
       {status === "authenticated" && (
         <>
           <Box
@@ -154,7 +160,7 @@ const Signup = () => {
             }}
           >
             <InfiniteScroll
-              dataLength={dataNoti.length}
+              dataLength={dataComment.length}
               next={reFetch}
               hasMore={hasMore}
               loader={
@@ -170,7 +176,7 @@ const Signup = () => {
               height={400}
               endMessage={
                 <p style={{ textAlign: "center" }}>
-                  <b>Đã hết thông báo</b>
+                  <b>Đã hết danh sách</b>
                 </p>
               }
             >
@@ -208,27 +214,61 @@ const Signup = () => {
                     </Alert>
                   </Fade>
                 )}
-                {!isLoading && dataNoti.length === 0 && !isError && (
+                {!isLoading && dataComment.length === 0 && !isError && (
                   <Typography
                     sx={{
                       width: "100%",
                       textAlign: "center",
                     }}
                   >
-                    Thông báo trống
+                    Danh sách trống
                   </Typography>
                 )}
                 {!isLoading &&
-                  dataNoti.length > 0 &&
-                  dataNoti.map((item, i) => {
+                  dataComment.length > 0 &&
+                  dataComment.map((item, i) => {
                     let newContent = item.content;
                     const content = item.content;
-                    if (content.includes("{name}")) {
-                      newContent = newContent.replace("{name}", item.account_send[0].name);
-                    }
 
                     return (
-                      <NotifyContent item={item} i={i} newContent={newContent} handleClickDelete={handleClickDelete} />
+                      <Box key={i}>
+                        <ListItem button={true}>
+                          <ListItemAvatar>
+                            <Avatar
+                              sx={{
+                                backgroundColor: (theme) => theme.palette.avatar.default,
+                                borderRadius: "10px",
+                              }}
+                              alt={
+                                item.comment[0].code[0] ? item.comment[0].code[0].title : item.comment[0].blog[0].title
+                              }
+                              src={
+                                item.comment[0].code[0]
+                                  ? item.comment[0].code[0].images[0]
+                                  : item.comment[0].blog[0].images[0]
+                              }
+                            ></Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            onClick={(e) => handleClickLinkComment(item)}
+                            sx={{
+                              color: (theme) => theme.palette.iconColor.default,
+                            }}
+                            primary={newContent}
+                            secondary={convertToTime(item.createdAt)}
+                          ></ListItemText>
+                          <IconButton
+                            onClick={() =>
+                              handleClickDelete(
+                                item._id,
+                                item.comment[0].code[0] ? item.comment[0].code[0]._id : item.comment[0].blog[0]._id
+                              )
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItem>
+                      </Box>
                     );
                   })}
               </Box>
@@ -239,5 +279,4 @@ const Signup = () => {
     </>
   );
 };
-
-export default Signup;
+export default Comments;
