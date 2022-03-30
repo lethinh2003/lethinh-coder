@@ -67,11 +67,12 @@ const DescCode = (props) => {
                     alignItems: "center",
                   }}
                 >
-                  {status === "authenticated" && sourceCode[0].costs === 0 ? (
+                  {status === "authenticated" && sourceCode[0].costs === 0 && (
                     <Button variant="outlined" onClick={() => handleClickOpenEmail()}>
                       Download Code
                     </Button>
-                  ) : (
+                  )}
+                  {status === "unauthenticated" && sourceCode[0].costs === 0 && (
                     <Button variant="outlined">Đăng Nhập Để Download Code</Button>
                   )}
                 </Typography>

@@ -22,19 +22,28 @@ import NumberFormat from "react-number-format";
 import ReactPaginate from "react-paginate";
 import Layout from "../../components/Layout";
 import { styled } from "@mui/material/styles";
-
+import { motion } from "framer-motion";
+import FilterCode from "../../components/code/FilterCode";
 const Items = ({ currentItems, isLoading }) => {
-  const CardCode = styled(Card)({
+  const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
-    minWidth: 300,
+    minWidth: 200,
     overflow: "unset",
     scrollSnapAlign: "center",
-  });
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
+
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
   const CardContentCode = styled(CardContent)({
     display: "flex",
     flexDirection: "column",
     padding: "20px 0",
+    maxHeight: "130px",
+    height: "100%",
   });
   const CardContentCodeTitle = styled(Typography)({
     fontFamily: "Noto Sans",
@@ -42,22 +51,15 @@ const Items = ({ currentItems, isLoading }) => {
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.8,
-    },
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "30px",
+    fontSize: "25px",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "20px",
+    fontSize: "18px",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",
@@ -141,7 +143,13 @@ const Items = ({ currentItems, isLoading }) => {
           currentItems.length > 0 &&
           currentItems.map((item, i) => {
             return (
-              <CardCode key={i}>
+              <CardCode
+                key={i}
+                as={motion.div}
+                initial={{ opacity: 0, scale: 1, x: "-100%" }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ delay: i / 10 }}
+              >
                 <CardMedia
                   className="code-container__image"
                   component="img"
@@ -158,24 +166,25 @@ const Items = ({ currentItems, isLoading }) => {
                       {item.title}
                     </CardContentCodeTitle>
                   </Link>
+
                   <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                     {item.desc}
                   </Typography>
-                  <Typography sx={{ marginTop: "20px", display: "flex" }}>
-                    {item.costs > 0 && (
-                      <CodeButton variant="outlined">
-                        <NumberFormat
-                          value={item.costs}
-                          displayType={"text"}
-                          thousandSeparator={"."}
-                          decimalSeparator={","}
-                          suffix={" VNĐ"}
-                        />{" "}
-                      </CodeButton>
-                    )}
-                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                  </Typography>
                 </CardContentCode>
+                <Typography sx={{ marginTop: "20px" }}>
+                  {item.costs > 0 && (
+                    <CodeButton variant="outlined">
+                      <NumberFormat
+                        value={item.costs}
+                        displayType={"text"}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                        suffix={" VNĐ"}
+                      />
+                    </CodeButton>
+                  )}
+                  {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
+                </Typography>
               </CardCode>
             );
           })}
@@ -184,6 +193,11 @@ const Items = ({ currentItems, isLoading }) => {
   );
 };
 const SourceCode = () => {
+  const CodeTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
+    fontWeight: "bold",
+  });
   const optionsPrice = [
     { label: "Giá giảm dần", key: "-costs" },
     { label: "Giá tăng dần", key: "costs" },
@@ -237,29 +251,6 @@ const SourceCode = () => {
     window.scrollTo(0, AllSourceCodeRef.current.offsetTop);
   };
 
-  const handleClickFilter = async () => {
-    const arraySort = [];
-    if (valueCosts) {
-      arraySort.push(valueCosts.key);
-    }
-    if (valueDate) {
-      arraySort.push(valueDate.key);
-    }
-
-    const newArraySort = arraySort.join(",");
-
-    try {
-      setIsLoading(true);
-      const result = await axios.get(`/api/source-code?sort=${newArraySort}&label=${inputValueLabels.toLowerCase()}`);
-      setSourceCode(result.data.data);
-
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      console.log(err);
-    }
-  };
-
   return (
     <>
       <Head>
@@ -302,161 +293,21 @@ const SourceCode = () => {
             component="h1"
             className="title"
             sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
-            ref={AllSourceCodeRef}
           >
             All Source Code
           </Typography>
-          {!isLoading && (
-            <>
-              <Box sx={{ p: 2, display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-                <Autocomplete
-                  disablePortal
-                  value={valueCosts}
-                  onChange={(event, newValue) => {
-                    setValueCosts(newValue);
-                  }}
-                  inputValue={inputValueCosts}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueCosts(newInputValue);
-                  }}
-                  options={optionsPrice}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Giá" />}
-                />
-                <Autocomplete
-                  disablePortal
-                  value={valueLabels}
-                  onChange={(event, newValue) => {
-                    setValueLabels(newValue);
-                  }}
-                  inputValue={inputValueLabels}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueLabels(newInputValue);
-                  }}
-                  options={optionsLabel}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Labels" />}
-                />
-                <Autocomplete
-                  disablePortal
-                  value={valueDate}
-                  onChange={(event, newValue) => {
-                    setValueDate(newValue);
-                  }}
-                  inputValue={inputValueDate}
-                  onInputChange={(event, newInputValue) => {
-                    setInputValueDate(newInputValue);
-                  }}
-                  options={optionsDate}
-                  isOptionEqualToValue={(option, value) => option.key === value.key}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => <TextField {...params} label="Thời gian" />}
-                />
-              </Box>
-              <Button variant="contained" onClick={handleClickFilter}>
-                Lọc
-              </Button>
-            </>
-          )}
-          {/* <Box
+
+          <FilterCode setIsLoading={setIsLoading} setSourceCode={setSourceCode} />
+
+          <CodeTitle
+            component="h1"
             sx={{
-              width: "100%",
-              flexWrap: "wrap",
-              bgcolor: "background.default",
-              justifyContent: "space-between",
-              color: "text.primary",
-              gap: "10px",
-              padding: "40px 20px",
-              display: "grid",
-              gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+              padding: { xs: "0 10px", md: "0 20px" },
             }}
+            ref={AllSourceCodeRef}
           >
-            {isLoading &&
-              Array.from({ length: 4 }).map((item, i) => (
-                <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
-                  <Skeleton variant="rectangular" width={"100%"} height={200} />
-                  <Box sx={{ p: 2 }}>
-                    <Skeleton />
-                    <Skeleton />
-                  </Box>
-                  <Box sx={{ p: 2, borderRadius: "20px" }}>
-                    <Skeleton sx={{ borderRadius: "5px" }} variant="rectangular" width={100} height={50} />
-                  </Box>
-                  <Box sx={{ p: 2, display: "flex", gap: "10px" }}>
-                    <Skeleton variant="rectangular" width={100} height={40} />
-                    <Skeleton variant="rectangular" width={100} height={40} />
-                  </Box>
-                </Card>
-              ))}
-            {!isLoading &&
-              sourceCode.length > 0 &&
-              sourceCode.map((item, i) => {
-                return (
-                  <Card sx={{ minWidth: 200 }} key={i} className={`code-container`}>
-                    <CardMedia
-                      className="code-container__image"
-                      component="img"
-                      height="140"
-                      image={item.images[0]}
-                      alt={item.title}
-                    />
-                    <CardContent className="code-container__body">
-                      <Typography
-                        sx={{
-                          fontFamily: "Noto Sans",
-                          fontSize: "20px",
-                          fontWeight: "bold",
-                          textTransform: "capitalize",
-                        }}
-                        variant="h5"
-                        component="div"
-                      >
-                        {item.title}
-                      </Typography>
-
-                      <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                        {item.desc}
-                      </Typography>
-                      <Typography sx={{ marginTop: "20px" }}>
-                        {item.costs > 0 && (
-                          <Button variant="contained" color="success">
-                            <NumberFormat
-                              value={item.costs}
-                              displayType={"text"}
-                              thousandSeparator={"."}
-                              decimalSeparator={","}
-                              suffix={" VNĐ"}
-                            />
-                          </Button>
-                        )}
-                        {item.costs === 0 && (
-                          <Button variant="contained">
-                            Free <MoneyOffIcon />
-                          </Button>
-                        )}
-                      </Typography>
-                    </CardContent>
-
-                    <CardActions
-                      sx={{
-                        paddingTop: "20px",
-                      }}
-                    >
-                      <Button size="small" color="primary">
-                        Share
-                      </Button>
-                      <Link href={`/source-code/${item.slug}`}>
-                        <Button size="small" color="primary">
-                          Chi tiết
-                        </Button>
-                      </Link>
-                    </CardActions>
-                  </Card>
-                );
-              })}
-          </Box> */}
+            Kết quả
+          </CodeTitle>
           <Items currentItems={currentItems} isLoading={isLoading} />
           <Box>
             <ReactPaginate

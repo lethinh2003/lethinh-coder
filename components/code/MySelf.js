@@ -3,16 +3,62 @@ import { Box, IconButton, Typography, Card, CardContent, CardMedia } from "@mui/
 import { SiZalo } from "react-icons/si";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
-
+import { styled } from "@mui/material/styles";
 const MySelf = (props) => {
   const { systemData } = props;
+  const CardCode = styled(Card)(({ theme }) => ({
+    padding: "15px",
+    borderRadius: "20px",
+    minWidth: 300,
+    overflow: "unset",
+    scrollSnapAlign: "center",
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
 
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
+  const CardContentCode = styled(CardContent)({
+    display: "flex",
+    flexDirection: "column",
+    padding: "20px 0",
+    maxHeight: "130px",
+    height: "100%",
+  });
+  const CardContentCodeTitle = styled(Typography)({
+    fontFamily: "Noto Sans",
+    fontSize: "20px",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    cursor: "pointer",
+  });
+  const CodeTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "25px",
+    fontWeight: "bold",
+  });
+  const CodeTitleSecond = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "18px",
+    fontWeight: "bold",
+    opacity: 0.8,
+    cursor: "pointer",
+
+    "&:hover": {
+      opacity: 0.7,
+    },
+
+    "&:active, &:focus": {
+      color: "#0b9ad1",
+    },
+  });
   return (
     <>
       {systemData.length > 0 && (
         <>
           <h1 className="title">MYSELF</h1>
-          <Card sx={{ display: "flex", padding: "20px 0px" }}>
+          <CardCode sx={{ display: "flex", padding: "20px 0px" }}>
             <Box
               sx={{
                 display: "flex",
@@ -68,7 +114,7 @@ const MySelf = (props) => {
                 </a>
               </Box>
             </Box>
-          </Card>
+          </CardCode>
         </>
       )}
     </>

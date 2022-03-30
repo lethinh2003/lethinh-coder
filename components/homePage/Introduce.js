@@ -18,6 +18,7 @@ import NumberFormat from "react-number-format";
 import Link from "next/link";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { useTheme } from "@mui/material/styles";
+import { motion } from "framer-motion";
 
 import { styled } from "@mui/material/styles";
 
@@ -97,11 +98,20 @@ const Introduce = (props) => {
                   sx={{
                     fontSize: { xs: "25px", md: "30px" },
                   }}
-                  component="div"
+                  as={motion.div}
+                  initial={{ opacity: 0, scale: 1 }}
+                  animate={{ opacity: 1, scale: 1.04, y: [-100, 0] }}
                 >
                   Tải xuống mã nguồn miễn phí
                 </IntroduceTitle>
-                <IntroduceDesc variant="span">Hệ thống chia sẻ mã nguồn miễn phí, chất lượng</IntroduceDesc>
+                <IntroduceDesc
+                  variant="span"
+                  as={motion.div}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1, scale: 1.04, y: [100, 0] }}
+                >
+                  Hệ thống chia sẻ mã nguồn miễn phí, chất lượng
+                </IntroduceDesc>
               </CardContent>
               <CardActions
                 sx={{
@@ -153,7 +163,15 @@ const Introduce = (props) => {
             >
               <Box>
                 <CardContent>
-                  <IntroduceDesc variant="span">Các bài blog đa dạng, hấp dẫn</IntroduceDesc>
+                  <IntroduceDesc
+                    variant="span"
+                    as={motion.div}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, scale: 1.04, x: [100, 0] }}
+                    transition={{ ease: "easeOut", duration: 1 }}
+                  >
+                    Các bài blog đa dạng, hấp dẫn
+                  </IntroduceDesc>
                 </CardContent>
                 <CardActions
                   sx={{
@@ -192,7 +210,15 @@ const Introduce = (props) => {
             >
               <Box>
                 <CardContent>
-                  <IntroduceDesc variant="span">Chia sẻ các thủ thuật máy tính</IntroduceDesc>
+                  <IntroduceDesc
+                    variant="span"
+                    as={motion.div}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, scale: 1.04, y: [50, 0] }}
+                    transition={{ ease: "easeOut", duration: 1 }}
+                  >
+                    Chia sẻ các thủ thuật máy tính
+                  </IntroduceDesc>
                 </CardContent>
                 <CardActions
                   sx={{

@@ -9,17 +9,25 @@ import NumberFormat from "react-number-format";
 
 const RelationCode = (props) => {
   const { sourceCodeRelationship } = props;
-  const CardCode = styled(Card)({
+  const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
     minWidth: 300,
     overflow: "unset",
     scrollSnapAlign: "center",
-  });
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
+
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
   const CardContentCode = styled(CardContent)({
     display: "flex",
     flexDirection: "column",
     padding: "20px 0",
+    maxHeight: "130px",
+    height: "100%",
   });
   const CardContentCodeTitle = styled(Typography)({
     fontFamily: "Noto Sans",
@@ -27,22 +35,15 @@ const RelationCode = (props) => {
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.8,
-    },
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "30px",
+    fontSize: "25px",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "20px",
+    fontSize: "18px",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",
@@ -123,21 +124,21 @@ const RelationCode = (props) => {
                     <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                       {item.desc}
                     </Typography>
-                    <Typography sx={{ marginTop: "20px", display: "flex" }}>
-                      {item.costs > 0 && (
-                        <CodeButton variant="outlined">
-                          <NumberFormat
-                            value={item.costs}
-                            displayType={"text"}
-                            thousandSeparator={"."}
-                            decimalSeparator={","}
-                            suffix={" VNĐ"}
-                          />{" "}
-                        </CodeButton>
-                      )}
-                      {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                    </Typography>
                   </CardContentCode>
+                  <Typography sx={{ marginTop: "20px", display: "flex" }}>
+                    {item.costs > 0 && (
+                      <CodeButton variant="outlined">
+                        <NumberFormat
+                          value={item.costs}
+                          displayType={"text"}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          suffix={" VNĐ"}
+                        />{" "}
+                      </CodeButton>
+                    )}
+                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
+                  </Typography>
                 </CardCode>
               );
             })}
@@ -153,7 +154,7 @@ const RelationCode = (props) => {
           gap: "10px",
           padding: "40px 20px",
           display: { xs: "none", md: "grid" },
-          gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
+          gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
         }}
       >
         {sourceCodeRelationship.length > 0 &&
@@ -180,21 +181,21 @@ const RelationCode = (props) => {
                   <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
                     {item.desc}
                   </Typography>
-                  <Typography sx={{ marginTop: "20px" }}>
-                    {item.costs > 0 && (
-                      <CodeButton variant="outlined">
-                        <NumberFormat
-                          value={item.costs}
-                          displayType={"text"}
-                          thousandSeparator={"."}
-                          decimalSeparator={","}
-                          suffix={" VNĐ"}
-                        />
-                      </CodeButton>
-                    )}
-                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                  </Typography>
                 </CardContentCode>
+                <Typography sx={{ marginTop: "20px" }}>
+                  {item.costs > 0 && (
+                    <CodeButton variant="outlined">
+                      <NumberFormat
+                        value={item.costs}
+                        displayType={"text"}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                        suffix={" VNĐ"}
+                      />
+                    </CodeButton>
+                  )}
+                  {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
+                </Typography>
               </CardCode>
             );
           })}

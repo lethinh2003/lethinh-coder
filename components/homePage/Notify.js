@@ -23,7 +23,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
 import socketIOClient from "socket.io-client";
 import NotifyContent from "./NotifyContent";
-
+import { motion } from "framer-motion";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 let socket;
 const Notify = () => {
   const hostServer = process.env.HOST_SOCKET;
@@ -162,7 +163,10 @@ const Notify = () => {
     boxShadow:
       "0px 11px 15px -7px rgb(0 0 0 / 20%), 0px 24px 38px 3px rgb(0 0 0 / 14%), 0px 9px 46px 8px rgb(0 0 0 / 12%)",
   }));
-
+  const variants = {
+    open: { opacity: 1, x: 0 },
+    closed: { opacity: 0, x: "-100%" },
+  };
   return (
     <>
       {status === "authenticated" && (
@@ -182,8 +186,14 @@ const Notify = () => {
           </NotifyButton>
 
           {isClickNotify && (
-            <Fade in={isClickNotify}>
-              <NotifyContainer>
+            <ClickAwayListener onClickAway={() => setIsClickNotify(false)}>
+              <NotifyContainer
+                as={motion.div}
+                initial={{ scale: 0 }}
+                animate={{
+                  scale: 1,
+                }}
+              >
                 <TransitionGroup>
                   <Box
                     sx={{
@@ -269,7 +279,7 @@ const Notify = () => {
                   </Box>
                 </TransitionGroup>
               </NotifyContainer>
-            </Fade>
+            </ClickAwayListener>
           )}
           {/* 
           <DialogComponent open={isClickNotify} onClose={handleClose}>

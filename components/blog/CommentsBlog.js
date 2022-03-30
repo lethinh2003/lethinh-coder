@@ -19,24 +19,29 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
 import convertTime from "../../utils/convertTime";
-let socket;
-const CommentsBlog = (props) => {
-  const hostServer = process.env.HOST_SOCKET;
+import InfiniteScroll from "react-infinite-scroll-component";
+import { ThreeDots } from "react-loading-icons";
 
+let socket;
+const CommentsCode = (props) => {
   const { status, session, blogData, router } = props;
   const getPSComment = useRef();
   const [listComments, setListComment] = useState([]);
   const [listCommentsAll, setListCommentAll] = useState([]);
   const [replyComment, setReplyComment] = useState([]);
   const [isLoadMoreComments, setIsLoadMoreComments] = useState(false);
-  const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [comment, setComment] = useState("");
   const [isComment, setIsComment] = useState(false);
   const [isGetListComments, setIsGetListComments] = useState(false);
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isTypingComment, setIsTypingComment] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limitResults, setLimitResults] = useState(5);
   const inputComment = useRef();
+  const hostServer = process.env.HOST_SOCKET;
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     socketInitializer();
@@ -49,11 +54,9 @@ const CommentsBlog = (props) => {
     socket.emit("join-room", blogData[0]._id);
     socket.on("send-all-comments", async (getComments) => {
       setIsGetListComments(true);
-      if (isLoadMoreComments) {
-        setListComment(getComments);
-      } else {
-        setListComment(getComments.slice(0, 5));
-      }
+
+      setListComment(getComments);
+
       setListCommentAll(getComments);
     });
     socket.on("send-room-history-likes", async () => {
@@ -75,19 +78,26 @@ const CommentsBlog = (props) => {
     const eventScrollCommentsBox = async () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
       if (c >= getPSComment.current.offsetTop - 300 && isGetListComments === false) {
+        setCurrentPage(1);
         await getAPI();
       }
     };
     const getAPI = async () => {
       if (isGetListComments === false) {
         setIsLoadingComments(true);
+
         document.removeEventListener("scroll", eventScrollCommentsBox);
-        const getComments = await axios.get(`${hostServer}/api/v1/comments/detail/` + blogData[0]._id);
-        if (isLoadMoreComments) {
-          setListComment(getComments.data.data);
+        const getComments = await axios.get(
+          `${hostServer}/api/v1/comments/detail/` + blogData[0]._id + `?page=${currentPage}&results=${limitResults}`
+        );
+        if (getComments.data.length === limitResults) {
+          setCurrentPage(currentPage + 1);
+          setHasMore(true);
         } else {
-          setListComment(getComments.data.data.slice(0, 5));
+          setHasMore(false);
         }
+        setListComment(getComments.data.data);
+
         setListCommentAll(getComments.data.data);
         setIsGetListComments(true);
         setIsLoadingComments(false);
@@ -98,7 +108,25 @@ const CommentsBlog = (props) => {
       document.removeEventListener("scroll", eventScrollCommentsBox);
     };
   }, [blogData, isGetListComments]);
+  const reFetch = async () => {
+    try {
+      const results = await axios.get(
+        `${hostServer}/api/v1/comments/detail/` + blogData[0]._id + `?page=${currentPage}&results=${limitResults}`
+      );
+      if (results.data.length === limitResults) {
+        setCurrentPage(currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+      const dataNotify = results.data.data;
+      const newData = [...listComments, ...dataNotify];
 
+      setListComment(newData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     if (status !== "authenticated") {
       setReplyComment([]);
@@ -148,7 +176,6 @@ const CommentsBlog = (props) => {
             linkNotify: `/blog/${blogData[0].slug}`,
           });
           socket.emit("get-notify", receiveId);
-
           setReplyComment([]);
         }
         setComment("");
@@ -176,7 +203,7 @@ const CommentsBlog = (props) => {
         const result = await axios.post(`${hostServer}/api/v1/comments/like`, {
           commentId: commentId,
           accountId: accountId,
-          linkNotify: `/blog/${blogData[0].slug}`,
+          linkNotify: `/source-code/${blogData[0].slug}`,
         });
         socket.emit("send-room-history-likes", session.user.id);
 
@@ -199,7 +226,7 @@ const CommentsBlog = (props) => {
         }
         socket.emit("get-all-comments", blogData[0]._id);
 
-        // const getComments = await axios.get("/api/blog/comments/" + blogData[0]._id);
+        // const getComments = await axios.get("/api/source-code/comments/" + blogData[0]._id);
         // setListComment(getComments.data.data.slice(0, 5));
         // setListCommentAll(getComments.data.data);
 
@@ -327,6 +354,7 @@ const CommentsBlog = (props) => {
           </Button>
         )}
       </form>
+
       <Box
         sx={{
           display: "flex",
@@ -335,159 +363,172 @@ const CommentsBlog = (props) => {
           padding: { xs: "0 10px", md: "0 40px" },
         }}
       >
-        {isTypingComment && <h3>Ai đó đang nhập bình luận ...</h3>}
-        {isPostingComment && (
-          <CircularProgress
-            sx={{
-              alignSelf: "center",
-            }}
-          />
-        )}
-        {isLoadingComments &&
-          Array.from({ length: 4 }).map((item, i) => (
-            <ListItem button={true} key={i}>
-              <ListItemAvatar>
-                <Skeleton variant="circular" width={40} height={40} />
-              </ListItemAvatar>
-              <ListItemText>
-                <Skeleton variant="text" width={100} />
-                <Skeleton variant="text" />
-              </ListItemText>
-            </ListItem>
-          ))}
-        {listComments.length === 0 && !isLoadingComments && <Typography>Hãy là người đầu tiên bình luận</Typography>}
-        {listComments.length > 0 &&
-          listComments.map((item, i) => (
+        <InfiniteScroll
+          dataLength={listComments.length}
+          next={reFetch}
+          hasMore={hasMore}
+          loader={
             <Box
-              key={i}
               sx={{
                 display: "flex",
-                flexDirection: "column",
-                fontFamily: "Noto Sans",
+                justifyContent: "center",
               }}
             >
-              <ListItem button={true}>
+              <ThreeDots fill="#06bcee" width={30} height={30} />
+            </Box>
+          }
+          height={400}
+        >
+          {isTypingComment && <h3>Ai đó đang nhập bình luận ...</h3>}
+          {isPostingComment && (
+            <CircularProgress
+              sx={{
+                alignSelf: "center",
+              }}
+            />
+          )}
+          {isLoadingComments &&
+            Array.from({ length: 4 }).map((item, i) => (
+              <ListItem button={true} key={i}>
                 <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      backgroundColor: (theme) => theme.palette.avatar.default,
-                    }}
-                    alt={item.user[0].name}
-                    src={item.user[0].avatar}
-                  >
-                    {item.user[0].name.charAt(0)}
-                  </Avatar>
+                  <Skeleton variant="circular" width={40} height={40} />
                 </ListItemAvatar>
-                <ListItemText
-                  primary={`${item.user[0].name} - ${item.user[0].role === "admin" ? "Admin" : "Member"} `}
-                  secondary={item.content}
-                ></ListItemText>
-                <IconButton
-                  size="large"
-                  aria-label="show likes"
-                  color="inherit"
-                  onClick={
-                    status === "authenticated"
-                      ? () => handleCLickLikeComment(item._id, session.user.id, item.user[0]._id)
-                      : null
-                  }
-                >
-                  <Badge badgeContent={item.likes.length} color="error">
-                    <ThumbUpAltIcon
-                      sx={{
-                        color: checkLikedComment(item._id) ? "#2d82d6" : "inherit",
-                      }}
-                    />
-                  </Badge>
-                </IconButton>
+                <ListItemText>
+                  <Skeleton variant="text" width={100} />
+                  <Skeleton variant="text" />
+                </ListItemText>
               </ListItem>
-
-              <Typography
+            ))}
+          {listComments.length === 0 && !isLoadingComments && <Typography>Hãy là người đầu tiên bình luận</Typography>}
+          {listComments.length > 0 &&
+            listComments.map((item, i) => (
+              <Box
+                key={i}
                 sx={{
                   display: "flex",
-                  flexWrap: "wrap",
-                  gap: "5px",
+                  flexDirection: "column",
+                  fontFamily: "Noto Sans",
                 }}
               >
+                <ListItem button={true}>
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{
+                        backgroundColor: (theme) => theme.palette.avatar.default,
+                        borderRadius: "10px",
+                      }}
+                      alt={item.user[0].name}
+                      src={item.user[0].avatar}
+                    >
+                      {item.user[0].name.charAt(0)}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={`${item.user[0].name} - ${item.user[0].role === "admin" ? "Admin" : "Member"} `}
+                    secondary={item.content}
+                  ></ListItemText>
+                  <IconButton
+                    size="large"
+                    aria-label="show likes"
+                    color="inherit"
+                    onClick={
+                      status === "authenticated"
+                        ? () => handleCLickLikeComment(item._id, session.user.id, item.user[0]._id)
+                        : null
+                    }
+                  >
+                    <Badge badgeContent={item.likes.length} color="error">
+                      <ThumbUpAltIcon
+                        sx={{
+                          color: checkLikedComment(item._id) ? "#2d82d6" : "inherit",
+                        }}
+                      />
+                    </Badge>
+                  </IconButton>
+                </ListItem>
+
                 <Typography
                   sx={{
-                    paddingLeft: "18px",
-                    fontStyle: "italic",
-                    fontSize: "12px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "5px",
                   }}
                 >
-                  {convertTime(item.createdAt)}
-                </Typography>
-                {status === "authenticated" && (
                   <Typography
                     sx={{
                       paddingLeft: "18px",
                       fontStyle: "italic",
                       fontSize: "12px",
-                      cursor: "pointer",
                     }}
-                    onClick={() => handleClickReplyComment(item)}
                   >
-                    Reply
+                    {convertTime(item.createdAt)}
                   </Typography>
-                )}
-                {status === "authenticated" && session.user.id === item.user[0]._id && (
-                  <Typography
-                    sx={{
-                      paddingLeft: "18px",
-                      fontStyle: "italic",
-                      fontSize: "12px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleClickDeleteComment(item)}
-                  >
-                    Delete
-                  </Typography>
-                )}
-              </Typography>
-
-              {item.reply.length > 0 &&
-                item.reply.map((replyItem) => (
-                  <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
-                    <ListItem button={true}>
-                      <ListItemAvatar>
-                        <Avatar
-                          sx={{
-                            backgroundColor: (theme) => theme.palette.avatar.default,
-                          }}
-                          alt={replyItem.user[0].name}
-                          src={replyItem.user[0].avatar}
-                        >
-                          {replyItem.user[0].name.charAt(0)}
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={`${replyItem.user[0].name} - ${
-                          replyItem.user[0].role === "admin" ? "Admin" : "Member"
-                        } `}
-                        secondary={replyItem.content}
-                      ></ListItemText>
-                    </ListItem>
+                  {status === "authenticated" && (
                     <Typography
                       sx={{
                         paddingLeft: "18px",
                         fontStyle: "italic",
                         fontSize: "12px",
+                        cursor: "pointer",
                       }}
+                      onClick={() => handleClickReplyComment(item)}
                     >
-                      {convertTime(replyItem.createdAt)}
+                      Reply
                     </Typography>
-                  </Box>
-                ))}
-            </Box>
-          ))}
+                  )}
+                  {status === "authenticated" && session.user.id === item.user[0]._id && (
+                    <Typography
+                      sx={{
+                        paddingLeft: "18px",
+                        fontStyle: "italic",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleClickDeleteComment(item)}
+                    >
+                      Delete
+                    </Typography>
+                  )}
+                </Typography>
+
+                {item.reply.length > 0 &&
+                  item.reply.map((replyItem) => (
+                    <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
+                      <ListItem button={true}>
+                        <ListItemAvatar>
+                          <Avatar
+                            sx={{
+                              backgroundColor: (theme) => theme.palette.avatar.default,
+                            }}
+                            alt={replyItem.user[0].name}
+                            src={replyItem.user[0].avatar}
+                          >
+                            {replyItem.user[0].name.charAt(0)}
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`${replyItem.user[0].name} - ${
+                            replyItem.user[0].role === "admin" ? "Admin" : "Member"
+                          } `}
+                          secondary={replyItem.content}
+                        ></ListItemText>
+                      </ListItem>
+                      <Typography
+                        sx={{
+                          paddingLeft: "18px",
+                          fontStyle: "italic",
+                          fontSize: "12px",
+                        }}
+                      >
+                        {convertTime(replyItem.createdAt)}
+                      </Typography>
+                    </Box>
+                  ))}
+              </Box>
+            ))}
+        </InfiniteScroll>
       </Box>
-      {listCommentsAll.length >= 5 && listComments.length > 0 && !isLoadMoreComments && (
-        <Button variant="outlined" onClick={handleClickLoadMoreComments}>
-          Xem tất cả
-        </Button>
-      )}
     </>
   );
 };
-export default CommentsBlog;
+export default CommentsCode;

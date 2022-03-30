@@ -26,6 +26,9 @@ import LoadingBox from "../homePage/LoadingBox";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { getAvatar } from "../../redux/actions";
+import socketIOClient from "socket.io-client";
+
+let socket;
 
 const Info = (props) => {
   const dispatch = useDispatch();
@@ -33,6 +36,7 @@ const Info = (props) => {
 
   const avatarInput = useRef(null);
   const [avatarUpload, setAvatarUpload] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -41,6 +45,16 @@ const Info = (props) => {
   const [isReFetch, setIsReFetch] = useState(false);
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
+  useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+    };
+  }, [status]);
+
+  const socketInitializer = async () => {
+    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -49,6 +63,7 @@ const Info = (props) => {
         const result = await axios.get("/api/users?account=" + session.user.account);
         setIsLoading(false);
         setData(result.data.data[0].userInfo);
+        setAvatar(result.data.data[0].userInfo.avatar);
       } catch (err) {
         console.log(err);
       }
@@ -245,7 +260,7 @@ const Info = (props) => {
               }}
               onClick={handleOpen}
               alt={data[0].name}
-              src={data[0].avatar}
+              src={avatar}
             >
               {data[0].name.charAt(0)}
             </AvatarPersonal>

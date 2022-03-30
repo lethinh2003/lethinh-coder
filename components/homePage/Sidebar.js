@@ -3,6 +3,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Avatar, Box, Button, IconButton, Switch, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 import AvatarProfile from "./AvatarProfile";
 import Notify from "./Notify";
@@ -89,6 +90,53 @@ const Sidebar = (props) => {
     height: "70px",
     borderBottom: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
   }));
+  const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
+    ({ theme }) => ({
+      width: 42,
+      height: 26,
+      padding: 0,
+      "& .MuiSwitch-switchBase": {
+        padding: 0,
+        margin: 2,
+        transitionDuration: "300ms",
+        "&.Mui-checked": {
+          transform: "translateX(16px)",
+          color: "#fff",
+          "& + .MuiSwitch-track": {
+            backgroundColor: theme.palette.avatar.default,
+            opacity: 1,
+            border: 0,
+          },
+          "&.Mui-disabled + .MuiSwitch-track": {
+            opacity: 0.5,
+          },
+        },
+        "&.Mui-focusVisible .MuiSwitch-thumb": {
+          color: "#33cf4d",
+          border: "6px solid #fff",
+        },
+        "&.Mui-disabled .MuiSwitch-thumb": {
+          color: theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[600],
+        },
+        "&.Mui-disabled + .MuiSwitch-track": {
+          opacity: theme.palette.mode === "light" ? 0.7 : 0.3,
+        },
+      },
+      "& .MuiSwitch-thumb": {
+        boxSizing: "border-box",
+        width: 22,
+        height: 22,
+      },
+      "& .MuiSwitch-track": {
+        borderRadius: 26 / 2,
+        backgroundColor: theme.palette.avatar.default,
+        opacity: 1,
+        transition: theme.transitions.create(["background-color"], {
+          duration: 500,
+        }),
+      },
+    })
+  );
 
   return (
     <>
@@ -134,11 +182,7 @@ const Sidebar = (props) => {
           }}
           component="div"
         >
-          <MaterialUISwitch
-            sx={{ m: 1 }}
-            onClick={handleClickSwitch}
-            checked={theme.palette.mode === "dark" ? true : false}
-          />
+          <IOSSwitch sx={{ m: 1 }} onClick={handleClickSwitch} checked={theme.palette.mode === "dark" ? true : false} />
 
           <Notify />
 

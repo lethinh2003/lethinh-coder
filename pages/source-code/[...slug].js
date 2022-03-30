@@ -90,9 +90,9 @@ const DetailSourceCode = (props) => {
           </Head>
 
           <Layout>
-            <Backdrop sx={{ color: "#fff", zIndex: 99999, backdropFilter: "blur(3px)" }} open={isLoading}>
+            {/* <Backdrop sx={{ color: "#fff", zIndex: 99999, backdropFilter: "blur(3px)" }} open={isLoading}>
               <CircularProgress color="inherit" />
-            </Backdrop>
+            </Backdrop> */}
             <Box
               sx={{
                 display: "flex",
