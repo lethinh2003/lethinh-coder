@@ -9,7 +9,20 @@ const handle = async (req, res) => {
   await dbConnect();
   if (req.method === "GET") {
     if (session && session.user.role === "admin") {
-      const results = await Comment.find({}).select("-__v");
+      const results = await Comment.find({})
+        .select("-__v")
+        .populate({
+          path: "user",
+          select: "-__v -password",
+        })
+        .populate({
+          path: "reply",
+          select: "-__v -password",
+        })
+        .populate({
+          path: "code",
+          select: "-__v -link",
+        });
 
       return res.status(200).json({
         status: "success",

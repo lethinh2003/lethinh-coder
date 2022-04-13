@@ -8,6 +8,7 @@ import { useRef } from "react";
 import { AiOutlineLogin } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { FaHome } from "react-icons/fa";
+import { FaBlog } from "react-icons/fa";
 
 const SidebarMobile = (props) => {
   const { session, status, handleClickSidebarMobile, isSidebarMobile } = props;
@@ -159,6 +160,27 @@ const SidebarMobile = (props) => {
                   <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
                   <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
                     Source
+                  </Typography>
+                </Button>
+              </Link>
+              <Link href="/blog">
+                <Button
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: "5px",
+                    fontSize: "25px",
+                    fontWeight: "bold",
+                    padding: "5px",
+                    textTransform: "capitalize",
+                    fontWeight: 500,
+                  }}
+                  component="div"
+                >
+                  <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                  <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                    Blog
                   </Typography>
                 </Button>
               </Link>

@@ -26,7 +26,7 @@ const handle = async (req, res) => {
             message: "You can't access this router",
           });
         } else {
-          const { title, content, images, desc, keywords, readTime } = req.body;
+          const { title, content, images, desc, keywords, readTime, labels } = req.body;
           const result = await Blog.create({
             title: title,
             content: content,
@@ -34,6 +34,7 @@ const handle = async (req, res) => {
             images: images,
             desc: desc,
             readTime: readTime,
+            labels: labels,
           });
           return res.status(201).json({
             status: "success",

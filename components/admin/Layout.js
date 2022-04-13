@@ -1,41 +1,34 @@
-import Sidebar from "./Sidebar";
-import SidebarMobile from "./SidebarMobile";
-import Navbar from "./Navbar";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
-import Head from "next/head";
-import Image from "next/image";
+import { Box } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import Link from "next/link";
-import { green, orange, purple, amber, deepOrange, grey } from "@mui/material/colors";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createGlobalStyle } from "styled-components";
+import { getDarkmode } from "../../redux/actions";
+import BackToTop from "../homePage/BackToTop";
+import Footer from "../homePage/Footer";
+import Navbar from "./Navbar";
+import Sidebar from "../homePage/Sidebar";
+import SidebarMobile from "./SidebarMobile";
 
-import MenuIcon from "@mui/icons-material/Menu";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SourceIcon from "@mui/icons-material/Source";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
-import Fab from "@mui/material/Fab";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Zoom from "@mui/material/Zoom";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${({ theme }) => theme.palette.background.default};
+  }
+  ::-webkit-scrollbar-thumb {
+  background-color:  ${({ theme }) => theme.palette.iconColor.default};
+
+  &:hover {
+    background-color:  ${({ theme }) => theme.palette.iconColor.hover};
+  }
+}
+`;
 
 const getDesignTokens = (mode) => ({
   typography: {
-    fontFamily: ["League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "Noto Sans", "sans-serif"].join(","),
+    fontFamily: ["Noto Sans", "League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "sans-serif"].join(","),
   },
   palette: {
     mode,
@@ -51,13 +44,34 @@ const getDesignTokens = (mode) => ({
     background: {
       ...(mode === "dark"
         ? {
-            default: "#161515",
+            default: "#0e1217",
           }
         : {
-            default: "#f5f4f4",
+            default: "#ffffff",
           }),
     },
-
+    iconColor: {
+      ...(mode === "dark"
+        ? {
+            default: "#a8b3cf",
+            hover: "#ffffff",
+          }
+        : {
+            default: "#525866",
+            hover: "black",
+          }),
+    },
+    avatar: {
+      ...(mode === "dark"
+        ? {
+            default: "#a8b3cf",
+            hover: "#ffffff",
+          }
+        : {
+            default: "#525866",
+            hover: "black",
+          }),
+    },
     header: {
       background: {
         ...(mode === "light"
@@ -65,7 +79,60 @@ const getDesignTokens = (mode) => ({
               default: "#ffffff",
             }
           : {
-              default: "#020000",
+              default: "#0e1217",
+            }),
+      },
+    },
+    card: {
+      borderColor: {
+        ...(mode === "light"
+          ? {
+              default: "#a4a6a9",
+              hover: "#19191a8a",
+            }
+          : {
+              default: "#383d47",
+              hover: "#a8b3cf66",
+            }),
+      },
+      bgColor: {
+        ...(mode === "light"
+          ? {
+              default: "#f5f8fc",
+            }
+          : {
+              default: "#1c1f26",
+            }),
+      },
+    },
+    dialog: {
+      borderColor: {
+        ...(mode === "light"
+          ? {
+              default: "#1d1e1ec9",
+              bottom: "#dcdee0",
+            }
+          : {
+              default: "#707683c4",
+              bottom: "#4b4c4e",
+            }),
+      },
+      bgColor: {
+        ...(mode === "light"
+          ? {
+              default: "#edf0f7",
+            }
+          : {
+              default: "#17191f",
+            }),
+      },
+      closeIcon: {
+        ...(mode === "light"
+          ? {
+              default: "#525866",
+            }
+          : {
+              default: "#a8b3cf",
             }),
       },
     },
@@ -100,60 +167,48 @@ const getDesignTokens = (mode) => ({
 
 const Layout = (props) => {
   const { data: session, status } = useSession();
-
-  const [isDarkMode, SetIsDarkMore] = useState(false);
+  if (session && session.user.access_token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${session.user.access_token}`;
+  } else {
+    axios.defaults.headers.common["Authorization"] = null;
+  }
   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
 
-  useEffect(() => {
-    const getStatusTheme = localStorage.getItem("darkMore");
-    if (getStatusTheme) {
-      SetIsDarkMore(JSON.parse(getStatusTheme));
-    }
-  }, []);
-
+  const getStatusDarkmode = useSelector((state) => state.getDarkmode);
+  const dispatch = useDispatch();
   const handleClickSwitch = () => {
-    SetIsDarkMore(!isDarkMode);
-    localStorage.setItem("darkMore", !isDarkMode);
+    dispatch(getDarkmode(!getStatusDarkmode));
   };
-  const theme = createTheme(getDesignTokens(isDarkMode ? "dark" : "light"));
   const handleClickSidebarMobile = () => {
     setIsSidebarMobile(!isSidebarMobile);
   };
-  const handleClickLogout = async () => {
-    const data = await signOut({
-      redirect: false,
-    });
-    localStorage.removeItem("listLikeComments");
-    localStorage.removeItem("avatarProfile");
-  };
-  const trigger = useScrollTrigger({
-    disableHysteresis: true,
-    threshold: 100,
-  });
-  const scrollToTop = () => {
-    const c = document.documentElement.scrollTop || document.body.scrollTop;
-    if (c > 0) {
-      window.requestAnimationFrame(scrollToTop);
-      window.scrollTo(0, c - c / 8);
-    }
-  };
+
+  useEffect(() => {
+    const test = JSON.parse(localStorage.getItem("darkMode")) || false;
+    dispatch(getDarkmode(test));
+  }, []);
+  const theme = createTheme(getDesignTokens(getStatusDarkmode ? "dark" : "light"));
+
   return (
     <>
       <ThemeProvider theme={theme}>
+        <GlobalStyle theme={theme} />
         <Sidebar
+          session={session}
+          status={status}
           handleClickSidebarMobile={handleClickSidebarMobile}
-          handleClickLogout={handleClickLogout}
           handleClickSwitch={handleClickSwitch}
         />
         <Navbar />
         {isSidebarMobile && (
           <SidebarMobile
+            session={session}
+            status={status}
             handleClickSidebarMobile={handleClickSidebarMobile}
             isSidebarMobile={isSidebarMobile}
-            handleClickSwitch={handleClickSwitch}
-            handleClickLogout={handleClickLogout}
           />
         )}
+
         <Box
           sx={{
             bgcolor: "background.default",
@@ -162,26 +217,14 @@ const Layout = (props) => {
               xs: "0px",
               md: "90px",
             },
+            position: "relative",
           }}
           className="box-container"
         >
           {props.children}
+          <Footer />
         </Box>
-        <Zoom in={trigger}>
-          <Fab
-            color="success"
-            sx={{
-              position: "fixed",
-              borderRadius: "50%",
-              margin: "10px",
-              bottom: "0",
-              right: "0",
-            }}
-            onClick={scrollToTop}
-          >
-            <KeyboardArrowUpIcon />
-          </Fab>
-        </Zoom>
+        <BackToTop />
       </ThemeProvider>
     </>
   );

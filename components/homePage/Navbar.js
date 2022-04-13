@@ -1,39 +1,15 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  DialogContentText,
-} from "@mui/material";
-import { useMemo, useState, useEffect } from "react";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import MenuIcon from "@mui/icons-material/Menu";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SourceIcon from "@mui/icons-material/Source";
-import Link from "next/link";
-import HomeIcon from "@mui/icons-material/Home";
-import ContactSupportIcon from "@mui/icons-material/ContactSupport";
-import { useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
-import Modal from "./Modal";
-import FacebookIcon from "@mui/icons-material/Facebook";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import { useRouter } from "next/router";
-import { SiZalo } from "react-icons/si";
-import { GrUserAdmin } from "react-icons/gr";
-import { useSession } from "next-auth/react";
 import AttachmentIcon from "@mui/icons-material/Attachment";
-import { styled } from "@mui/material/styles";
-
+import HomeIcon from "@mui/icons-material/Home";
+import { Box, Button, Typography } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { FaBlog } from "react-icons/fa";
+
 const Navbar = (props) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
@@ -107,6 +83,7 @@ const Navbar = (props) => {
                   className="ms-navbar__item--title"
                   sx={{
                     color: "text.primary",
+                    fontWeight: "bold",
                   }}
                 >
                   Home
@@ -136,9 +113,38 @@ const Navbar = (props) => {
                   className="ms-navbar__item--title"
                   sx={{
                     color: "text.primary",
+                    fontWeight: "bold",
                   }}
                 >
                   Sources
+                </Box>
+              </Button>
+            </Link>
+            <Link href="/blog">
+              <Button
+                className={
+                  router.pathname === "/blog" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"
+                }
+                sx={{
+                  color: "text.primary",
+                }}
+              >
+                <Box
+                  className="ms-navbar__item--icon"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  <FaBlog />
+                </Box>
+                <Box
+                  className="ms-navbar__item--title"
+                  sx={{
+                    color: "text.primary",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Blog
                 </Box>
               </Button>
             </Link>
@@ -164,6 +170,7 @@ const Navbar = (props) => {
                     className="ms-navbar__item--title"
                     sx={{
                       color: "text.primary",
+                      fontWeight: "bold",
                     }}
                   >
                     Admin

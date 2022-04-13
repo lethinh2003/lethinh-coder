@@ -16,17 +16,16 @@ const handle = async (req, res) => {
       const getOrdersSuccess = HistoryCode.find({ status: "success" }).select("-__v");
       const getOrdersPending = HistoryCode.find({ status: "pending" }).select("-__v");
       const getSourcesCode = Code.find({ status: true }).select("-__v -link");
-      const getUsers = User.find({ status: "active" }).select("-__v -password");
+      const getUsers = User.find({ status: true }).select("-__v -password");
 
-      await Promise.all([getOrders, getOrdersSuccess, getOrdersPending, getSourcesCode, getUsers]).then((data) => {
+      await Promise.all([getOrders, getOrdersSuccess, getSourcesCode, getUsers]).then((data) => {
         return res.status(200).json({
           status: "success",
           data: [
             { key: "orders", title: "Đơn Hàng", value: data[0].length },
             { key: "ordersSuccess", title: "Thành Công", value: data[1].length },
-            { key: "ordersPending", title: "Đang Xử Lý", value: data[2].length },
-            { key: "sourcesCode", title: "Source Code", value: data[3].length },
-            { key: "users", title: "Người Dùng", value: data[4].length },
+            { key: "sourcesCode", title: "Source Code", value: data[2].length },
+            { key: "users", title: "Người Dùng HĐ", value: data[3].length },
           ],
         });
       });

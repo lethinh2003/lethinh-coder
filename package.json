@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-code-block": "^33.0.0",
     "@ckeditor/ckeditor5-react": "^4.0.0",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",

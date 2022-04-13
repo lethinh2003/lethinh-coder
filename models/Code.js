@@ -88,13 +88,14 @@ CodeSchema.pre("save", async function (next) {
     lower: true,
   });
   this.slug = year + "/" + month + "/" + this.slug;
-
-  this.keywords = keyword_extractor.extract(this.desc, {
-    language: "english",
-    remove_digits: true,
-    return_changed_case: true,
-    remove_duplicates: false,
-  });
+  if (!this.keywords) {
+    this.keywords = keyword_extractor.extract(this.desc, {
+      language: "english",
+      remove_digits: true,
+      return_changed_case: true,
+      remove_duplicates: false,
+    });
+  }
   next();
 });
 const Code = mongoose.models.Code || mongoose.model("Code", CodeSchema);

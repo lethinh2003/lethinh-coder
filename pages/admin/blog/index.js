@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import Link from "next/link";
 import Layout from "../../../components/admin/Layout";
-import Code from "../../../components/admin/panel/Code";
+import Blog from "../../../components/admin/panel/Blog";
 
 const SourceCode = () => {
   return (
@@ -19,10 +19,10 @@ const SourceCode = () => {
             padding: { xs: "40px 10px", md: "40px 20px" },
           }}
         >
-          <Link href="/admin/source-code/new">
+          <Link href="/admin/blog/new">
             <Button variant="contained">Tạo mới</Button>
           </Link>
-          <Code />
+          <Blog />
         </Box>
       </Layout>
     </>

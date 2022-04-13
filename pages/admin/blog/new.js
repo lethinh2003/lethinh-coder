@@ -20,18 +20,33 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Modal from "../../../components/homePage/Modal";
-export default function MyEditor() {
-  const editorRef = useRef();
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
+export default function MyEditor() {
+  // form validation rules
+  const validationSchema = Yup.object().shape({
+    title: Yup.string().required("Title is required"),
+    desc: Yup.string().required("Desc is required"),
+
+    images: Yup.string().required("Images is required"),
+    keywords: Yup.string().required("Keywords is required"),
+    labels: Yup.string().required("Labels is required"),
+  });
+  const formOptions = { resolver: yupResolver(validationSchema) };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm(formOptions);
+  const editorRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [link, setLink] = useState("");
-  const [images, setImages] = useState("");
-  const [keywords, setKeywords] = useState("");
-  const [readTime, setReadTime] = useState(0);
+
   const [isModal, setIsModal] = useState(false);
   const [text, setText] = useState("");
   useEffect(() => {
@@ -41,51 +56,34 @@ export default function MyEditor() {
     };
     setEditorLoaded(true);
   }, []);
-  const handleClickSend = async () => {
+  const onSubmit = async (dataForm) => {
     try {
       setIsLoading(true);
       const data = localStorage.getItem("postDataBlog") || null;
-      const imagesArray = images.split(", ");
-      const keywordsArray = keywords.split(", ");
+      const imagesArray = dataForm.images.split(", ");
+      const labelsArray = dataForm.labels.split(", ");
+      const keywordsArray = dataForm.keywords.split(", ");
 
       const response = await axios.post("/api/admin/blog", {
-        title: title,
+        title: dataForm.title,
         content: data,
+        readTime: dataForm.readTime,
         images: imagesArray,
+        labels: labelsArray,
         keywords: keywordsArray,
-        desc: desc,
-        readTime: readTime,
+        desc: dataForm.desc,
       });
       setIsModal(true);
       setText(response.data.message);
-      setTitle("");
-      setDesc("");
-
-      setImages("");
+      reset({ title: "", desc: "", readTime: 0, images: "", labels: "", keywords: "" });
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
-        console.log(err.response.data.message);
+        setIsModal(true);
+        setText(err.response.data.message);
       }
     }
-  };
-  const handleChangeTitle = (e) => {
-    setTitle(e.target.value);
-  };
-  const handleChangeDesc = (e) => {
-    setDesc(e.target.value);
-  };
-
-  const handleChangeImages = (e) => {
-    setImages(e.target.value);
-  };
-
-  const handleChangeKeywords = (e) => {
-    setKeywords(e.target.value);
-  };
-  const handleChangeReadTime = (e) => {
-    setReadTime(e.target.value);
   };
 
   return (
@@ -119,66 +117,132 @@ export default function MyEditor() {
           {!editorLoaded && <div>Editor loading</div>}
           {editorLoaded && (
             <>
-              <TextField
-                id="title"
-                label="Title"
-                variant="outlined"
-                value={title}
-                fullWidth
-                onChange={(e) => handleChangeTitle(e)}
-              />
-              <TextField
-                id="desc"
-                label="Desc"
-                variant="outlined"
-                fullWidth
-                value={desc}
-                onChange={(e) => handleChangeDesc(e)}
-              />
-
-              <TextField
-                fullWidth
-                id="images"
-                label="Images"
-                variant="outlined"
-                value={images}
-                onChange={(e) => handleChangeImages(e)}
-              />
-              <TextField
-                fullWidth
-                id="keywords"
-                label="Keywords"
-                variant="outlined"
-                value={keywords}
-                onChange={(e) => handleChangeKeywords(e)}
-              />
-              <TextField
-                fullWidth
-                id="readTime"
-                label="Phút đọc"
-                variant="outlined"
-                type={"number"}
-                value={readTime}
-                onChange={(e) => handleChangeReadTime(e)}
-              />
-
-              <Box sx={{ width: "100%", color: "black" }}>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={localStorage.getItem("postDataBlog") || null}
-                  onReady={(editor) => {
-                    // You can store the "editor" and use when it is needed.
-                    console.log("Editor is ready to use!", editor);
-                  }}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    localStorage.setItem("postDataBlog", data);
-                  }}
+              <form
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  gap: "15px",
+                }}
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Title"
+                      variant="outlined"
+                      error={errors.title ? true : false}
+                      helperText={errors.title ? errors.title.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
                 />
-              </Box>
-              <Button variant="outlined" onClick={() => handleClickSend()}>
-                Send
-              </Button>
+                <Controller
+                  name="desc"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Desc"
+                      variant="outlined"
+                      error={errors.desc ? true : false}
+                      helperText={errors.desc ? errors.desc.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="readTime"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Read time"
+                      type="number"
+                      variant="outlined"
+                      error={errors.readTime ? true : false}
+                      helperText={errors.readTime ? errors.readTime.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue={0}
+                />
+
+                <Controller
+                  name="images"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Images"
+                      variant="outlined"
+                      error={errors.images ? true : false}
+                      helperText={errors.images ? errors.images.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="keywords"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Keywords"
+                      variant="outlined"
+                      error={errors.keywords ? true : false}
+                      helperText={errors.keywords ? errors.keywords.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="labels"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Labels"
+                      variant="outlined"
+                      error={errors.labels ? true : false}
+                      helperText={errors.labels ? errors.labels.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+
+                <Box sx={{ width: "100%", color: "black" }}>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={localStorage.getItem("postDataBlog") || null}
+                    onReady={(editor) => {
+                      // You can store the "editor" and use when it is needed.
+                      console.log("Editor is ready to use!", editor);
+                    }}
+                    onChange={(event, editor) => {
+                      const data = editor.getData();
+                      localStorage.setItem("postDataBlog", data);
+                    }}
+                  />
+                </Box>
+                <Button variant="outlined" type="submit" onClick={() => onSubmit()}>
+                  Send
+                </Button>
+              </form>
             </>
           )}
         </Box>

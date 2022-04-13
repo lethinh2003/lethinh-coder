@@ -17,6 +17,7 @@ import {
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import convertToTime from "../../../utils/convertTime";
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +32,7 @@ const Users = () => {
             id: item._id,
             stt: i + 1,
             account: item.account,
+            name: item.name,
             time: convertToTime(item.createdAt),
             role: item.role,
             status: item.status,
@@ -46,26 +48,17 @@ const Users = () => {
 
     getUsers();
   }, []);
-  const convertToTime = (timeISOString) => {
-    let date = `Gần đây`;
-    const getFullDate = new Date(timeISOString);
-    const getDay = `${getFullDate.getDate() < 10 ? "0" + getFullDate.getDate() : getFullDate.getDate()}/${
-      getFullDate.getMonth() < 9 ? "0" + (getFullDate.getMonth() + 1) : getFullDate.getMonth() + 1
-    }/${getFullDate.getFullYear()}`;
-    const getTime = `${getFullDate.getHours() < 10 ? "0" + getFullDate.getHours() : getFullDate.getHours()}:${
-      getFullDate.getMinutes() < 10 ? "0" + getFullDate.getMinutes() : getFullDate.getMinutes()
-    }:${getFullDate.getSeconds() < 10 ? "0" + getFullDate.getSeconds() : getFullDate.getSeconds()}`;
-    date = getDay + " " + getTime;
-    return date;
-  };
+
   const GridRowsProp = users;
 
   const GridColDef = [
     { field: "stt", headerName: "STT", width: 100 },
     { field: "account", headerName: "Account", width: 200 },
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "id", headerName: "ID", width: 270 },
     { field: "time", headerName: "Tham gia", width: 250 },
     { field: "role", headerName: "Role", width: 150 },
-    { field: "status", headerName: "Status", width: 150 },
+    { field: "status", headerName: "Status", type: "boolean", width: 150 },
   ];
 
   return (

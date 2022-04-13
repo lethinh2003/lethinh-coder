@@ -164,7 +164,7 @@ export const getServerSideProps = async (context) => {
   let sourceBySlug = [];
   let systemData = [];
   await Promise.all([
-    Code.find({ slug: { $in: test } }),
+    Code.find({ slug: { $in: test }, status: true }),
     System.find({}).select("-__v"),
     System.updateMany(
       {},

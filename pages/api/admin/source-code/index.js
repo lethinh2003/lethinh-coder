@@ -26,7 +26,7 @@ const handle = async (req, res) => {
             message: "You can't access this router",
           });
         } else {
-          const { title, content, link, costs, images, desc } = req.body;
+          const { title, content, link, costs, images, desc, keywords, labels } = req.body;
           const result = await Code.create({
             title: title,
             content: content,
@@ -34,6 +34,8 @@ const handle = async (req, res) => {
             costs: costs,
             images: images,
             desc: desc,
+            keywords: keywords,
+            labels: labels,
           });
           return res.status(201).json({
             status: "success",

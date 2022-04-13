@@ -33,6 +33,7 @@ import { useSession } from "next-auth/react";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { AiFillTool } from "react-icons/ai";
 import { HiTemplate } from "react-icons/hi";
+import { styled } from "@mui/material/styles";
 
 import axios from "axios";
 const Navbar = (props) => {
@@ -54,13 +55,15 @@ const Navbar = (props) => {
     };
     fetchSystem();
   }, []);
+  const BoxMenuNavBar = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.header.background.default,
 
+    borderRight: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
+  }));
   return (
     <>
-      <Box
+      <BoxMenuNavBar
         sx={{
-          bgcolor: "header.background.default",
-          color: "text.primary",
           display: {
             xs: "none",
             md: "flex",
@@ -166,6 +169,33 @@ const Navbar = (props) => {
                 </Box>
               </Button>
             </Link>
+            <Link href="/admin/blog">
+              <Button
+                className={
+                  router.pathname === "/admin/blog" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"
+                }
+                sx={{
+                  color: "text.primary",
+                }}
+              >
+                <Box
+                  className="ms-navbar__item--icon"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  <HiTemplate />
+                </Box>
+                <Box
+                  className="ms-navbar__item--title"
+                  sx={{
+                    color: "text.primary",
+                  }}
+                >
+                  Blog
+                </Box>
+              </Button>
+            </Link>
             <Link href="/admin/tools">
               <Button
                 className={
@@ -195,38 +225,9 @@ const Navbar = (props) => {
                 </Box>
               </Button>
             </Link>
-            <Link href="/admin/orders">
-              <Button
-                className={
-                  router.pathname === "/admin/orders"
-                    ? `ms-navbar__item active_${theme.palette.mode}`
-                    : "ms-navbar__item"
-                }
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                <Box
-                  className="ms-navbar__item--icon"
-                  sx={{
-                    color: "text.primary",
-                  }}
-                >
-                  <HiTemplate />
-                </Box>
-                <Box
-                  className="ms-navbar__item--title"
-                  sx={{
-                    color: "text.primary",
-                  }}
-                >
-                  Orders
-                </Box>
-              </Button>
-            </Link>
           </Typography>
         </Typography>
-      </Box>
+      </BoxMenuNavBar>
     </>
   );
 };

@@ -20,8 +20,13 @@ const DateThinh = (date1, date2) => {
     }
   } else {
     const getTheRestOfDay = date2.getDate() - date1.getDate();
+
     if (getTheRestOfDay <= 30) {
-      result = `${getTheRestOfDay} ngày trước`;
+      if (getTheRestOfDay < 0) {
+        result = `${-getTheRestOfDay} ngày trước`;
+      } else {
+        result = `${getTheRestOfDay} ngày trước`;
+      }
     }
   }
   return result;

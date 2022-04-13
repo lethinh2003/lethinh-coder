@@ -25,6 +25,8 @@ import Table from "@ckeditor/ckeditor5-table/src/table";
 import TableToolbar from "@ckeditor/ckeditor5-table/src/tabletoolbar";
 import TextTransformation from "@ckeditor/ckeditor5-typing/src/texttransformation";
 //Extend plugin
+import CodeBlock from "@ckeditor/ckeditor5-code-block/src/codeblock";
+
 import TodoList from "@ckeditor/ckeditor5-list/src/todolist";
 import Underline from "@ckeditor/ckeditor5-basic-styles/src/underline.js";
 import Subscript from "@ckeditor/ckeditor5-basic-styles/src/subscript.js";
@@ -81,6 +83,7 @@ ClassicEditor.builtinPlugins = [
   SpecialCharacters,
   Subscript,
   Superscript,
+  CodeBlock,
   TodoList,
   Underline,
   SpecialCharactersArrows,
@@ -115,6 +118,7 @@ ClassicEditor.defaultConfig = {
       "|",
       "bulletedList",
       "numberedList",
+      "codeBlock",
       "todolist",
       "|",
       "alignment",

@@ -17,6 +17,7 @@ import {
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import convertToTime from "../../../utils/convertTime";
 const HistoryComment = () => {
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,10 +31,10 @@ const HistoryComment = () => {
           const newData = data.map((item, i) => ({
             id: item._id,
             stt: i + 1,
-            account: item.account,
+            account: item.user[0].account,
             time: convertToTime(item.createdAt),
             content: item.content,
-            code: item.code,
+            code: item.code[0] ? item.code[0]._id : item.blog[0]._id,
             likes: item.likes.length,
           }));
           setHistory(newData);
@@ -47,18 +48,7 @@ const HistoryComment = () => {
 
     getUsers();
   }, []);
-  const convertToTime = (timeISOString) => {
-    let date = `Gần đây`;
-    const getFullDate = new Date(timeISOString);
-    const getDay = `${getFullDate.getDate() < 10 ? "0" + getFullDate.getDate() : getFullDate.getDate()}/${
-      getFullDate.getMonth() < 9 ? "0" + (getFullDate.getMonth() + 1) : getFullDate.getMonth() + 1
-    }/${getFullDate.getFullYear()}`;
-    const getTime = `${getFullDate.getHours() < 10 ? "0" + getFullDate.getHours() : getFullDate.getHours()}:${
-      getFullDate.getMinutes() < 10 ? "0" + getFullDate.getMinutes() : getFullDate.getMinutes()
-    }:${getFullDate.getSeconds() < 10 ? "0" + getFullDate.getSeconds() : getFullDate.getSeconds()}`;
-    date = getDay + " " + getTime;
-    return date;
-  };
+
   const GridRowsProp = history;
 
   const GridColDef = [
@@ -67,7 +57,7 @@ const HistoryComment = () => {
     { field: "content", headerName: "Content", minWidth: 250, maxWidth: 1050 },
     { field: "time", headerName: "Time", width: 250 },
     { field: "likes", headerName: "Likes", width: 150 },
-    { field: "code", headerName: "Code ID", width: 250 },
+    { field: "code", headerName: "Box ID", width: 250 },
   ];
 
   return (

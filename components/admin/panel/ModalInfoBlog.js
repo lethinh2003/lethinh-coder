@@ -77,7 +77,7 @@ const Modal = (props) => {
   useEffect(() => {
     const getDetailCode = async () => {
       try {
-        const result = await axios.get("/api/admin/source-code/" + id);
+        const result = await axios.get("/api/admin/blog/" + id);
         setData(result.data.data);
         if (result.data.data.length > 0) {
           setDataLabel(result.data.data[0].labels);
@@ -131,12 +131,12 @@ const Modal = (props) => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const response = await axios.post("/api/admin/source-code/" + id, {
+      const response = await axios.post("/api/admin/blog/" + id, {
         id: id,
         title: data.title,
         content: dataContent,
-        link: data.link,
-        costs: data.costs,
+
+        readTime: data.readTime,
         images: dataImg,
         desc: data.desc,
         status: dataStatus,
@@ -239,40 +239,23 @@ const Modal = (props) => {
                   </Box>
                 )}
                 <DialogContentText sx={{ pt: 2 }}>
-                  <LabelInput>Link</LabelInput>
+                  <LabelInput>Read ttime</LabelInput>
                   <Controller
-                    name="link"
+                    name="readTime"
                     control={control}
                     render={({ field }) => (
                       <TextField
                         size="small"
                         fullWidth
-                        error={errors.link ? true : false}
-                        helperText={errors.link ? errors.link.message : ""}
+                        error={errors.readTime ? true : false}
+                        helperText={errors.readTime ? errors.readTime.message : ""}
                         {...field}
                       />
                     )}
-                    defaultValue={data[0].link}
+                    defaultValue={data[0].readTime}
                   />
                 </DialogContentText>
-                <DialogContentText sx={{ pt: 2 }}>
-                  <LabelInput>Costs</LabelInput>
-                  <Controller
-                    name="costs"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        size="small"
-                        type="number"
-                        fullWidth
-                        error={errors.costs ? true : false}
-                        helperText={errors.costs ? errors.costs.message : ""}
-                        {...field}
-                      />
-                    )}
-                    defaultValue={data[0].costs}
-                  />
-                </DialogContentText>
+
                 <DialogContentText sx={{ pt: 2 }}>
                   <TextField fullWidth label="Thời gian" defaultValue={convertTime(data[0].createdAt)} disabled />
                 </DialogContentText>

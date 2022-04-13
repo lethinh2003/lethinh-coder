@@ -1,5 +1,5 @@
 import dbConnect from "../../../../database/dbConnect";
-import Code from "../../../../models/Code";
+import Blog from "../../../../models/Blog";
 import catchError from "../../../../utils/catchError";
 import { getSession } from "next-auth/react";
 import axios from "axios";
@@ -8,7 +8,7 @@ const handle = async (req, res) => {
   const session = await getSession({ req });
   await dbConnect();
   if (req.method === "GET") {
-    let results = Code.find({ _id: req.query.id }).select("-__v");
+    let results = Blog.find({ _id: req.query.id }).select("-__v");
     if (req.query.sort) {
       const arraySort = req.query.sort.split(",").join(" ");
       results = results.sort(arraySort);
@@ -26,15 +26,15 @@ const handle = async (req, res) => {
           message: "You can't access this router",
         });
       } else {
-        const { title, content, link, costs, images, id, status, desc, labels, keywords } = req.body;
+        const { title, content, readTime, images, id, status, desc, labels, keywords } = req.body;
         try {
-          const result = await Code.findByIdAndUpdate(
+          const result = await Blog.findByIdAndUpdate(
             id,
             {
               title: title,
               content: content,
-              link: link,
-              costs: costs,
+
+              readTime: readTime,
               images: images,
               status: status,
               desc: desc,
@@ -66,7 +66,7 @@ const handle = async (req, res) => {
       } else {
         const { id } = req.query;
         try {
-          const result = await Code.remove({
+          const result = await Blog.remove({
             _id: id,
           });
 

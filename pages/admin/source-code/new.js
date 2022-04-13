@@ -20,17 +20,33 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Modal from "../../../components/homePage/Modal";
-export default function MyEditor() {
-  const editorRef = useRef();
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
+export default function MyEditor() {
+  // form validation rules
+  const validationSchema = Yup.object().shape({
+    title: Yup.string().required("Title is required"),
+    desc: Yup.string().required("Desc is required"),
+    link: Yup.string().required("Link is required"),
+    images: Yup.string().required("Images is required"),
+    keywords: Yup.string().required("Keywords is required"),
+    labels: Yup.string().required("Labels is required"),
+  });
+  const formOptions = { resolver: yupResolver(validationSchema) };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    register,
+    reset,
+  } = useForm(formOptions);
+  const editorRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [link, setLink] = useState("");
-  const [images, setImages] = useState("");
-  const [costs, setCosts] = useState(0);
+
   const [isModal, setIsModal] = useState(false);
   const [text, setText] = useState("");
   useEffect(() => {
@@ -40,57 +56,35 @@ export default function MyEditor() {
     };
     setEditorLoaded(true);
   }, []);
-  const handleClickSend = async () => {
+  const onSubmit = async (dataForm) => {
     try {
       setIsLoading(true);
       const data = localStorage.getItem("postData") || null;
-      const imagesArray = images.split(", ");
+      const imagesArray = dataForm.images.split(", ");
+      const labelsArray = dataForm.labels.split(", ");
+      const keywordsArray = dataForm.keywords.split(", ");
 
       const response = await axios.post("/api/admin/source-code", {
-        title: title,
+        title: dataForm.title,
         content: data,
-        link: link,
-        costs: costs,
+        link: dataForm.link,
+        costs: dataForm.costs,
         images: imagesArray,
-        desc: desc,
+        labels: labelsArray,
+        keywords: keywordsArray,
+        desc: dataForm.desc,
       });
       setIsModal(true);
       setText(response.data.message);
-      setTitle("");
-      setLink("");
-      setDesc("");
-      setCosts(0);
-      setImages("");
+      reset({ title: "", desc: "", link: "", images: "", labels: "", keywords: "" });
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
-        console.log(err.response.data.message);
+        setIsModal(true);
+        setText(err.response.data.message);
       }
     }
-  };
-  const handleChangeTitle = (e) => {
-    setTitle(e.target.value);
-  };
-  const handleChangeDesc = (e) => {
-    setDesc(e.target.value);
-  };
-  const handleChangeLink = (e) => {
-    setLink(e.target.value);
-  };
-  const handleChangeCosts = (e) => {
-    setCosts(e.target.value);
-  };
-  const handleChangeImages = (e) => {
-    setImages(e.target.value);
-  };
-  const upload = async (e) => {
-    // Convert the FileList into an array and iterate
-    let files = Array.from(e.target.files).map((file) => file);
-
-    // At this point you'll have an array of results
-
-    console.log(files);
   };
 
   return (
@@ -124,68 +118,147 @@ export default function MyEditor() {
           {!editorLoaded && <div>Editor loading</div>}
           {editorLoaded && (
             <>
-              <TextField
-                id="title"
-                label="Title"
-                variant="outlined"
-                value={title}
-                fullWidth
-                onChange={(e) => handleChangeTitle(e)}
-              />
-              <TextField
-                id="desc"
-                label="Desc"
-                variant="outlined"
-                fullWidth
-                value={desc}
-                onChange={(e) => handleChangeDesc(e)}
-              />
-              <TextField
-                id="link"
-                label="Link"
-                variant="outlined"
-                fullWidth
-                value={link}
-                onChange={(e) => handleChangeLink(e)}
-              />
-              <TextField
-                fullWidth
-                id="costs"
-                label="Costs"
-                type="number"
-                InputLabelProps={{
-                  shrink: true,
+              <form
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  gap: "15px",
                 }}
-                value={costs}
-                onChange={(e) => handleChangeCosts(e)}
-              />
-              <TextField
-                fullWidth
-                id="images"
-                label="Images"
-                variant="outlined"
-                value={images}
-                onChange={(e) => handleChangeImages(e)}
-              />
-              {/* <input type="file" onChange={upload} multiple /> */}
-
-              <Box sx={{ width: "100%", color: "black" }}>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={localStorage.getItem("postData") || null}
-                  onReady={(editor) => {
-                    // You can store the "editor" and use when it is needed.
-                    console.log("Editor is ready to use!", editor);
-                  }}
-                  onChange={(event, editor) => {
-                    const data = editor.getData();
-                    localStorage.setItem("postData", data);
-                  }}
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Title"
+                      variant="outlined"
+                      error={errors.title ? true : false}
+                      helperText={errors.title ? errors.title.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
                 />
-              </Box>
-              <Button variant="outlined" onClick={() => handleClickSend()}>
-                Send
-              </Button>
+                <Controller
+                  name="desc"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Desc"
+                      variant="outlined"
+                      error={errors.desc ? true : false}
+                      helperText={errors.desc ? errors.desc.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="link"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Link"
+                      variant="outlined"
+                      error={errors.link ? true : false}
+                      helperText={errors.link ? errors.link.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="costs"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Giá"
+                      variant="outlined"
+                      type="number"
+                      error={errors.costs ? true : false}
+                      helperText={errors.costs ? errors.costs.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue={0}
+                />
+                <Controller
+                  name="images"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Images"
+                      variant="outlined"
+                      error={errors.images ? true : false}
+                      helperText={errors.images ? errors.images.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="keywords"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Keywords"
+                      variant="outlined"
+                      error={errors.keywords ? true : false}
+                      helperText={errors.keywords ? errors.keywords.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <Controller
+                  name="labels"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      label="Labels"
+                      variant="outlined"
+                      error={errors.labels ? true : false}
+                      helperText={errors.labels ? errors.labels.message : ""}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+
+                <Box sx={{ width: "100%", color: "black" }}>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={localStorage.getItem("postData") || null}
+                    onReady={(editor) => {
+                      // You can store the "editor" and use when it is needed.
+                      console.log("Editor is ready to use!", editor);
+                    }}
+                    onChange={(event, editor) => {
+                      const data = editor.getData();
+                      localStorage.setItem("postData", data);
+                    }}
+                  />
+                </Box>
+                <Button variant="outlined" type="submit" onClick={() => onSubmit()}>
+                  Send
+                </Button>
+              </form>
             </>
           )}
         </Box>
