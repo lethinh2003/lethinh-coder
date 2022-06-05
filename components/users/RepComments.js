@@ -20,15 +20,13 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-import socketIOClient from "socket.io-client";
 import convertToTime from "../../utils/convertTime";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-let socket;
-const Comments = () => {
+const Comments = ({ user, socket }) => {
   const router = useRouter();
 
-  const hostServer = process.env.HOST_SOCKET;
+  const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,27 +37,21 @@ const Comments = () => {
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
   useEffect(() => {
-    socketInitializer();
     return () => {
-      socket.disconnect();
       clearTimeout(refreshError.current);
     };
   }, []);
-  const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
-    if (status === "authenticated") {
-    }
-  };
+
   useEffect(() => {
     const fetchAPI = async () => {
       try {
         setIsError(false);
         setIsLoading(true);
         const results = await axios.get(
-          `${hostServer}/api/v1/reply-comments?page=${currentPage}&results=${limitResults}`
+          `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
         );
-        if (results.data.length === limitResults) {
-          setCurrentPage(currentPage + 1);
+        if (results.data.results === limitResults) {
+          setCurrentPage((currentPage) => currentPage + 1);
           setHasMore(true);
         } else {
           setHasMore(false);
@@ -80,19 +72,18 @@ const Comments = () => {
         }
       }
     };
-    if (status === "authenticated") {
-      fetchAPI();
-    }
+
+    fetchAPI();
   }, []);
 
   const reFetch = async () => {
     try {
       setIsError(false);
       const results = await axios.get(
-        `${hostServer}/api/v1/reply-comments?page=${currentPage}&results=${limitResults}`
+        `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
       );
-      if (results.data.length === limitResults) {
-        setCurrentPage(currentPage + 1);
+      if (results.data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
         setHasMore(true);
       } else {
         setHasMore(false);
@@ -116,7 +107,7 @@ const Comments = () => {
   const handleClickDelete = async (id, codeId) => {
     try {
       setIsError(false);
-      await axios.post(`${hostServer}/api/v1/reply-comments`, {
+      await axios.post(`${hostServer}/api/v1/reply-comments/delete`, {
         commentId: id,
       });
       socket.emit("get-all-comments", codeId);
@@ -152,130 +143,126 @@ const Comments = () => {
     <>
       <ActivitiesTitle>Rep Bình luận</ActivitiesTitle>
 
-      {status === "authenticated" && (
-        <>
-          <Box
-            sx={{
-              paddingTop: "16px",
-            }}
-          >
-            <InfiniteScroll
-              dataLength={dataComment.length}
-              next={reFetch}
-              hasMore={hasMore}
-              loader={
-                <Box
+      <Box
+        sx={{
+          paddingTop: "16px",
+        }}
+      >
+        <InfiniteScroll
+          dataLength={dataComment.length}
+          next={reFetch}
+          hasMore={hasMore}
+          loader={
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <ThreeDots fill="#06bcee" width={30} height={30} />
+            </Box>
+          }
+          height={400}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Đã hết danh sách</b>
+            </p>
+          }
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {isLoading &&
+              Array.from({ length: 4 }).map((item, i) => (
+                <ListItem
+                  button={true}
+                  key={i}
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
+                    width: "100%",
                   }}
                 >
-                  <ThreeDots fill="#06bcee" width={30} height={30} />
-                </Box>
-              }
-              height={400}
-              endMessage={
-                <p style={{ textAlign: "center" }}>
-                  <b>Đã hết danh sách</b>
-                </p>
-              }
-            >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {isLoading &&
-                  Array.from({ length: 4 }).map((item, i) => (
-                    <ListItem
-                      button={true}
-                      key={i}
-                      sx={{
-                        width: "100%",
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Skeleton variant="circular" width={40} height={40} />
-                      </ListItemAvatar>
-                      <ListItemText>
-                        <Skeleton variant="text" height={70} />
-                        <Skeleton variant="text" width={100} />
-                      </ListItemText>
-                    </ListItem>
-                  ))}
-                {isError && (
-                  <Fade in={isError}>
-                    <Alert
-                      sx={{
-                        width: "100%",
-                        borderRadius: "20px",
-                        border: "1px solid #914b31",
-                      }}
-                      severity="error"
-                    >
-                      <AlertTitle>Error</AlertTitle>
-                      {messageError} — <strong>try again!</strong>
-                    </Alert>
-                  </Fade>
-                )}
-                {!isLoading && dataComment.length === 0 && !isError && (
-                  <Typography
-                    sx={{
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  >
-                    Danh sách trống
-                  </Typography>
-                )}
-                {!isLoading &&
-                  dataComment.length > 0 &&
-                  dataComment.map((item, i) => {
-                    let newContent = item.content;
-                    const content = item.content;
+                  <ListItemAvatar>
+                    <Skeleton variant="circular" width={40} height={40} />
+                  </ListItemAvatar>
+                  <ListItemText>
+                    <Skeleton variant="text" height={70} />
+                    <Skeleton variant="text" width={100} />
+                  </ListItemText>
+                </ListItem>
+              ))}
+            {isError && (
+              <Fade in={isError}>
+                <Alert
+                  sx={{
+                    width: "100%",
+                    borderRadius: "20px",
+                    border: "1px solid #914b31",
+                  }}
+                  severity="error"
+                >
+                  <AlertTitle>Error</AlertTitle>
+                  {messageError} — <strong>try again!</strong>
+                </Alert>
+              </Fade>
+            )}
+            {!isLoading && dataComment.length === 0 && !isError && (
+              <Typography
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Danh sách trống
+              </Typography>
+            )}
+            {!isLoading &&
+              dataComment.length > 0 &&
+              dataComment.map((item, i) => {
+                let newContent = item.content;
+                const content = item.content;
 
-                    return (
-                      <Box key={i}>
-                        <ListItem button={true}>
-                          <ListItemAvatar>
-                            <Avatar
-                              sx={{
-                                backgroundColor: (theme) => theme.palette.avatar.default,
-                                borderRadius: "10px",
-                              }}
-                              alt={
-                                item.comment[0].code[0] ? item.comment[0].code[0].title : item.comment[0].blog[0].title
-                              }
-                              src={
-                                item.comment[0].code[0]
-                                  ? item.comment[0].code[0].images[0]
-                                  : item.comment[0].blog[0].images[0]
-                              }
-                            ></Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            onClick={(e) => handleClickLinkComment(item)}
-                            sx={{
-                              color: (theme) => theme.palette.iconColor.default,
-                            }}
-                            primary={newContent}
-                            secondary={convertToTime(item.createdAt)}
-                          ></ListItemText>
-                          <IconButton
-                            onClick={() =>
-                              handleClickDelete(
-                                item._id,
-                                item.comment[0].code[0] ? item.comment[0].code[0]._id : item.comment[0].blog[0]._id
-                              )
-                            }
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </ListItem>
-                      </Box>
-                    );
-                  })}
-              </Box>
-            </InfiniteScroll>
+                return (
+                  <Box key={i}>
+                    <ListItem button={true}>
+                      <ListItemAvatar>
+                        <Avatar
+                          sx={{
+                            backgroundColor: (theme) => theme.palette.avatar.default,
+                            borderRadius: "10px",
+                          }}
+                          alt={item.comment[0].code[0] ? item.comment[0].code[0].title : item.comment[0].blog[0].title}
+                          src={
+                            item.comment[0].code[0]
+                              ? item.comment[0].code[0].images[0]
+                              : item.comment[0].blog[0].images[0]
+                          }
+                        ></Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        onClick={(e) => handleClickLinkComment(item)}
+                        sx={{
+                          color: (theme) => theme.palette.iconColor.default,
+                        }}
+                        primary={newContent}
+                        secondary={convertToTime(item.createdAt)}
+                      ></ListItemText>
+                      {session && session.user && user.account === session.user.account && (
+                        <IconButton
+                          onClick={() =>
+                            handleClickDelete(
+                              item._id,
+                              item.comment[0].code[0] ? item.comment[0].code[0]._id : item.comment[0].blog[0]._id
+                            )
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </ListItem>
+                  </Box>
+                );
+              })}
           </Box>
-        </>
-      )}
+        </InfiniteScroll>
+      </Box>
     </>
   );
 };

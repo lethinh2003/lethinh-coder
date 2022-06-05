@@ -1,7 +1,9 @@
 const DateThinh = (date1, date2) => {
   let result;
+
   const fullDate1 = `${date1.getDate()}/${date1.getMonth() + 1}/${date1.getFullYear()}`;
   const fullDate2 = `${date2.getDate()}/${date2.getMonth() + 1}/${date2.getFullYear()}`;
+
   if (fullDate1 === fullDate2) {
     const getHoursDate1 = date1.getHours();
     const getMinutesDate1 = date1.getMinutes();
@@ -19,14 +21,10 @@ const DateThinh = (date1, date2) => {
       result = `${getHoursDate2 - getHoursDate1} giờ trước`;
     }
   } else {
-    const getTheRestOfDay = date2.getDate() - date1.getDate();
+    const getTheRestOfDay = Math.ceil((date2.getTime() - date1.getTime()) / 3600 / 1000 / 24);
 
     if (getTheRestOfDay <= 30) {
-      if (getTheRestOfDay < 0) {
-        result = `${-getTheRestOfDay} ngày trước`;
-      } else {
-        result = `${getTheRestOfDay} ngày trước`;
-      }
+      result = `${getTheRestOfDay} ngày trước`;
     }
   }
   return result;
@@ -35,6 +33,7 @@ const convertTime = (timeISOString) => {
   let date = `Gần đây`;
   const getFullDate = new Date(timeISOString);
   const getCurrentDate = new Date();
+
   const getDay = `${getFullDate.getDate() < 10 ? "0" + getFullDate.getDate() : getFullDate.getDate()}/${
     getFullDate.getMonth() < 9 ? "0" + (getFullDate.getMonth() + 1) : getFullDate.getMonth() + 1
   }/${getFullDate.getFullYear()}`;

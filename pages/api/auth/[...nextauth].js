@@ -25,9 +25,11 @@ export default NextAuth({
     CredentialsProvider({
       id: "login",
       name: "login",
+
       async authorize(credentials, req) {
         await dbConnect();
         const { account, password } = credentials;
+
         const user = await User.findOne({
           account: account,
         });
@@ -127,6 +129,7 @@ export default NextAuth({
             expiresIn: 60 * 60 * 24 * 30, ///Expire default jwt next-auth
           }
         );
+        console.log(generateToken);
         token.account = user.account;
         token.role = user.role;
         token.id = user._id;

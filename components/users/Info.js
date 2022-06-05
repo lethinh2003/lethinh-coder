@@ -1,77 +1,27 @@
-import { useSession } from "next-auth/react";
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-  Modal,
-  Fade,
-  Backdrop,
-} from "@mui/material";
-import convertTime from "../../utils/convertTime";
+import { Avatar, Backdrop, Box, Fade, Modal, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import LoadingBox from "../homePage/LoadingBox";
 import axios from "axios";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { getAvatar } from "../../redux/actions";
-import socketIOClient from "socket.io-client";
+import { toast } from "react-toastify";
+import axiosCustom from "../../configs/axios";
+import convertTime from "../../utils/convertTime";
+import LoadingBox from "../homePage/LoadingBox";
 
-let socket;
-
-const Info = (props) => {
+const Info = ({ user, isLoading, account, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
+  const [dataUser, setDataUser] = useState(null);
 
   const avatarInput = useRef(null);
   const [avatarUpload, setAvatarUpload] = useState("");
-  const [avatar, setAvatar] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState([]);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
   const [isSuccessUpload, setIsSuccessUpload] = useState(false);
   const [isReFetch, setIsReFetch] = useState(false);
   const handleOpen = () => setIsOpenModal(true);
   const handleClose = () => setIsOpenModal(false);
-  useEffect(() => {
-    socketInitializer();
-    return () => {
-      socket.disconnect();
-    };
-  }, [status]);
-
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
-  };
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        setIsLoading(true);
-        const result = await axios.get("/api/users?account=" + session.user.account);
-        setIsLoading(false);
-        setData(result.data.data[0].userInfo);
-        setAvatar(result.data.data[0].userInfo.avatar);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    if (session && session.user) {
-      getUser();
-    }
-  }, [status, isReFetch]);
 
   const StyleModal = styled(Box)({
     position: "absolute",
@@ -106,6 +56,11 @@ const Info = (props) => {
     },
   });
   useEffect(() => {
+    if (user) {
+      setDataUser(user);
+    }
+  }, [user]);
+  useEffect(() => {
     if (avatarUpload) {
       handleUploadAvatar();
     }
@@ -114,38 +69,33 @@ const Info = (props) => {
     try {
       setIsLoadingUpload(true);
       setIsSuccessUpload(false);
-      setIsReFetch(false);
       handleClose();
       const uploadCloudinary = await axios({
         method: "post",
-        url: `${process.env.HOST_SOCKET}/api/v1/users/upload-avatar`,
+        url: `${process.env.ENDPOINT_SERVER}/api/v1/users/upload-avatar`,
         data: avatarUpload,
         headers: {
           "Content-Type": `multipart/form-data;`,
         },
       });
-      await axios.post(`${process.env.HOST_SOCKET}/api/v1/users/update`, {
+      const res = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/users/update`, {
         avatar: uploadCloudinary.data.data,
-        name: session.user.name,
       });
-      const data = {
-        idRoom: session.user.id,
-        dataImage: uploadCloudinary.data.data,
-      };
-      socket.emit("update-avatar-profile", data);
-      localStorage.setItem("avatarProfile", uploadCloudinary.data.data);
+
+      setDataUser(res.data.data);
 
       setAvatarUpload("");
       setIsLoadingUpload(false);
       setIsSuccessUpload(true);
-      setIsReFetch(true);
     } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
       console.log(err);
       setAvatarUpload("");
       setIsLoadingUpload(false);
     }
   };
-
   const handleFileUpload = (e) => {
     const uploadData = new FormData();
     uploadData.append("file", e.target.files[0], "file");
@@ -155,23 +105,18 @@ const Info = (props) => {
     try {
       setIsLoadingUpload(true);
       setIsSuccessUpload(false);
-      setIsReFetch(false);
       handleClose();
-      await axios.post(`${process.env.HOST_SOCKET}/api/v1/users/update`, {
+      const res = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/users/update`, {
         avatar: "",
-        name: session.user.name,
       });
-      const data = {
-        idRoom: session.user.id,
-        dataImage: "",
-      };
-      socket.emit("update-avatar-profile", data);
+      setDataUser(res.data.data);
 
-      localStorage.removeItem("avatarProfile");
       setIsLoadingUpload(false);
       setIsSuccessUpload(true);
-      setIsReFetch(true);
     } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
       console.log(err);
       setIsLoadingUpload(false);
     }
@@ -204,47 +149,51 @@ const Info = (props) => {
         }}
       >
         <LoadingBox isLoading={isLoadingUpload} isSuccess={isSuccessUpload} />
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={isOpenModal}
-          onClose={handleClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={isOpenModal}>
-            <StyleModal>
-              <ModalText>
-                <div className="input-file" style={{ display: "none" }}>
-                  <input type="file" name="file" ref={avatarInput} id="file" onChange={(e) => handleFileUpload(e)} />
-                </div>
-                <label
-                  style={{
-                    width: "100%",
-                    display: "inline-block",
+        {session && session.user && account === session.user.account && (
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={isOpenModal}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={isOpenModal}>
+              <StyleModal>
+                <ModalText>
+                  <div className="input-file" style={{ display: "none" }}>
+                    <input type="file" name="file" ref={avatarInput} id="file" onChange={(e) => handleFileUpload(e)} />
+                  </div>
+                  <label
+                    style={{
+                      width: "100%",
+                      display: "inline-block",
+                    }}
+                    htmlFor="file"
+                    className="input-label"
+                  >
+                    Add the avatar
+                  </label>
+                </ModalText>
+                {dataUser && dataUser.avatar && (
+                  <ModalText onClick={() => hanldeClickRemoveAvatar()}>Remove the current avatar</ModalText>
+                )}
+                <Typography
+                  sx={{
+                    textAlign: "center",
                   }}
-                  htmlFor="file"
-                  className="input-label"
                 >
-                  Add the avatar
-                </label>
-              </ModalText>
-              <ModalText onClick={() => hanldeClickRemoveAvatar()}>Remove the current avatar</ModalText>
-              <Typography
-                sx={{
-                  textAlign: "center",
-                }}
-              >
-                <ModalText onClick={handleClose}>Cancel</ModalText>
-              </Typography>
-            </StyleModal>
-          </Fade>
-        </Modal>
+                  <ModalText onClick={handleClose}>Cancel</ModalText>
+                </Typography>
+              </StyleModal>
+            </Fade>
+          </Modal>
+        )}
         {isLoading && <Skeleton variant="circular" width={150} height={150} />}
-        {!isLoading && data.length > 0 && (
+        {dataUser && (
           <Box
             sx={{
               backgroundColor: (theme) => theme.palette.dialog.bgColor.default,
@@ -259,10 +208,10 @@ const Info = (props) => {
                 backgroundColor: (theme) => theme.palette.avatar.default,
               }}
               onClick={handleOpen}
-              alt={data[0].name}
-              src={avatar}
+              alt={dataUser.name}
+              src={dataUser.avatar}
             >
-              {data[0].name.charAt(0)}
+              {dataUser.name.charAt(0)}
             </AvatarPersonal>
           </Box>
         )}
@@ -282,7 +231,7 @@ const Info = (props) => {
               <Skeleton variant="text" width={150} />
             </>
           )}
-          {!isLoading && data.length > 0 && (
+          {dataUser && (
             <>
               <Typography
                 sx={{
@@ -290,7 +239,7 @@ const Info = (props) => {
                   fontWeight: "700",
                 }}
               >
-                {data[0].name}
+                {dataUser.name}
               </Typography>
               <Typography
                 sx={{
@@ -299,7 +248,7 @@ const Info = (props) => {
                   color: (theme) => theme.palette.iconColor.default,
                 }}
               >
-                @{data[0].account}
+                @{dataUser.account}
               </Typography>
               <Typography
                 sx={{
@@ -308,7 +257,7 @@ const Info = (props) => {
                   fontWeight: "500",
                 }}
               >
-                Tham gia: {convertTime(data[0].createdAt)}
+                Tham gia: {convertTime(dataUser.createdAt)}
               </Typography>
             </>
           )}

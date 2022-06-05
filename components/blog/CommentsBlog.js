@@ -40,7 +40,7 @@ const CommentsCode = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [limitResults, setLimitResults] = useState(5);
   const inputComment = useRef();
-  const hostServer = process.env.HOST_SOCKET;
+  const hostServer = process.env.ENDPOINT_SERVER;
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const CommentsCode = (props) => {
     };
   }, [router.query.slug, status]);
   const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
     socket.emit("join-room", blogData[0]._id);
     socket.on("send-all-comments", async (getComments) => {
       setIsGetListComments(true);

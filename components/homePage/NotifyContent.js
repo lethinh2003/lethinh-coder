@@ -18,7 +18,7 @@ import convertToTime from "../../utils/convertTime";
 import { memo } from "react";
 
 const NotifyContent = (props) => {
-  const { item, i, newContent, handleClickDelete, handleClickNotify } = props;
+  const { item, newContent, handleClickDelete, handleClickNotify } = props;
   const router = useRouter();
 
   const handleClickLinkNotify = (e, item) => {
@@ -35,7 +35,6 @@ const NotifyContent = (props) => {
     <>
       {item && (
         <Box
-          key={i}
           sx={{
             opacity: !item.status ? 1 : 0.6,
           }}

@@ -1,61 +1,46 @@
-import Layout from "../../components/Layout";
+import { Box } from "@mui/material";
 import Head from "next/head";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-  Modal,
-  Fade,
-  Backdrop,
-} from "@mui/material";
-import convertTime from "../../utils/convertTime";
-import { deepOrange, deepPurple } from "@mui/material/colors";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import Layout from "../../components/Layout";
 import Info from "../../components/users/Info";
 import Menu from "../../components/users/Menu";
-import Comments from "../../components/users/Comments";
-import { styled } from "@mui/material/styles";
-
-const AboutMe = () => {
-  const { data: session, status } = useSession();
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useContext } from "react";
+import SocketContext from "../../context/socket";
+const AccountDetail = () => {
+  const socket = useContext(SocketContext);
   const router = useRouter();
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { account } = router.query;
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      return router.push("/");
-    }
-    if (session) {
-      if (router.query.account !== session.user.account) {
-        return router.push("/");
+    const getUser = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/users?account=${account}`);
+
+        setUser(res.data.data);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        if (err.response.data) {
+          toast.error(err.response.data.message);
+        }
       }
+    };
+    if (account) {
+      getUser();
     }
-  }, [status]);
+  }, [account]);
 
   return (
     <>
-      {!isLoading && data.length > 0 && (
-        <>
-          <Head>
-            <title>Profile {session.user.account}</title>
-          </Head>
-        </>
-      )}
+      <Head>
+        <title>Profile {account}</title>
+      </Head>
 
       <Layout>
         <>
@@ -70,14 +55,12 @@ const AboutMe = () => {
               gap: "10px",
             }}
           >
-            <Info />
-            <Menu />
-            {/* <Notifies isLoading={isLoading} data={data.length > 0 ? data[0].userNotifies : []} /> */}
-            {/* <Comments isLoading={isLoading} data={data.length > 0 ? data[0].userComments : []} /> */}
+            <Info user={user} isLoading={isLoading} account={account} />
+            <Menu user={user} socket={socket} />
           </Box>
         </>
       </Layout>
     </>
   );
 };
-export default AboutMe;
+export default AccountDetail;

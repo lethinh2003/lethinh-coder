@@ -1,44 +1,29 @@
-import axios from "axios";
-import Link from "next/link";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-} from "@mui/material";
-
-import ShowCodes from "../components/homePage/ShowCodes";
-import ShowBlogs from "../components/homePage/ShowBlogs";
 import Head from "next/head";
+import { useSelector } from "react-redux";
+import ContributeEmail from "../components/homePage/ContributeEmail";
+import Introduce from "../components/homePage/Introduce";
+import ShowBlogs from "../components/homePage/ShowBlogs";
+import ShowCodes from "../components/homePage/ShowCodes";
 import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
-import Code from "../models/Code";
 import Blog from "../models/Blog";
-import System from "../models/System";
-import Introduce from "../components/homePage/Introduce";
-import ContributeEmail from "../components/homePage/ContributeEmail";
+import Code from "../models/Code";
 
 const Home = (props) => {
-  let { newCode, mostDownloadsCode, mostViewsCode, systemData, newBlog } = props;
-  systemData = JSON.parse(systemData);
+  const dataSystem = useSelector((state) => state.system.data);
+
+  let { newCode, mostDownloadsCode, mostViewsCode, newBlog } = props;
 
   return (
     <>
-      {systemData.length > 0 && (
+      {dataSystem && (
         <Head>
-          <title> {systemData[0].meta_title}</title>
-          <meta name="description" content={systemData[0].meta_desc} />
-          <meta name="keywords" content={systemData[0].meta_keywords} />
-          <meta name="author" content={systemData[0].meta_author} />
-          <meta property="og:image" content={systemData[0].meta_thumbnail} />
-          <meta property="og:title" content={systemData[0].meta_title} />
+          <title> {dataSystem.meta_title}</title>
+          <meta name="description" content={dataSystem.meta_desc} />
+          <meta name="keywords" content={dataSystem.meta_keywords} />
+          <meta name="author" content={dataSystem.meta_author} />
+          <meta property="og:image" content={dataSystem.meta_thumbnail} />
+          <meta property="og:title" content={dataSystem.meta_title} />
         </Head>
       )}
       <Layout>
@@ -66,22 +51,14 @@ export const getServerSideProps = async () => {
     Code.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
     Code.find({ status: true }).sort("-downloads").limit(6).select("-link -__v"),
     Code.find({ status: true }).sort("-views").limit(6).select("-link -__v"),
-    System.find({}).select("-__v"),
     Blog.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
-    System.updateMany(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
   ])
     .then((data) => {
       newCode = data[0];
       mostDownloadsCode = data[1];
       mostViewsCode = data[2];
-      systemData = data[3];
-      newBlog = data[4];
+
+      newBlog = data[3];
     })
     .catch((err) => console.log(err));
   return {
@@ -89,7 +66,6 @@ export const getServerSideProps = async () => {
       newCode: JSON.stringify(newCode),
       mostDownloadsCode: JSON.stringify(mostDownloadsCode),
       mostViewsCode: JSON.stringify(mostViewsCode),
-      systemData: JSON.stringify(systemData),
       newBlog: JSON.stringify(newBlog),
     },
   };

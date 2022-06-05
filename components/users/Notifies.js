@@ -19,11 +19,10 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-import socketIOClient from "socket.io-client";
 import NotifyContent from "../../components/homePage/NotifyContent";
-let socket;
-const Signup = () => {
-  const hostServer = process.env.HOST_SOCKET;
+
+const Notifies = ({ user, socket }) => {
+  const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
 
   const router = useRouter();
@@ -41,16 +40,12 @@ const Signup = () => {
   useEffect(() => {
     socketInitializer();
     return () => {
-      socket.disconnect();
       clearTimeout(refreshError.current);
     };
   }, []);
   const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
-    if (status === "authenticated") {
-      socket.emit("join-notify", session.user.id);
-      socket.emit("get-notify", session.user.id);
-    }
+    socket.emit("join-notify", session.user.id);
+    socket.emit("get-notify", session.user.id);
   };
   useEffect(() => {
     const fetchAPI = async () => {
@@ -58,9 +53,10 @@ const Signup = () => {
         setIsError(false);
         setIsLoading(true);
         const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-        socket.emit("read-notify", session.user.id);
-        if (results.data.length === limitResults) {
-          setCurrentPage(currentPage + 1);
+        socket.emit("read-notify", user._id);
+
+        if (results.data.results === limitResults) {
+          setCurrentPage((currentPage) => currentPage + 1);
           setHasMore(true);
         } else {
           setHasMore(false);
@@ -80,17 +76,16 @@ const Signup = () => {
         }
       }
     };
-    if (status === "authenticated") {
-      fetchAPI();
-    }
+
+    fetchAPI();
   }, []);
 
   const reFetch = async () => {
     try {
       setIsError(false);
       const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-      if (results.data.length === limitResults) {
-        setCurrentPage(currentPage + 1);
+      if (results.data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
         setHasMore(true);
       } else {
         setHasMore(false);
@@ -114,7 +109,7 @@ const Signup = () => {
   const handleClickDelete = async (id) => {
     try {
       setIsError(false);
-      await axios.post(`${hostServer}/api/v1/notifies`, {
+      await axios.post(`${hostServer}/api/v1/notifies/delete`, {
         notifyId: id,
       });
       const newArray = [...dataNoti];
@@ -131,113 +126,103 @@ const Signup = () => {
       }
     }
   };
-  const NotifyButton = styled(IconButton)({});
-  const DialogComponent = styled(Dialog)(({ theme }) => ({
-    "& .MuiDialog-paper": {
-      borderRadius: "20px",
-      backgroundColor: theme.palette.dialog.bgColor.default,
-      border: `1px solid ${theme.palette.dialog.borderColor.default}`,
-      margin: 0,
-    },
-  }));
-  const DialogTitleComponent = styled(DialogTitle)(({ theme }) => ({
-    borderBottom: `1px solid ${theme.palette.dialog.borderColor.bottom}`,
-    fontWeight: "bold",
-  }));
+
   return (
     <>
-      {status === "authenticated" && (
-        <>
-          <Box
-            sx={{
-              paddingTop: "16px",
-            }}
-          >
-            <InfiniteScroll
-              dataLength={dataNoti.length}
-              next={reFetch}
-              hasMore={hasMore}
-              loader={
-                <Box
+      <Box
+        sx={{
+          paddingTop: "16px",
+        }}
+      >
+        <InfiniteScroll
+          dataLength={dataNoti.length}
+          next={reFetch}
+          hasMore={hasMore}
+          loader={
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <ThreeDots fill="#06bcee" width={30} height={30} />
+            </Box>
+          }
+          height={400}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Đã hết thông báo</b>
+            </p>
+          }
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {isLoading &&
+              Array.from({ length: 4 }).map((item, i) => (
+                <ListItem
+                  button={true}
+                  key={i}
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
+                    width: "100%",
                   }}
                 >
-                  <ThreeDots fill="#06bcee" width={30} height={30} />
-                </Box>
-              }
-              height={400}
-              endMessage={
-                <p style={{ textAlign: "center" }}>
-                  <b>Đã hết thông báo</b>
-                </p>
-              }
-            >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {isLoading &&
-                  Array.from({ length: 4 }).map((item, i) => (
-                    <ListItem
-                      button={true}
-                      key={i}
-                      sx={{
-                        width: "100%",
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Skeleton variant="circular" width={40} height={40} />
-                      </ListItemAvatar>
-                      <ListItemText>
-                        <Skeleton variant="text" height={70} />
-                        <Skeleton variant="text" width={100} />
-                      </ListItemText>
-                    </ListItem>
-                  ))}
-                {isError && (
-                  <Fade in={isError}>
-                    <Alert
-                      sx={{
-                        width: "100%",
-                        borderRadius: "20px",
-                        border: "1px solid #914b31",
-                      }}
-                      severity="error"
-                    >
-                      <AlertTitle>Error</AlertTitle>
-                      {messageError} — <strong>try again!</strong>
-                    </Alert>
-                  </Fade>
-                )}
-                {!isLoading && dataNoti.length === 0 && !isError && (
-                  <Typography
-                    sx={{
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  >
-                    Thông báo trống
-                  </Typography>
-                )}
-                {!isLoading &&
-                  dataNoti.length > 0 &&
-                  dataNoti.map((item, i) => {
-                    let newContent = item.content;
-                    const content = item.content;
-                    if (content.includes("{name}")) {
-                      newContent = newContent.replace("{name}", item.account_send[0].name);
-                    }
+                  <ListItemAvatar>
+                    <Skeleton variant="circular" width={40} height={40} />
+                  </ListItemAvatar>
+                  <ListItemText>
+                    <Skeleton variant="text" height={70} />
+                    <Skeleton variant="text" width={100} />
+                  </ListItemText>
+                </ListItem>
+              ))}
+            {isError && (
+              <Fade in={isError}>
+                <Alert
+                  sx={{
+                    width: "100%",
+                    borderRadius: "20px",
+                    border: "1px solid #914b31",
+                  }}
+                  severity="error"
+                >
+                  <AlertTitle>Error</AlertTitle>
+                  {messageError} — <strong>try again!</strong>
+                </Alert>
+              </Fade>
+            )}
+            {!isLoading && dataNoti.length === 0 && !isError && (
+              <Typography
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Thông báo trống
+              </Typography>
+            )}
+            {!isLoading &&
+              dataNoti.length > 0 &&
+              dataNoti.map((item, i) => {
+                let newContent = item.content;
+                const content = item.content;
+                if (content.includes("{name}")) {
+                  newContent = newContent.replace("{name}", item.account_send[0].name);
+                }
 
-                    return (
-                      <NotifyContent item={item} i={i} newContent={newContent} handleClickDelete={handleClickDelete} />
-                    );
-                  })}
-              </Box>
-            </InfiniteScroll>
+                return (
+                  <NotifyContent
+                    key={i}
+                    item={item}
+                    i={i}
+                    newContent={newContent}
+                    handleClickDelete={handleClickDelete}
+                  />
+                );
+              })}
           </Box>
-        </>
-      )}
+        </InfiniteScroll>
+      </Box>
     </>
   );
 };
 
-export default Signup;
+export default Notifies;

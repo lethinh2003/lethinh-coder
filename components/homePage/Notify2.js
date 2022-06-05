@@ -66,7 +66,7 @@ const Notify = () => {
   }, [status]);
 
   const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
+    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
     if (status === "authenticated") {
       socket.emit("join-notify", session.user.id);
       socket.emit("get-notify", session.user.id);

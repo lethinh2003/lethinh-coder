@@ -4,12 +4,22 @@ import { Avatar, Box, Button, IconButton, Switch, Typography } from "@mui/materi
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
+import { useEffect } from "react";
 import AvatarProfile from "./AvatarProfile";
 import Notify from "./Notify";
+import { useDispatch, useSelector } from "react-redux";
+
+import { getSystem } from "../../redux/actions/getSystem";
 const Sidebar = (props) => {
   const { status, handleClickSidebarMobile, handleClickSwitch } = props;
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const dataSystem = useSelector((state) => state.system.data);
+  useEffect(() => {
+    if (!dataSystem) {
+      dispatch(getSystem());
+    }
+  }, []);
 
   const LoginButton = styled(Button)({
     boxShadow: "none",
@@ -183,10 +193,13 @@ const Sidebar = (props) => {
           component="div"
         >
           <IOSSwitch sx={{ m: 1 }} onClick={handleClickSwitch} checked={theme.palette.mode === "dark" ? true : false} />
+          {status === "authenticated" && (
+            <>
+              <Notify />
 
-          <Notify />
-
-          <AvatarProfile />
+              <AvatarProfile />
+            </>
+          )}
           {status === "unauthenticated" && (
             <>
               <Link href="/login">

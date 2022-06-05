@@ -44,17 +44,7 @@ const Navbar = (props) => {
   const handleClickSupport = () => {
     setIsModal(true);
   };
-  useEffect(() => {
-    const fetchSystem = async () => {
-      try {
-        const result = await axios.get("/api/system");
-        console.log(result.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchSystem();
-  }, []);
+
   const BoxMenuNavBar = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.header.background.default,
 

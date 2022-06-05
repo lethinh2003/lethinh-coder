@@ -85,6 +85,8 @@ const Login = () => {
           password: data.password,
           redirect: false,
         });
+        console.log(result);
+
         if (!result.error) {
           setIsSuccess(true);
           setIsError(false);

@@ -5,7 +5,7 @@ module.exports = {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    HOST_SOCKET: process.env.HOST_SOCKET,
+    ENDPOINT_SERVER: process.env.ENDPOINT_SERVER,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     ACCOUNT_GMAIL: process.env.ACCOUNT_GMAIL,
     PASSWORD_GMAIL: process.env.PASSWORD_GMAIL,

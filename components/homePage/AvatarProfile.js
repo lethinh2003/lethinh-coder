@@ -6,39 +6,24 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import socketIOClient from "socket.io-client";
-let socket;
+import { getUser } from "../../redux/actions/getUser";
+
 const AvatarProfile = () => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
-  const getAvatar = useSelector((state) => state.getAvatar);
+  const dataUser = useSelector((state) => state.user.data);
+  const gettingDataUser = useSelector((state) => state.user.requesting);
+  const getErrorDataUser = useSelector((state) => state.user.error);
   const [anchorEl, setAnchorEl] = useState(null);
   const [avatar, setAvatar] = useState("");
   const isMenuUser = Boolean(anchorEl);
   useEffect(() => {
-    socketInitializer();
     if (status === "authenticated") {
-      const getAvatarLocal = localStorage.getItem("avatarProfile");
-      if (getAvatarLocal) {
-        setAvatar(getAvatarLocal);
+      if (!dataUser) {
+        dispatch(getUser(session.user.account));
       }
     }
-
-    return () => {
-      socket.disconnect();
-    };
   }, [status]);
-  const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
-    if (status === "authenticated") {
-      socket.emit("join-profile", session.user.id);
-      socket.emit("get-avatar-profile", session.user.id);
-      socket.on("update-avatar-profile", (data) => {
-        setAvatar(data);
-        localStorage.setItem("avatarProfile", data);
-      });
-    }
-  };
 
   const handleClickLogout = async () => {
     const data = await signOut({
@@ -86,19 +71,20 @@ const AvatarProfile = () => {
     gap: "5px",
     justifyContent: "space-between",
   });
+
   return (
     <>
-      {status === "authenticated" && (
+      {dataUser && (
         <>
           <IconButton onClick={(e) => handleOpenUserMenu(e)}>
             <AvatarComponent
               sx={{
                 backgroundColor: (theme) => theme.palette.avatar.default,
               }}
-              alt={session.user.name}
-              src={avatar}
+              alt={dataUser.name}
+              src={dataUser.avatar}
             >
-              {session.user.name.charAt(0)}
+              {dataUser.name.charAt(0)}
             </AvatarComponent>
           </IconButton>
 
@@ -119,7 +105,7 @@ const AvatarProfile = () => {
             onClose={handleCloseUserMenu}
           >
             <MenuAvatarItemComponent>
-              <Link href={"/users/" + session.user.account} onClick={handleCloseUserMenu}>
+              <Link href={"/users/" + dataUser.account} onClick={handleCloseUserMenu}>
                 <MenuItemComponent>
                   <PersonIcon
                     sx={{

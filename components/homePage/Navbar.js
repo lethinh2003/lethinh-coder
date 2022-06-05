@@ -14,23 +14,11 @@ const Navbar = (props) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
   const [isModal, setIsModal] = useState(false);
-  const [data, setData] = useState([]);
   const router = useRouter();
   const handleClickSupport = () => {
     setIsModal(true);
   };
-  useEffect(() => {
-    const fetchSystem = async () => {
-      try {
-        const result = await axios.get("/api/system");
 
-        setData(result.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchSystem();
-  }, []);
   const BoxMenuNavBar = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.header.background.default,
 

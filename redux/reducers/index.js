@@ -1,8 +1,12 @@
 import { combineReducers } from "redux";
-import getDarkmode from "./getDarkmode";
-import getAvatar from "./getAvatar";
+import getUserReducer from "./getUserReducer";
+import getDarkModeReducer from "./getDarkModeReducer";
+import getSystemReducer from "./getSystemReducer";
 
-export default combineReducers({
-  getDarkmode,
-  getAvatar,
+const reducers = combineReducers({
+  user: getUserReducer,
+  darkMode: getDarkModeReducer,
+  system: getSystemReducer,
 });
+
+export default (state, action) => reducers(state, action);

@@ -19,26 +19,33 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
-import socketIOClient from "socket.io-client";
-let socket;
+import SocketContext from "../../context/socket";
+import { useContext } from "react";
+
 const Introduce = (props) => {
+  const socket = useContext(SocketContext);
   const timeOutAlert = useRef();
   const [data, setData] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    socketInitializer();
+    if (socket) {
+      socketInitializer();
+      console.log("socket tao", socket);
+    }
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off("send-event-homepage-express");
+        console.log("socket huy", socket);
+      }
       clearTimeout(timeOutAlert.current);
     };
   }, [socket]);
+
   const socketInitializer = () => {
-    socket = socketIOClient.connect(process.env.HOST_SOCKET);
     socket.emit("join-homepage-express");
-    socket.emit("send-event-homepage-express");
+    socket.emit("send-event-homepage-express", 0);
     socket.on("send-event-homepage-express", (data) => {
-      console.log("send-data");
       setData(data);
       setIsSuccess(true);
       clearTimeout(timeOutAlert.current);
@@ -194,28 +201,28 @@ const Introduce = (props) => {
                 }}
               >
                 <Tooltip title="Thích">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express1 : 0} max={99999}>
+                  <Badge color="secondary" badgeContent={data ? data.home_express1 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(1)}>
                       <IconExpress1 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Cực Thích">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express2 : 0} max={99999}>
+                  <Badge color="secondary" badgeContent={data ? data.home_express2 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(2)}>
                       <IconExpress2 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Bình thường">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express3 : 0} max={99999}>
+                  <Badge color="secondary" badgeContent={data ? data.home_express3 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(3)}>
                       <IconExpress3 />
                     </IconButton>
                   </Badge>
                 </Tooltip>
                 <Tooltip title="Chán">
-                  <Badge color="secondary" badgeContent={data.length > 0 ? data[0].home_express4 : 0} max={99999}>
+                  <Badge color="secondary" badgeContent={data ? data.home_express4 : 0} max={99999}>
                     <IconButton onClick={() => handleClickExpress(4)}>
                       <IconExpress4 />
                     </IconButton>
