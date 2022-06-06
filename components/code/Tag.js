@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
-
+import { memo } from "react";
 const Tag = (props) => {
   const { sourceCode } = props;
 
   return (
     <>
-      {sourceCode.length > 0 && (
+      {sourceCode && (
         <>
           <h1 className="title">Tag</h1>
           <Box
@@ -19,11 +19,11 @@ const Tag = (props) => {
               opacity: "0.7",
             }}
           >
-            {sourceCode[0].keywords.join(", ")}
+            {sourceCode.keywords.join(", ")}
           </Box>
         </>
       )}
     </>
   );
 };
-export default Tag;
+export default memo(Tag);

@@ -1,44 +1,8 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Backdrop,
-  CircularProgress,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Badge,
-  Input,
-} from "@mui/material";
-import convertTime from "../../utils/convertTime";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye } from "react-icons/ai";
-import { useSession } from "next-auth/react";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { BsCloudDownload } from "react-icons/bs";
-import { SiZalo } from "react-icons/si";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import CancelIcon from "@mui/icons-material/Cancel";
-import NumberFormat from "react-number-format";
-import Email from "../auth/Email";
-import Lightbox from "react-image-lightbox";
-
+import { Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { memo } from "react";
 const SummaryCode = (props) => {
-  const { sourceCode, status } = props;
+  const { sourceCode } = props;
   const [listContents, setListContents] = useState([]);
   const [isContentPos, setIsContentPos] = useState("");
   useEffect(() => {
@@ -73,7 +37,10 @@ const SummaryCode = (props) => {
   }, [listContents]);
 
   const handleClickContent = (item) => {
-    window.scrollTo(0, item.offsetTop - item.offsetHeight);
+    item.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   return (
@@ -93,7 +60,14 @@ const SummaryCode = (props) => {
           top: 5,
         }}
       >
-        <h1 className="title">Contents</h1>
+        <h1
+          className="title"
+          style={{
+            paddingTop: "10px",
+          }}
+        >
+          Table of Contents
+        </h1>
         <Box
           className="tableofcontents"
           sx={{
@@ -126,4 +100,4 @@ const SummaryCode = (props) => {
     </>
   );
 };
-export default SummaryCode;
+export default memo(SummaryCode);

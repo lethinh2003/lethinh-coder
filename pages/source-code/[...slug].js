@@ -1,46 +1,27 @@
+import { Box } from "@mui/material";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import CommentsCode from "../../components/code/CommentsCode";
+import DescCode from "../../components/code/DescCode";
+import ImagesCode from "../../components/code/ImagesCode";
+import InfoCode from "../../components/code/InfoCode";
+import MySelf from "../../components/code/MySelf";
+import RelationCode from "../../components/code/RelationCode";
+import SummaryCode from "../../components/code/SummaryCode";
+import Tag from "../../components/code/Tag";
 import Layout from "../../components/Layout";
 import dbConnect from "../../database/dbConnect";
 import Code from "../../models/Code";
 import System from "../../models/System";
-import axios from "axios";
-
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Backdrop,
-  CircularProgress,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Badge,
-  Input,
-} from "@mui/material";
-
-import { useState, useEffect, useRef } from "react";
-import Head from "next/head";
-import { useSession } from "next-auth/react";
-import InfoCode from "../../components/code/InfoCode";
-import DescCode from "../../components/code/DescCode";
-import SummaryCode from "../../components/code/SummaryCode";
-import CommentsCode from "../../components/code/CommentsCode";
-import MySelf from "../../components/code/MySelf";
-import RelationCode from "../../components/code/RelationCode";
-import Tag from "../../components/code/Tag";
-import ImagesCode from "../../components/code/ImagesCode";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
+  const dataSystem = useSelector((state) => state.system.data);
+
   let { sourceBySlug, newSource, systemData } = props;
   const [sourceCode, setSourceCode] = useState(JSON.parse(sourceBySlug));
   systemData = JSON.parse(systemData);
@@ -50,17 +31,18 @@ const DetailSourceCode = (props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (sourceCode.length === 0) {
+    if (!sourceCode) {
       return router.push("/");
     }
     const slug = router.query.slug.join("/");
+    const data = JSON.parse(sourceBySlug);
+    if (slug !== sourceCode.slug) {
+      setSourceCode(data);
+    }
     const fetchAPI = async () => {
       try {
         setIsLoading(true);
-        const results = await axios.get("/api/source-code/" + slug);
-        setSourceCode(results.data.data);
-        const keywordRelationship =
-          results.data.data[0].labels[Math.floor(Math.random() * results.data.data[0].labels.length)];
+        const keywordRelationship = data.labels[Math.floor(Math.random() * data.labels.length)];
         const resultsRelation = await axios.get(`/api/source-code/relation-code?keyword=${keywordRelationship}`);
         setSourceCodeRelationship(resultsRelation.data.data);
         setIsLoading(false);
@@ -70,21 +52,21 @@ const DetailSourceCode = (props) => {
       }
     };
     fetchAPI();
-  }, [router.query.slug, status]);
+  }, [router.query.slug]);
 
   return (
     <>
-      {sourceCode.length > 0 && (
+      {sourceCode && (
         <>
           <Head>
-            <title>{`${sourceCode[0].title} - LT Blog`}</title>
-            <meta name="description" content={sourceCode[0].desc} />
-            {systemData.length > 0 && (
-              <meta name="keywords" content={`${systemData[0].meta_keywords},  ${sourceCode[0].keywords.join(", ")}`} />
+            <title>{`${sourceCode.title} - LT Blog`}</title>
+            <meta name="description" content={sourceCode.desc} />
+            {dataSystem && (
+              <meta name="keywords" content={`${dataSystem.meta_keywords},  ${sourceCode.keywords.join(", ")}`} />
             )}
-            <meta property="og:title" content={`${sourceCode[0].title} - LT Blog`} />
-            <meta property="og:description" content={sourceCode[0].desc} />
-            <meta property="og:image" content={sourceCode[0].images[0]} />
+            <meta property="og:title" content={`${sourceCode.title} - LT Blog`} />
+            <meta property="og:description" content={sourceCode.desc} />
+            <meta property="og:image" content={sourceCode.images[0]} />
             <meta property="og:image:width" content="600" />
             <meta property="og:image:height" content="315" />
           </Head>
@@ -142,11 +124,11 @@ const DetailSourceCode = (props) => {
                     padding: { xs: "10px", md: "20px" },
                   }}
                 >
-                  <ImagesCode sourceCode={sourceCode} status={status} />
+                  <ImagesCode sourceCode={sourceCode} />
                 </Box>
               </Box>
               <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
-              <MySelf systemData={systemData} />
+              <MySelf dataSystem={dataSystem} />
               <RelationCode sourceCodeRelationship={sourceCodeRelationship} />
               <Tag sourceCode={sourceCode} />
             </Box>
@@ -164,20 +146,18 @@ export const getServerSideProps = async (context) => {
   let sourceBySlug = [];
   let systemData = [];
   await Promise.all([
-    Code.find({ slug: { $in: test }, status: true }),
-    System.find({}).select("-__v"),
-    System.updateMany(
-      {},
-      { $inc: { home_views: 1 } },
+    Code.findOneAndUpdate(
+      { slug: { $in: test }, status: true },
+      {
+        $inc: { views: 1 },
+      },
       {
         new: true,
       }
     ),
-    Code.updateOne(
-      {
-        slug: { $in: test },
-      },
-      { $inc: { views: 1 } },
+    System.findOneAndUpdate(
+      {},
+      { $inc: { home_views: 1 } },
       {
         new: true,
       }

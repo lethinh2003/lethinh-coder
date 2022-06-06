@@ -275,10 +275,11 @@
 .table_content {
   padding-left: 5px;
   cursor: pointer;
-  transition: all 0.25s linear;
+  transition: all 0.1s linear;
 
   &.active {
     color: #0cc5e3;
+    font-weight: 500;
   }
 }
 .box_notify {
@@ -324,4 +325,20 @@
 }
 .bottom-active {
   color: #0e1217;
+}
+.image-container {
+
+  width: 100%;
+
+  > div {
+    position: unset !important;
+  }
+
+  .image {
+    max-width: 600px;
+    object-fit: contain;
+    width: 100% !important;
+    position: relative !important;
+    height: unset !important;
+  }
 }

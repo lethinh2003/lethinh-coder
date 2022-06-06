@@ -1,14 +1,8 @@
-import { Box, Typography, CardContent, CardMedia, Button } from "@mui/material";
-import convertTime from "../../utils/convertTime";
+import { Box, Button, CardMedia, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "next/link";
 import { styled } from "@mui/material/styles";
-
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye, AiFillTags } from "react-icons/ai";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { BsCloudDownload } from "react-icons/bs";
-
-import NumberFormat from "react-number-format";
+import Link from "next/link";
+import { memo } from "react";
 
 const InfoBlog = (props) => {
   const { blogData } = props;
@@ -34,7 +28,7 @@ const InfoBlog = (props) => {
   });
   return (
     <>
-      {blogData.length > 0 && (
+      {blogData && (
         <Box
           sx={{
             display: "flex",
@@ -53,7 +47,7 @@ const InfoBlog = (props) => {
             <Link style={{ color: "inherit" }} href="/source-code">
               Blog
             </Link>
-            <Typography color="text.primary">{blogData[0].title}</Typography>
+            <Typography color="text.primary">{blogData.title}</Typography>
           </Breadcrumbs>
 
           <Box
@@ -74,8 +68,8 @@ const InfoBlog = (props) => {
                 objectFit: "cover",
               }}
               component="img"
-              image={blogData[0].images[0]}
-              alt={blogData[0].title}
+              image={blogData.images[0]}
+              alt={blogData.title}
             />
           </Box>
         </Box>
@@ -83,4 +77,4 @@ const InfoBlog = (props) => {
     </>
   );
 };
-export default InfoBlog;
+export default memo(InfoBlog);

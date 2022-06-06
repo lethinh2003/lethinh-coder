@@ -35,7 +35,7 @@ import { BsCheckSquare } from "react-icons/bs";
 import Introduce from "../components/homePage/Introduce";
 import { styled } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import { useEffect, useState, useRef } from "react";
 import { Bars } from "react-loading-icons";
 import { useRouter } from "next/router";
@@ -93,7 +93,7 @@ const Signup = () => {
   }, []);
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/");
+      window.location.href = "/";
     }
   }, [status]);
 
@@ -115,6 +115,12 @@ const Signup = () => {
           setIsLoading(false);
           reset({ account: "", password: "", name: "" });
         }, 3000);
+        const login = await signIn("login", {
+          account: data.account,
+          password: data.password,
+          redirect: false,
+          callbackUrl: "/",
+        });
       } catch (err) {
         setIsLoading(false);
         if (err.response) {
@@ -444,3 +450,21 @@ const Signup = () => {
 };
 
 export default Signup;
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const session = await getSession({ req });
+
+  if (session && session.user) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+};

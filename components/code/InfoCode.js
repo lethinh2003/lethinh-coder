@@ -3,11 +3,11 @@ import convertTime from "../../utils/convertTime";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "next/link";
 import { styled } from "@mui/material/styles";
-
+import { motion } from "framer-motion";
 import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye, AiFillTags } from "react-icons/ai";
 import { FaMoneyCheckAlt } from "react-icons/fa";
 import { BsCloudDownload } from "react-icons/bs";
-
+import { memo } from "react";
 import NumberFormat from "react-number-format";
 
 const InfoCode = (props) => {
@@ -32,10 +32,14 @@ const InfoCode = (props) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
+  console.log("re-render");
   return (
     <>
-      {sourceCode.length > 0 && (
+      {sourceCode && (
         <Box
+          as={motion.div}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           sx={{
             display: "flex",
             flexWrap: "wrap",
@@ -53,7 +57,7 @@ const InfoCode = (props) => {
             <Link style={{ color: "inherit" }} href="/source-code">
               Source code
             </Link>
-            <Typography color="text.primary">{sourceCode[0].title}</Typography>
+            <Typography color="text.primary">{sourceCode.title}</Typography>
           </Breadcrumbs>
           <h1 className="title">Trang thông tin code</h1>
 
@@ -76,8 +80,8 @@ const InfoCode = (props) => {
                 boxShadow: "0px 5px 50px 0px #52f18a, 0px 0px 0px 7px rgb(31 195 127)",
               }}
               component="img"
-              image={sourceCode[0].images[0]}
-              alt={sourceCode[0].title}
+              image={sourceCode.images[0]}
+              alt={sourceCode.title}
             />
             <CardContent
               sx={{
@@ -91,14 +95,14 @@ const InfoCode = (props) => {
                   fontWeight: "500",
                 }}
               >
-                <AiFillFileZip /> Tên code: {sourceCode[0].title}{" "}
+                <AiFillFileZip /> Tên code: {sourceCode.title}{" "}
               </Typography>
               <Typography
                 sx={{
                   fontWeight: "500",
                 }}
               >
-                <AiOutlineEye /> Lượt xem: {sourceCode[0].views}{" "}
+                <AiOutlineEye /> Lượt xem: {sourceCode.views}{" "}
               </Typography>
               <Typography
                 sx={{
@@ -107,7 +111,7 @@ const InfoCode = (props) => {
               >
                 <FaMoneyCheckAlt /> Phí tải:{" "}
                 <NumberFormat
-                  value={sourceCode[0].costs}
+                  value={sourceCode.costs}
                   displayType={"text"}
                   thousandSeparator={"."}
                   decimalSeparator={","}
@@ -119,16 +123,16 @@ const InfoCode = (props) => {
                   fontWeight: "500",
                 }}
               >
-                <BsCloudDownload /> Lượt tải: {sourceCode[0].downloads}{" "}
+                <BsCloudDownload /> Lượt tải: {sourceCode.downloads}{" "}
               </Typography>
               <Typography
                 sx={{
                   fontWeight: "500",
                 }}
               >
-                <AiOutlineCalendar /> Thời gian: {convertTime(sourceCode[0].createdAt)}{" "}
+                <AiOutlineCalendar /> Thời gian: {convertTime(sourceCode.createdAt)}{" "}
               </Typography>
-              {sourceCode[0].labels.length > 0 && (
+              {sourceCode.labels.length > 0 && (
                 <Typography
                   sx={{
                     fontWeight: "500",
@@ -142,7 +146,7 @@ const InfoCode = (props) => {
                       flexWrap: "wrap",
                     }}
                   >
-                    {sourceCode[0].labels.map((item, i) => (
+                    {sourceCode.labels.map((item, i) => (
                       <CodeButton key={i} variant="outlined">
                         {item}
                       </CodeButton>
@@ -157,4 +161,4 @@ const InfoCode = (props) => {
     </>
   );
 };
-export default InfoCode;
+export default memo(InfoCode);

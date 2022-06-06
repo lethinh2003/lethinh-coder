@@ -27,7 +27,8 @@ const AvatarProfile = () => {
 
   const handleClickLogout = async () => {
     const data = await signOut({
-      redirect: false,
+      redirect: true,
+      callbackUrl: "/",
     });
     localStorage.removeItem("listLikeComments");
     localStorage.removeItem("avatarProfile");

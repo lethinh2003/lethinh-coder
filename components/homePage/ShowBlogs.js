@@ -1,29 +1,12 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-} from "@mui/material";
-import { useState, useEffect, useRef } from "react";
-import NumberFormat from "react-number-format";
+import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
 import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { useTheme } from "@mui/material/styles";
-import { styled } from "@mui/material/styles";
-import { GrFormView } from "react-icons/gr";
+import { useState } from "react";
+import NumberFormat from "react-number-format";
 import convertTime from "../../utils/convertTime";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import CommentIcon from "@mui/icons-material/Comment";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import { memo } from "react";
+import readingTime from "reading-time";
+
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
 
@@ -103,7 +86,12 @@ const ShowBlogs = (props) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
+  const getReadingTime = (item) => {
+    const stats = readingTime(item.content);
+    const getMinutes = stats.text.split(" ");
 
+    return getMinutes[0];
+  };
   return (
     <>
       <Box
@@ -169,7 +157,7 @@ const ShowBlogs = (props) => {
                               fontSize: { xs: "14px", md: "16px" },
                             }}
                           >
-                            {convertTime(item.createdAt)} - {item.readTime} phút đọc/{item.views} views
+                            {convertTime(item.createdAt)} - {getReadingTime(item)} phút đọc/{item.views} views
                           </Typography>
                         </Typography>
                       </Typography>
@@ -207,4 +195,4 @@ const ShowBlogs = (props) => {
     </>
   );
 };
-export default ShowBlogs;
+export default memo(ShowBlogs);

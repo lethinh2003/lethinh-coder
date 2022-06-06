@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -26,10 +26,12 @@ import { FcGoogle } from "react-icons/fc";
 import * as Yup from "yup";
 import LoadingBox from "../components/homePage/LoadingBox";
 import Layout from "../components/Layout";
-
+import { getUser } from "../redux/actions/getUser";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -70,7 +72,7 @@ const Login = () => {
   }, []);
   useEffect(() => {
     if (status === "authenticated") {
-      router.push("/");
+      window.location.href = "/";
     }
   }, [status]);
 
@@ -84,10 +86,12 @@ const Login = () => {
           account: data.account,
           password: data.password,
           redirect: false,
+          callbackUrl: "/",
         });
         console.log(result);
 
         if (!result.error) {
+          console.log(session);
           setIsSuccess(true);
           setIsError(false);
           refreshLoading.current = setTimeout(() => {
@@ -365,3 +369,21 @@ const Login = () => {
 };
 
 export default Login;
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const session = await getSession({ req });
+
+  if (session && session.user) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+};

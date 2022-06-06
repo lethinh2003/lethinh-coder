@@ -1,7 +1,8 @@
 import { Typography } from "@mui/material";
 import { useState } from "react";
 import Lightbox from "react-image-lightbox";
-
+import { memo } from "react";
+import Image from "next/image";
 const ImagesCode = (props) => {
   const { sourceCode, status } = props;
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -11,8 +12,19 @@ const ImagesCode = (props) => {
     setPhotoIndex(index);
     setIsOpenLightBox(true);
   };
-  const imagesLightBox = sourceCode.length > 0 ? sourceCode[0].images : [];
+  const imagesLightBox = sourceCode ? sourceCode.images : [];
+  const keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
+  const triplet = (e1, e2, e3) =>
+    keyStr.charAt(e1 >> 2) +
+    keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
+    keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
+    keyStr.charAt(e3 & 63);
+
+  const rgbDataURL = (r, g, b) =>
+    `data:image/gif;base64,R0lGODlhAQABAPAA${
+      triplet(0, r, g) + triplet(b, 255, 255)
+    }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
   return (
     <>
       <h1 className="title">Images</h1>
@@ -26,43 +38,33 @@ const ImagesCode = (props) => {
           onMoveNextRequest={() => setPhotoIndex((photoIndex + 1) % imagesLightBox.length)}
         />
       )}
-      {sourceCode.length > 0 &&
-        sourceCode.map((item, i) => {
-          return (
-            <Typography
-              component="div"
-              key={i}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {item.images.length > 0 &&
-                item.images.map((im, i) => {
-                  return (
-                    <img
-                      loading="lazy"
-                      onClick={() => handleClickOpenLightBoxImage(i)}
-                      alt={item.title}
-                      key={i}
-                      src={im}
-                      style={{
-                        maxWidth: "600px",
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        cursor: "pointer",
-                      }}
-                    />
-                  );
-                })}
-            </Typography>
-          );
-        })}
+
+      <Typography
+        component="div"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        {sourceCode.images.length > 0 &&
+          sourceCode.images.map((im, i) => {
+            return (
+              <Image
+                onClick={() => handleClickOpenLightBoxImage(i)}
+                width={900}
+                height={400}
+                src={im}
+                alt={sourceCode.title}
+                objectFit="cover"
+              />
+            );
+          })}
+      </Typography>
     </>
   );
 };
-export default ImagesCode;
+export default memo(ImagesCode);

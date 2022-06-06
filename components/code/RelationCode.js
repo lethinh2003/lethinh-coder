@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { styled } from "@mui/material/styles";
-
+import { memo } from "react";
 import NumberFormat from "react-number-format";
 
 const RelationCode = (props) => {
@@ -203,4 +203,4 @@ const RelationCode = (props) => {
     </>
   );
 };
-export default RelationCode;
+export default memo(RelationCode);

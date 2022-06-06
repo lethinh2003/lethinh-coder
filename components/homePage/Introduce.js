@@ -1,26 +1,8 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-} from "@mui/material";
-import { useState, useEffect, useRef } from "react";
-import NumberFormat from "react-number-format";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import { useTheme } from "@mui/material/styles";
-import { motion } from "framer-motion";
-
+import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { memo } from "react";
 
 const Introduce = (props) => {
   const IntroduceButton = styled(Button)({
@@ -250,4 +232,4 @@ const Introduce = (props) => {
     </>
   );
 };
-export default Introduce;
+export default memo(Introduce);

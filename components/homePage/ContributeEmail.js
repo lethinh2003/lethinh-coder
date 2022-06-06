@@ -21,7 +21,7 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useRef, useState } from "react";
 import SocketContext from "../../context/socket";
 import { useContext } from "react";
-
+import { memo } from "react";
 const Introduce = (props) => {
   const socket = useContext(SocketContext);
   const timeOutAlert = useRef();
@@ -247,4 +247,4 @@ const Introduce = (props) => {
     </>
   );
 };
-export default Introduce;
+export default memo(Introduce);

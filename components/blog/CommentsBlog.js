@@ -21,11 +21,13 @@ import socketIOClient from "socket.io-client";
 import convertTime from "../../utils/convertTime";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-
-let socket;
+import SocketContext from "../../context/socket";
+import { useContext } from "react";
 const CommentsCode = (props) => {
+  const socket = useContext(SocketContext);
   const { status, session, blogData, router } = props;
   const getPSComment = useRef();
+  const [count, setCount] = useState(0);
   const [listComments, setListComment] = useState([]);
   const [listCommentsAll, setListCommentAll] = useState([]);
   const [replyComment, setReplyComment] = useState([]);
@@ -44,19 +46,39 @@ const CommentsCode = (props) => {
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    socketInitializer();
+    if (socket) {
+      socketInitializer();
+    }
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off("send-all-comments");
+
+        socket.off("send-room-history-likes");
+      }
     };
-  }, [router.query.slug, status]);
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-    socket.emit("join-room", blogData[0]._id);
+  }, [router.query.slug, socket]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.on("create-new-comment", (comment) => {
+  //       setCount((count) => count + 1);
+  //       const currentComments = listComments;
+
+  //       const newComments = [comment].concat(currentComments);
+  //       setListComment(newComments);
+  //     });
+  //   }
+  //   return () => {
+  //     if (socket) {
+  //       socket.off("create-new-comment");
+  //     }
+  //   };
+  // }, [listComments, socket]);
+
+  const socketInitializer = () => {
+    socket.emit("join-room", blogData._id);
     socket.on("send-all-comments", async (getComments) => {
-      setIsGetListComments(true);
-
+      setHasMore(false);
       setListComment(getComments);
-
       setListCommentAll(getComments);
     });
     socket.on("send-room-history-likes", async () => {
@@ -74,10 +96,15 @@ const CommentsCode = (props) => {
       }
     });
   };
+
   useEffect(() => {
     const eventScrollCommentsBox = async () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
-      if (c >= getPSComment.current.offsetTop - 300 && isGetListComments === false) {
+      if (
+        getPSComment.current &&
+        c >= getPSComment.current.offsetTop - getPSComment.current.offsetHeight &&
+        isGetListComments === false
+      ) {
         setCurrentPage(1);
         await getAPI();
       }
@@ -88,10 +115,10 @@ const CommentsCode = (props) => {
 
         document.removeEventListener("scroll", eventScrollCommentsBox);
         const getComments = await axios.get(
-          `${hostServer}/api/v1/comments/detail/` + blogData[0]._id + `?page=${currentPage}&results=${limitResults}`
+          `${hostServer}/api/v1/comments/detail/` + blogData._id + `?page=${currentPage}&results=${limitResults}`
         );
         if (getComments.data.length === limitResults) {
-          setCurrentPage(currentPage + 1);
+          setCurrentPage((currentPage) => currentPage + 1);
           setHasMore(true);
         } else {
           setHasMore(false);
@@ -111,15 +138,17 @@ const CommentsCode = (props) => {
   const reFetch = async () => {
     try {
       const results = await axios.get(
-        `${hostServer}/api/v1/comments/detail/` + blogData[0]._id + `?page=${currentPage}&results=${limitResults}`
+        `${hostServer}/api/v1/comments/detail/` + blogData._id + `?page=${currentPage}&results=${limitResults}`
       );
       if (results.data.length === limitResults) {
-        setCurrentPage(currentPage + 1);
+        setCurrentPage((currentPage) => currentPage + 1);
         setHasMore(true);
       } else {
         setHasMore(false);
       }
-      const dataNotify = results.data.data;
+
+      let dataNotify = results.data.data;
+
       const newData = [...listComments, ...dataNotify];
 
       setListComment(newData);
@@ -165,7 +194,7 @@ const CommentsCode = (props) => {
       try {
         setIsPostingComment(true);
         if (replyComment.length === 0) {
-          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + blogData[0]._id, {
+          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + blogData._id, {
             content: comment,
             type: "blog",
           });
@@ -173,7 +202,7 @@ const CommentsCode = (props) => {
           const result = await axios.post(`${hostServer}/api/v1/comments/reply`, {
             commentId: replyComment[0].commentId,
             content: comment,
-            linkNotify: `/blog/${blogData[0].slug}`,
+            linkNotify: `/blog/${blogData.slug}`,
           });
           socket.emit("get-notify", receiveId);
           setReplyComment([]);
@@ -182,7 +211,7 @@ const CommentsCode = (props) => {
         setIsComment(false);
 
         setIsPostingComment(false);
-        socket.emit("get-all-comments", blogData[0]._id);
+        socket.emit("get-all-comments", blogData._id);
       } catch (err) {
         setIsPostingComment(false);
         console.log(err);
@@ -203,7 +232,7 @@ const CommentsCode = (props) => {
         const result = await axios.post(`${hostServer}/api/v1/comments/like`, {
           commentId: commentId,
           accountId: accountId,
-          linkNotify: `/source-code/${blogData[0].slug}`,
+          linkNotify: `/blog/${blogData.slug}`,
         });
         socket.emit("send-room-history-likes", session.user.id);
 
@@ -224,7 +253,7 @@ const CommentsCode = (props) => {
           const filterArray = convertToArray.filter((item) => item !== commentId);
           localStorage.setItem("listLikeComments", JSON.stringify(filterArray));
         }
-        socket.emit("get-all-comments", blogData[0]._id);
+        socket.emit("get-all-comments", blogData._id);
 
         // const getComments = await axios.get("/api/source-code/comments/" + blogData[0]._id);
         // setListComment(getComments.data.data.slice(0, 5));
@@ -282,7 +311,7 @@ const CommentsCode = (props) => {
         await axios.post(`${hostServer}/api/v1/comments/delete`, {
           commentId: item._id,
         });
-        socket.emit("get-all-comments", blogData[0]._id);
+        socket.emit("get-all-comments", blogData._id);
       }
     } catch (err) {
       console.log(err);

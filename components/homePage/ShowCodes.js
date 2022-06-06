@@ -19,7 +19,8 @@ import Link from "next/link";
 import MoneyOffIcon from "@mui/icons-material/MoneyOff";
 import { useTheme } from "@mui/material/styles";
 import { styled } from "@mui/material/styles";
-
+import Image from "next/image";
+import { memo } from "react";
 const ShowCodes = (props) => {
   const [sourceCode, setSourceCode] = useState(JSON.parse(props.sourceCode));
 
@@ -150,16 +151,16 @@ const ShowCodes = (props) => {
               sourceCode.map((item, i) => {
                 return (
                   <CardCode key={i}>
-                    <CardMedia
+                    <Box
                       className="code-container__image"
-                      component="img"
                       height="140"
-                      image={item.images[0]}
-                      alt={item.title}
                       sx={{
                         borderRadius: "20px",
+                        position: "relative",
                       }}
-                    />
+                    >
+                      <Image src={item.images[0]} layout="fill" objectFit="cover" alt={item.title} />
+                    </Box>
                     <CardContentCode>
                       <Link href={`/source-code/${item.slug}`}>
                         <CardContentCodeTitle component="div" className="code-title">
@@ -206,16 +207,16 @@ const ShowCodes = (props) => {
             sourceCode.map((item, i) => {
               return (
                 <CardCode key={i}>
-                  <CardMedia
+                  <Box
                     className="code-container__image"
-                    component="img"
                     height="140"
-                    image={item.images[0]}
-                    alt={item.title}
                     sx={{
                       borderRadius: "20px",
+                      position: "relative",
                     }}
-                  />
+                  >
+                    <Image src={item.images[0]} layout="fill" objectFit="cover" alt={item.title} />
+                  </Box>
                   <CardContentCode>
                     <Link href={`/source-code/${item.slug}`}>
                       <CardContentCodeTitle component="div" className="code-title">
@@ -249,4 +250,4 @@ const ShowCodes = (props) => {
     </>
   );
 };
-export default ShowCodes;
+export default memo(ShowCodes);

@@ -21,9 +21,12 @@ import socketIOClient from "socket.io-client";
 import convertTime from "../../utils/convertTime";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-
-let socket;
+import SocketContext from "../../context/socket";
+import { useContext } from "react";
+import { memo } from "react";
 const CommentsCode = (props) => {
+  const socket = useContext(SocketContext);
+
   const { status, session, sourceCode, router } = props;
   const getPSComment = useRef();
   const [listComments, setListComment] = useState([]);
@@ -44,19 +47,22 @@ const CommentsCode = (props) => {
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    socketInitializer();
+    if (socket) {
+      socketInitializer();
+    }
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off("send-all-comments");
+        socket.off("send-room-history-likes");
+      }
     };
-  }, [router.query.slug, status]);
+  }, [router.query.slug, socket]);
+
   const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-    socket.emit("join-room", sourceCode[0]._id);
+    socket.emit("join-room", sourceCode._id);
     socket.on("send-all-comments", async (getComments) => {
       setIsGetListComments(true);
-
       setListComment(getComments);
-
       setListCommentAll(getComments);
     });
     socket.on("send-room-history-likes", async () => {
@@ -77,7 +83,7 @@ const CommentsCode = (props) => {
   useEffect(() => {
     const eventScrollCommentsBox = async () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
-      if (c >= getPSComment.current.offsetTop - 300 && isGetListComments === false) {
+      if (getPSComment.current && c >= getPSComment.current.offsetTop - 300 && isGetListComments === false) {
         setCurrentPage(1);
         await getAPI();
       }
@@ -87,7 +93,7 @@ const CommentsCode = (props) => {
         setIsLoadingComments(true);
         document.removeEventListener("scroll", eventScrollCommentsBox);
         const getComments = await axios.get(
-          `${hostServer}/api/v1/comments/detail/` + sourceCode[0]._id + `?page=${currentPage}&results=${limitResults}`
+          `${hostServer}/api/v1/comments/detail/` + sourceCode._id + `?page=${currentPage}&results=${limitResults}`
         );
         if (getComments.data.length === limitResults) {
           setCurrentPage(currentPage + 1);
@@ -110,7 +116,7 @@ const CommentsCode = (props) => {
   const reFetch = async () => {
     try {
       const results = await axios.get(
-        `${hostServer}/api/v1/comments/detail/` + sourceCode[0]._id + `?page=${currentPage}&results=${limitResults}`
+        `${hostServer}/api/v1/comments/detail/` + sourceCode._id + `?page=${currentPage}&results=${limitResults}`
       );
       if (results.data.length === limitResults) {
         setCurrentPage(currentPage + 1);
@@ -164,7 +170,7 @@ const CommentsCode = (props) => {
       try {
         setIsPostingComment(true);
         if (replyComment.length === 0) {
-          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + sourceCode[0]._id, {
+          const result = await axios.post(`${hostServer}/api/v1/comments/detail/` + sourceCode._id, {
             content: comment,
             type: "code",
           });
@@ -172,7 +178,7 @@ const CommentsCode = (props) => {
           const result = await axios.post(`${hostServer}/api/v1/comments/reply`, {
             commentId: replyComment[0].commentId,
             content: comment,
-            linkNotify: `/source-code/${sourceCode[0].slug}`,
+            linkNotify: `/source-code/${sourceCode.slug}`,
           });
           socket.emit("get-notify", receiveId);
           setReplyComment([]);
@@ -181,7 +187,7 @@ const CommentsCode = (props) => {
         setIsComment(false);
 
         setIsPostingComment(false);
-        socket.emit("get-all-comments", sourceCode[0]._id);
+        socket.emit("get-all-comments", sourceCode._id);
       } catch (err) {
         setIsPostingComment(false);
         console.log(err);
@@ -190,7 +196,7 @@ const CommentsCode = (props) => {
   };
   const handleChangeComment = (e) => {
     if (!isPostingComment) {
-      // socket.emit("typing-comment", sourceCode[0]._id);
+      // socket.emit("typing-comment", sourceCode._id);
       setIsComment(true);
       setComment(e.target.value);
     }
@@ -202,7 +208,7 @@ const CommentsCode = (props) => {
         const result = await axios.post(`${hostServer}/api/v1/comments/like`, {
           commentId: commentId,
           accountId: accountId,
-          linkNotify: `/source-code/${sourceCode[0].slug}`,
+          linkNotify: `/source-code/${sourceCode.slug}`,
         });
         socket.emit("send-room-history-likes", session.user.id);
 
@@ -223,9 +229,9 @@ const CommentsCode = (props) => {
           const filterArray = convertToArray.filter((item) => item !== commentId);
           localStorage.setItem("listLikeComments", JSON.stringify(filterArray));
         }
-        socket.emit("get-all-comments", sourceCode[0]._id);
+        socket.emit("get-all-comments", sourceCode._id);
 
-        // const getComments = await axios.get("/api/source-code/comments/" + sourceCode[0]._id);
+        // const getComments = await axios.get("/api/source-code/comments/" + sourceCode._id);
         // setListComment(getComments.data.data.slice(0, 5));
         // setListCommentAll(getComments.data.data);
 
@@ -281,7 +287,7 @@ const CommentsCode = (props) => {
         await axios.post(`${hostServer}/api/v1/comments/delete`, {
           commentId: item._id,
         });
-        socket.emit("get-all-comments", sourceCode[0]._id);
+        socket.emit("get-all-comments", sourceCode._id);
       }
     } catch (err) {
       console.log(err);
@@ -530,4 +536,4 @@ const CommentsCode = (props) => {
     </>
   );
 };
-export default CommentsCode;
+export default memo(CommentsCode);
