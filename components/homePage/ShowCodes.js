@@ -22,8 +22,8 @@ import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import { memo } from "react";
 const ShowCodes = (props) => {
-  const [sourceCode, setSourceCode] = useState(JSON.parse(props.sourceCode));
-
+  const source = props.sourceCode;
+  const [sourceCode, setSourceCode] = useState(typeof source === "string" ? JSON.parse(source) : source);
   const theme = useTheme();
   const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
@@ -157,9 +157,17 @@ const ShowCodes = (props) => {
                       sx={{
                         borderRadius: "20px",
                         position: "relative",
+                        overflow: "hidden",
                       }}
                     >
-                      <Image src={item.images[0]} layout="fill" objectFit="cover" alt={item.title} />
+                      <Image
+                        src={item.images[0]}
+                        layout="fill"
+                        objectFit="cover"
+                        alt={item.title}
+                        placeholder="blur"
+                        blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                      />
                     </Box>
                     <CardContentCode>
                       <Link href={`/source-code/${item.slug}`}>
@@ -200,7 +208,11 @@ const ShowCodes = (props) => {
             gap: "10px",
             padding: "40px 20px",
             display: { xs: "none", md: "grid" },
-            gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+            gridTemplateColumns: {
+              sm: "repeat(2, minmax(0,1fr))",
+              md: "repeat(2, minmax(0,1fr))",
+              lg: "repeat(3, minmax(0,1fr))",
+            },
           }}
         >
           {sourceCode.length > 0 &&
@@ -213,9 +225,17 @@ const ShowCodes = (props) => {
                     sx={{
                       borderRadius: "20px",
                       position: "relative",
+                      overflow: "hidden",
                     }}
                   >
-                    <Image src={item.images[0]} layout="fill" objectFit="cover" alt={item.title} />
+                    <Image
+                      src={item.images[0]}
+                      layout="fill"
+                      objectFit="cover"
+                      alt={item.title}
+                      placeholder="blur"
+                      blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                    />
                   </Box>
                   <CardContentCode>
                     <Link href={`/source-code/${item.slug}`}>

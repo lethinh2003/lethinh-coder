@@ -2,7 +2,7 @@ module.exports = {
   reactStrictMode: true,
   optimizeFonts: false,
   images: {
-    domains: ["i.imgur.com"],
+    domains: ["i.imgur.com", "anonyviet.com"],
   },
   env: {
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

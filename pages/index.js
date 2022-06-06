@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ContributeEmail from "../components/homePage/ContributeEmail";
 import Introduce from "../components/homePage/Introduce";
@@ -11,8 +12,24 @@ import Code from "../models/Code";
 
 const Home = (props) => {
   const dataSystem = useSelector((state) => state.system.data);
+  const [mostDownloadsCode, setMostDownloadsCode] = useState([]);
+  const [mostViewsCode, setMostViewsCode] = useState([]);
 
-  let { newCode, mostDownloadsCode, mostViewsCode, newBlog } = props;
+  let { newCode, newBlog } = props;
+  useEffect(() => {
+    if (newCode) {
+      const sortByViews = [...JSON.parse(newCode)];
+      const sortByDownloads = [...JSON.parse(newCode)];
+      sortByDownloads.sort((a, b) => b.downloads - a.downloads);
+      sortByViews.sort((a, b) => b.views - a.views);
+      setMostDownloadsCode(sortByDownloads);
+      setMostViewsCode(sortByViews);
+    }
+  }, []);
+  useEffect(() => {
+    console.log("downloads", mostDownloadsCode);
+    console.log("views", mostViewsCode);
+  }, [mostDownloadsCode, mostViewsCode]);
 
   return (
     <>
@@ -30,8 +47,8 @@ const Home = (props) => {
         <Introduce />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
-        <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>
-        <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>
+        {mostDownloadsCode.length > 0 && <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>}
+        {mostViewsCode.length > 0 && <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>}
         <ContributeEmail />
       </Layout>
     </>
@@ -49,23 +66,17 @@ export const getServerSideProps = async () => {
   let newBlog = [];
   const test = await Promise.all([
     Code.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
-    Code.find({ status: true }).sort("-downloads").limit(6).select("-link -__v"),
-    Code.find({ status: true }).sort("-views").limit(6).select("-link -__v"),
     Blog.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
   ])
     .then((data) => {
       newCode = data[0];
-      mostDownloadsCode = data[1];
-      mostViewsCode = data[2];
 
-      newBlog = data[3];
+      newBlog = data[1];
     })
     .catch((err) => console.log(err));
   return {
     props: {
       newCode: JSON.stringify(newCode),
-      mostDownloadsCode: JSON.stringify(mostDownloadsCode),
-      mostViewsCode: JSON.stringify(mostViewsCode),
       newBlog: JSON.stringify(newBlog),
     },
   };

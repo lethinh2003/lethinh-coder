@@ -37,9 +37,6 @@ const InfoCode = (props) => {
     <>
       {sourceCode && (
         <Box
-          as={motion.div}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
           sx={{
             display: "flex",
             flexWrap: "wrap",

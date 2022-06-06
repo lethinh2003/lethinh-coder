@@ -5,6 +5,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { styled } from "@mui/material/styles";
 import { memo } from "react";
+import Image from "next/image";
+
 const MySelf = (props) => {
   const { dataSystem } = props;
   const CardCode = styled(Card)(({ theme }) => ({
@@ -70,11 +72,24 @@ const MySelf = (props) => {
               }}
             >
               <CardMedia
-                component="img"
-                sx={{ height: 100, width: 100, objectFit: "cover", borderRadius: "10px" }}
-                image={dataSystem.myself_avatar}
-                alt={dataSystem.myself_name}
-              />
+                sx={{
+                  height: 100,
+                  width: 100,
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <Image
+                  src={dataSystem.myself_avatar}
+                  layout="fill"
+                  objectFit="cover"
+                  alt={dataSystem.myself_name}
+                  placeholder="blur"
+                  blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                />
+              </CardMedia>
               <CardContent
                 sx={{
                   padding: "unset",

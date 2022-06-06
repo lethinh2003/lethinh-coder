@@ -5,7 +5,8 @@ import { useState } from "react";
 import NumberFormat from "react-number-format";
 import convertTime from "../../utils/convertTime";
 import { memo } from "react";
-import readingTime from "reading-time";
+import getReadingTime from "../../utils/getReadingTime";
+import Image from "next/image";
 
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
@@ -30,7 +31,7 @@ const ShowBlogs = (props) => {
     display: "flex",
     flexDirection: "column",
     padding: "20px 0",
-    maxHeight: "145px",
+    maxHeight: "160px",
     height: "100%",
   });
   const CardContentCodeTitle = styled(Typography)({
@@ -86,12 +87,7 @@ const ShowBlogs = (props) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
-  const getReadingTime = (item) => {
-    const stats = readingTime(item.content);
-    const getMinutes = stats.text.split(" ");
 
-    return getMinutes[0];
-  };
   return (
     <>
       <Box
@@ -127,7 +123,7 @@ const ShowBlogs = (props) => {
         </BoxCodeTitle>
         <Box
           sx={{
-            padding: { xs: "10px", md: "20px" },
+            padding: { xs: "10px", md: "20px 100px" },
             width: "100%",
             bgcolor: "background.default",
           }}
@@ -135,7 +131,11 @@ const ShowBlogs = (props) => {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+              gridTemplateColumns: {
+                xs: "repeat(1, minmax(0,1fr))",
+                md: "repeat(2, minmax(0,1fr))",
+                lg: "repeat(3, minmax(0,1fr))",
+              },
               gap: "10px",
             }}
           >
@@ -155,9 +155,14 @@ const ShowBlogs = (props) => {
                           <Typography
                             sx={{
                               fontSize: { xs: "14px", md: "16px" },
+                              display: "flex",
+                              flexDirection: "column",
                             }}
                           >
-                            {convertTime(item.createdAt)} - {getReadingTime(item)} phút đọc/{item.views} views
+                            <Typography>📆 {convertTime(item.createdAt)}</Typography>
+                            <Typography>
+                              🕐 {getReadingTime(item.content)} phút đọc/{item.views} views
+                            </Typography>
                           </Typography>
                         </Typography>
                       </Typography>
@@ -176,16 +181,24 @@ const ShowBlogs = (props) => {
                         {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
                       </Typography>
                     </CardContentCode>
-                    <CardMedia
+                    <Box
                       className="code-container__image"
-                      component="img"
                       height="140"
-                      image={item.images[0]}
-                      alt={item.title}
                       sx={{
                         borderRadius: "20px",
+                        position: "relative",
+                        overflow: "hidden",
                       }}
-                    />
+                    >
+                      <Image
+                        src={item.images[0]}
+                        layout="fill"
+                        objectFit="cover"
+                        alt={item.title}
+                        placeholder="blur"
+                        blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                      />
+                    </Box>
                   </CardCode>
                 );
               })}

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CommentsCode from "../../components/code/CommentsCode";
 import DescCode from "../../components/code/DescCode";
 import ImagesCode from "../../components/code/ImagesCode";
@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
+  const timeRefLoading = useRef(null);
   const dataSystem = useSelector((state) => state.system.data);
 
   let { sourceBySlug, newSource, systemData } = props;
@@ -41,18 +42,29 @@ const DetailSourceCode = (props) => {
     }
     const fetchAPI = async () => {
       try {
-        setIsLoading(true);
         const keywordRelationship = data.labels[Math.floor(Math.random() * data.labels.length)];
         const resultsRelation = await axios.get(`/api/source-code/relation-code?keyword=${keywordRelationship}`);
         setSourceCodeRelationship(resultsRelation.data.data);
-        setIsLoading(false);
       } catch (err) {
-        setIsLoading(false);
         console.log(err);
       }
     };
     fetchAPI();
   }, [router.query.slug]);
+  useEffect(() => {
+    setIsLoading(false);
+    timeRefLoading.current = setTimeout(() => {
+      setIsLoading(true);
+    }, 500);
+    return () => {
+      clearTimeout(timeRefLoading.current);
+    };
+  }, [sourceCode]);
+
+  const variants = {
+    open: { opacity: 1 },
+    closed: { opacity: 0 },
+  };
 
   return (
     <>
@@ -76,6 +88,13 @@ const DetailSourceCode = (props) => {
               <CircularProgress color="inherit" />
             </Backdrop> */}
             <Box
+              as={motion.div}
+              initial={{ opacity: 0 }}
+              // animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              animate={isLoading ? "open" : "closed"}
+              variants={variants}
+              transition={{ type: "spring", stiffness: 100 }}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -87,50 +106,54 @@ const DetailSourceCode = (props) => {
                 padding: "40px 0",
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: "column",
-                  bgcolor: "background.default",
-                  justifyContent: "center",
-                  color: "text.primary",
-                  gap: "10px",
-                  padding: "40px 0",
-                }}
-              >
-                <InfoCode sourceCode={sourceCode} />
-                <Box
-                  className="thinhle"
-                  sx={{
-                    display: "flex",
-                    alignItems: "flex-start",
+              {isLoading && (
+                <>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      bgcolor: "background.default",
+                      justifyContent: "center",
+                      color: "text.primary",
+                      gap: "10px",
+                      padding: "40px 0",
+                    }}
+                  >
+                    <InfoCode sourceCode={sourceCode} />
+                    <Box
+                      className="thinhle"
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
 
-                    bgcolor: "background.default",
-                    justifyContent: "center",
-                    color: "text.primary",
-                    gap: "10px",
-                    padding: "40px 0",
-                  }}
-                >
-                  <DescCode sourceCode={sourceCode} status={status} />
-                  <SummaryCode sourceCode={sourceCode} status={status} />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    padding: { xs: "10px", md: "20px" },
-                  }}
-                >
-                  <ImagesCode sourceCode={sourceCode} />
-                </Box>
-              </Box>
-              <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
-              <MySelf dataSystem={dataSystem} />
-              <RelationCode sourceCodeRelationship={sourceCodeRelationship} />
-              <Tag sourceCode={sourceCode} />
+                        bgcolor: "background.default",
+                        justifyContent: "center",
+                        color: "text.primary",
+                        gap: "10px",
+                        padding: "40px 0",
+                      }}
+                    >
+                      <DescCode sourceCode={sourceCode} status={status} />
+                      <SummaryCode sourceCode={sourceCode} status={status} />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: { xs: "10px", md: "20px" },
+                      }}
+                    >
+                      <ImagesCode sourceCode={sourceCode} />
+                    </Box>
+                  </Box>
+                  <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
+                  <MySelf dataSystem={dataSystem} />
+                  <RelationCode sourceCodeRelationship={sourceCodeRelationship} />
+                  <Tag sourceCode={sourceCode} />
+                </>
+              )}
             </Box>
           </Layout>
         </>

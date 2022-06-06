@@ -60,6 +60,8 @@ const ImagesCode = (props) => {
                 src={im}
                 alt={sourceCode.title}
                 objectFit="cover"
+                placeholder="blur"
+                blurDataURL="https://i.imgur.com/HYNKD6V.png"
               />
             );
           })}
