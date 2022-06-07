@@ -19,7 +19,7 @@ const NewBlogs = (props) => {
     display: "flex",
     width: "100%",
     justifyContent: "space-between",
-    gap: "10px",
+    gap: "20px",
   });
   const BoxChild1NewBlog = styled(Box)({
     display: "flex",
@@ -125,7 +125,7 @@ const NewBlogs = (props) => {
             </Box>
           </BoxChild1NewBlog>
         )}
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {newBlog &&
             newBlog.slice(1).map((item, i) => (
               <BoxChild2NewBlog key={i}>

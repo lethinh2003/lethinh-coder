@@ -42,9 +42,9 @@ const Footer = () => {
   useEffect(() => {
     if (router.pathname === "/") {
       setValue("home");
-    } else if (router.pathname === "/source-code") {
+    } else if (router.pathname.startsWith("/source-code")) {
       setValue("code");
-    } else if (router.pathname === "/blog") {
+    } else if (router.pathname.startsWith("/blog")) {
       setValue("blog");
     }
   }, [router.pathname]);

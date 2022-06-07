@@ -7,7 +7,7 @@ import convertTime from "../../utils/convertTime";
 import { memo } from "react";
 import getReadingTime from "../../utils/getReadingTime";
 import Image from "next/image";
-
+import ItemBlog from "./Blog/ItemBlog";
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
 
@@ -133,7 +133,7 @@ const ShowBlogs = (props) => {
               display: "grid",
               gridTemplateColumns: {
                 xs: "repeat(1, minmax(0,1fr))",
-                md: "repeat(2, minmax(0,1fr))",
+                sm: "repeat(2, minmax(0,1fr))",
                 lg: "repeat(3, minmax(0,1fr))",
               },
               gap: "10px",
@@ -141,66 +141,7 @@ const ShowBlogs = (props) => {
           >
             {blogData.length > 0 &&
               blogData.map((item, i) => {
-                return (
-                  <CardCode key={i}>
-                    <CardContentCode>
-                      <Link href={`/blog/${item.slug}`}>
-                        <CardContentCodeTitle component="div" className="code-title">
-                          {item.title}
-                        </CardContentCodeTitle>
-                      </Link>
-
-                      <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                        <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                          <Typography
-                            sx={{
-                              fontSize: { xs: "14px", md: "16px" },
-                              display: "flex",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <Typography>📆 {convertTime(item.createdAt)}</Typography>
-                            <Typography>
-                              🕐 {getReadingTime(item.content)} phút đọc/{item.views} views
-                            </Typography>
-                          </Typography>
-                        </Typography>
-                      </Typography>
-                      <Typography sx={{ marginTop: "20px" }}>
-                        {item.costs > 0 && (
-                          <CodeButton variant="outlined">
-                            <NumberFormat
-                              value={item.costs}
-                              displayType={"text"}
-                              thousandSeparator={"."}
-                              decimalSeparator={","}
-                              suffix={" VNĐ"}
-                            />
-                          </CodeButton>
-                        )}
-                        {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                      </Typography>
-                    </CardContentCode>
-                    <Box
-                      className="code-container__image"
-                      height="140"
-                      sx={{
-                        borderRadius: "20px",
-                        position: "relative",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Image
-                        src={item.images[0]}
-                        layout="fill"
-                        objectFit="cover"
-                        alt={item.title}
-                        placeholder="blur"
-                        blurDataURL="https://i.imgur.com/HYNKD6V.png"
-                      />
-                    </Box>
-                  </CardCode>
-                );
+                return <ItemBlog key={i} item={item} />;
               })}
           </Box>
         </Box>

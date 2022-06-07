@@ -5,6 +5,7 @@ module.exports = {
     domains: ["i.imgur.com", "anonyviet.com"],
   },
   env: {
+    FACEBOOK_APPID: process.env.FACEBOOK_APPID,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

@@ -1,23 +1,23 @@
 import { Box } from "@mui/material";
 import axios from "axios";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import CommentsCode from "../../components/code/CommentsCode";
 import DescCode from "../../components/code/DescCode";
 import ImagesCode from "../../components/code/ImagesCode";
 import InfoCode from "../../components/code/InfoCode";
-import MySelf from "../../components/code/MySelf";
+import MySelf from "../../components/Post/MySelf";
 import RelationCode from "../../components/code/RelationCode";
-import SummaryCode from "../../components/code/SummaryCode";
-import Tag from "../../components/code/Tag";
 import Layout from "../../components/Layout";
+import TableOfContent from "../../components/Post/TableOfContent";
+import Tag from "../../components/Post/Tag";
 import dbConnect from "../../database/dbConnect";
 import Code from "../../models/Code";
 import System from "../../models/System";
-import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   const timeRefLoading = useRef(null);
@@ -135,7 +135,7 @@ const DetailSourceCode = (props) => {
                       }}
                     >
                       <DescCode sourceCode={sourceCode} status={status} />
-                      <SummaryCode sourceCode={sourceCode} status={status} />
+                      <TableOfContent dataPost={sourceCode} status={status} />
                     </Box>
                     <Box
                       sx={{
@@ -151,7 +151,7 @@ const DetailSourceCode = (props) => {
                   <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
                   <MySelf dataSystem={dataSystem} />
                   <RelationCode sourceCodeRelationship={sourceCodeRelationship} />
-                  <Tag sourceCode={sourceCode} />
+                  <Tag data={sourceCode} />
                 </>
               )}
             </Box>

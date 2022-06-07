@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import ItemBlog from "./ItemBlog";
-const AllBlogs = (props) => {
+const RelationBlogs = ({ data }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadMore, setIsLoadMore] = useState(false);
   const [blogData, setBlogData] = useState([]);
@@ -16,7 +16,9 @@ const AllBlogs = (props) => {
       try {
         setIsLoading(true);
         const results = await axios.get(
-          `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
+          `${process.env.ENDPOINT_SERVER}/api/v1/blogs/relationship?labels=${data.labels.join(
+            ","
+          )}&page=${pageCount}&results=${itemsPerPage}`
         );
         if (results.data.results === itemsPerPage) {
           setIsLoadMore(true);
@@ -38,7 +40,9 @@ const AllBlogs = (props) => {
     try {
       setIsLoadMore(false);
       const results = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
+        `${process.env.ENDPOINT_SERVER}/api/v1/blogs/relationship?labels=${data.labels.join(
+          ","
+        )}&page=${pageCount}&results=${itemsPerPage}`
       );
       if (results.data.results === itemsPerPage) {
         setIsLoadMore(true);
@@ -84,6 +88,7 @@ const AllBlogs = (props) => {
   });
   return (
     <>
+      <h1 className="title">Relationship Blogs</h1>
       <Box
         sx={{
           width: "100%",
@@ -97,9 +102,6 @@ const AllBlogs = (props) => {
           flexDirection: "column",
         }}
       >
-        <BlogTitle component="h1" ref={AllBlog}>
-          All Blog
-        </BlogTitle>
         <Box
           sx={{
             padding: { xs: "0px 0px", md: "20px 100px" },
@@ -177,4 +179,4 @@ const AllBlogs = (props) => {
     </>
   );
 };
-export default AllBlogs;
+export default RelationBlogs;

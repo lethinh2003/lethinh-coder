@@ -3,7 +3,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import { memo } from "react";
-
+import Image from "next/image";
 const InfoBlog = (props) => {
   const { blogData } = props;
   const CodeButton = styled(Button)({
@@ -44,7 +44,7 @@ const InfoBlog = (props) => {
             <Link style={{ color: "inherit" }} href="/">
               Home
             </Link>
-            <Link style={{ color: "inherit" }} href="/source-code">
+            <Link style={{ color: "inherit" }} href="/blog">
               Blog
             </Link>
             <Typography color="text.primary">{blogData.title}</Typography>
@@ -60,17 +60,28 @@ const InfoBlog = (props) => {
               padding: "20px",
             }}
           >
-            <CardMedia
+            <Box
               sx={{
-                height: "400px",
+                height: "500px",
+
                 width: "100%",
                 borderRadius: "10px",
                 objectFit: "cover",
+                position: "relative",
+                overflow: "hidden",
               }}
-              component="img"
-              image={blogData.images[0]}
-              alt={blogData.title}
-            />
+            >
+              <Image
+                src={blogData.images[0]}
+                layout="fill"
+                width={1920}
+                height={1920}
+                objectFit="cover"
+                alt={blogData.title}
+                placeholder="blur"
+                blurDataURL="https://i.imgur.com/HYNKD6V.png"
+              />
+            </Box>
           </Box>
         </Box>
       )}

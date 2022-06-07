@@ -40,7 +40,8 @@ const convertTime = (timeISOString) => {
   const getTime = `${getFullDate.getHours() < 10 ? "0" + getFullDate.getHours() : getFullDate.getHours()}:${
     getFullDate.getMinutes() < 10 ? "0" + getFullDate.getMinutes() : getFullDate.getMinutes()
   }:${getFullDate.getSeconds() < 10 ? "0" + getFullDate.getSeconds() : getFullDate.getSeconds()}`;
-  date = getDay + " " + getTime;
+  // date = getDay + " " + getTime;
+  date = getDay + " ";
   const hanldeConvert = DateThinh(getFullDate, getCurrentDate);
   if (hanldeConvert) {
     return `${hanldeConvert}`;

@@ -1,13 +1,13 @@
 import { Box } from "@mui/material";
 import { memo } from "react";
 const Tag = (props) => {
-  const { sourceCode } = props;
+  const { data } = props;
 
   return (
     <>
-      {sourceCode && (
+      {data && (
         <>
-          <h1 className="title">Tag</h1>
+          <h1 className="title">Tags</h1>
           <Box
             sx={{
               display: "flex",
@@ -19,7 +19,7 @@ const Tag = (props) => {
               opacity: "0.7",
             }}
           >
-            {sourceCode.keywords.join(", ")}
+            {data.keywords.join(", ")}
           </Box>
         </>
       )}

@@ -32,7 +32,6 @@ const InfoCode = (props) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
-  console.log("re-render");
   return (
     <>
       {sourceCode && (

@@ -32,7 +32,7 @@ const BlogComponent = (props) => {
             bgcolor: "background.default",
             justifyContent: "center",
             color: "text.primary",
-            gap: "10px",
+            gap: "20px",
             padding: "40px 0",
           }}
         >

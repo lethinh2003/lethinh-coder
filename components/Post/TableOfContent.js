@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { memo } from "react";
-const SummaryCode = (props) => {
-  const { sourceCode } = props;
+const TableOfContent = (props) => {
+  const { dataPost } = props;
   const [listContents, setListContents] = useState([]);
   const [isContentPos, setIsContentPos] = useState("");
   useEffect(() => {
@@ -14,7 +14,7 @@ const SummaryCode = (props) => {
       }
     }
     setListContents(data);
-  }, [sourceCode]);
+  }, [dataPost]);
   useEffect(() => {
     const eventScroll = () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
@@ -100,4 +100,4 @@ const SummaryCode = (props) => {
     </>
   );
 };
-export default memo(SummaryCode);
+export default memo(TableOfContent);
