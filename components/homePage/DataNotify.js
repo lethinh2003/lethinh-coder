@@ -16,18 +16,46 @@ import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import SocketContext from "../../context/socket";
 import NotifyContent from "./NotifyContent";
+import { useQuery } from "react-query";
+
 const DataNotify = () => {
   const socket = useContext(SocketContext);
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
   const [isClickNotify, setIsClickNotify] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [dataNoti, setDataNoti] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [limitResults, setLimitResults] = useState(10);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
+
+  const callDataApi = async () => {
+    const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
+    return results.data;
+  };
+  const getListQuery = useQuery("get-notifies-current-user", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  useEffect(() => {
+    if (error && error.response) {
+      setMessageError(error.response.data.message);
+      setIsError(true);
+      refreshError.current = setTimeout(() => {
+        setIsError(false);
+        setMessageError("");
+      }, 5000);
+    }
+  }, [isErrorQuery]);
+
+  useEffect(() => {
+    if (data) {
+      setDataNoti(data.data);
+    }
+  }, [data]);
 
   useEffect(() => {
     const fetchAPI = async () => {
@@ -53,7 +81,7 @@ const DataNotify = () => {
       }
     };
 
-    fetchAPI();
+    // fetchAPI();
   }, []);
 
   const handleClickNotify = () => {

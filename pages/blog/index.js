@@ -48,7 +48,7 @@ export const getServerSideProps = async () => {
   await dbConnect();
   let newBlog = [];
   const test = await Promise.all([
-    Blog.find({}).limit(4).select("-link -__v").sort("-_id"),
+    Blog.find({ status: true }).limit(4).select("-link -__v").sort("-_id"),
     System.updateMany(
       {},
       { $inc: { home_views: 1 } },

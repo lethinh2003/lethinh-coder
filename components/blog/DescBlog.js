@@ -5,8 +5,10 @@ import convertTime from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
 import ShareButton from "../ShareSocial/ShareButton";
+
 const DescBlog = (props) => {
   const { blogData } = props;
+
   const CodeButton = styled(Button)({
     boxShadow: "none",
     fontSize: "14px",
@@ -69,7 +71,7 @@ const DescBlog = (props) => {
           padding: "40px 0",
         }}
       >
-        <h1 className="title">Desciption blog</h1>
+        <Typography className="title">Desciption blog</Typography>
         {blogData && (
           <Box
             sx={{

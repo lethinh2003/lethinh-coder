@@ -55,7 +55,7 @@ const InfoCode = (props) => {
             </Link>
             <Typography color="text.primary">{sourceCode.title}</Typography>
           </Breadcrumbs>
-          <h1 className="title">Trang thông tin code</h1>
+          <Typography className="title">Trang thông tin code</Typography>
 
           <Box
             sx={{

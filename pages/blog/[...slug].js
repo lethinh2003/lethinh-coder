@@ -90,8 +90,7 @@ const DetailSourceCode = (props) => {
               as={motion.div}
               initial={{ opacity: 0 }}
               exit={{ opacity: 0 }}
-              animate={isLoading ? "open" : "closed"}
-              variants={variants}
+              animate={{ opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
               sx={{
                 display: "flex",
@@ -104,42 +103,38 @@ const DetailSourceCode = (props) => {
                 padding: "20px 0",
               }}
             >
-              {isLoading && (
-                <>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      bgcolor: "background.default",
-                      justifyContent: "center",
-                      color: "text.primary",
-                      gap: "10px",
-                      padding: " 0",
-                    }}
-                  >
-                    <InfoBlog blogData={blogData} />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "flex-start",
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  bgcolor: "background.default",
+                  justifyContent: "center",
+                  color: "text.primary",
+                  gap: "10px",
+                  padding: " 0",
+                }}
+              >
+                <InfoBlog blogData={blogData} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
 
-                        bgcolor: "background.default",
-                        justifyContent: "center",
-                        color: "text.primary",
-                        gap: "10px",
-                      }}
-                    >
-                      <DescBlog blogData={blogData} />
-                      <TableOfContent dataPost={blogData} />
-                    </Box>
-                  </Box>
-                  <CommentsBlog status={status} session={session} blogData={blogData} router={router} />
-                  <MySelf dataSystem={dataSystem} />
-                  <RelationBlogs data={blogData} />
-                  <Tag data={blogData} />
-                </>
-              )}
+                    bgcolor: "background.default",
+                    justifyContent: "center",
+                    color: "text.primary",
+                    gap: "10px",
+                  }}
+                >
+                  <DescBlog blogData={blogData} />
+                  <TableOfContent dataPost={blogData} />
+                </Box>
+              </Box>
+              <CommentsBlog status={status} session={session} blogData={blogData} router={router} />
+              <MySelf dataSystem={dataSystem} />
+              <RelationBlogs data={blogData} />
+              <Tag data={blogData} />
             </Box>
           </Layout>
         </>

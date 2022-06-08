@@ -9,10 +9,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import SocketContext from "../../context/socket";
+import { useQuery } from "react-query";
+
 const AccountDetail = () => {
   const socket = useContext(SocketContext);
   const router = useRouter();
   const { account } = router.query;
+
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 

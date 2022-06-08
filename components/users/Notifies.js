@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import NotifyContent from "../../components/homePage/NotifyContent";
+import { useQuery } from "react-query";
 
 const Notifies = ({ user, socket }) => {
   const hostServer = process.env.ENDPOINT_SERVER;
@@ -28,7 +29,7 @@ const Notifies = ({ user, socket }) => {
   const router = useRouter();
   const [isClickNotify, setIsClickNotify] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [dataNoti, setDataNoti] = useState([]);
   const [numberNotify, setNumberNotify] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,6 +44,39 @@ const Notifies = ({ user, socket }) => {
       clearTimeout(refreshError.current);
     };
   }, []);
+  const callDataApi = async () => {
+    const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
+    socket.emit("read-notify", user._id);
+    return results.data;
+  };
+  const getListQuery = useQuery("get-notifies-user", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  useEffect(() => {
+    if (error && error.response) {
+      setMessageError(error.response.data.message);
+      setIsError(true);
+      refreshError.current = setTimeout(() => {
+        setIsError(false);
+        setMessageError("");
+      }, 5000);
+    }
+  }, [isErrorQuery]);
+
+  useEffect(() => {
+    if (data) {
+      if (data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+      setDataNoti(data.data);
+    }
+  }, [data]);
+
   const socketInitializer = () => {
     socket.emit("join-notify", session.user.id);
     socket.emit("get-notify", session.user.id);
@@ -77,7 +111,7 @@ const Notifies = ({ user, socket }) => {
       }
     };
 
-    fetchAPI();
+    // fetchAPI();
   }, []);
 
   const reFetch = async () => {

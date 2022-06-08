@@ -119,7 +119,7 @@ const NewBlogs = (props) => {
                     fontSize: { xs: "14px", md: "16px" },
                   }}
                 >
-                  🕐 {getReadingTime(newBlog[0].content)} phút đọc/{newBlog[0].views} views
+                  🕐 {getReadingTime(newBlog[0].content)} phút đọc
                 </Typography>
               </Typography>
             </Box>
@@ -169,7 +169,7 @@ const NewBlogs = (props) => {
                         fontSize: { xs: "14px", md: "16px" },
                       }}
                     >
-                      🕐 {getReadingTime(item.content)} phút đọc/{item.views} views
+                      🕐 {getReadingTime(item.content)} phút đọc
                     </Typography>
                   </Typography>
                 </Box>

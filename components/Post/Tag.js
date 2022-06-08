@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { memo } from "react";
 const Tag = (props) => {
   const { data } = props;
@@ -7,7 +7,7 @@ const Tag = (props) => {
     <>
       {data && (
         <>
-          <h1 className="title">Tags</h1>
+          <Typography className="title">Tags</Typography>
           <Box
             sx={{
               display: "flex",

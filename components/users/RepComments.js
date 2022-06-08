@@ -22,20 +22,56 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import convertToTime from "../../utils/convertTime";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useQuery } from "react-query";
 
 const Comments = ({ user, socket }) => {
   const router = useRouter();
 
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
+
   const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [dataComment, setDataComment] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(5);
+  const [limitResults, setLimitResults] = useState(50);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
+  const callDataApi = async () => {
+    const results = await axios.get(
+      `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
+    );
+    return results.data;
+  };
+  const getListQuery = useQuery("get-repcomments-user", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+
+  useEffect(() => {
+    if (error && error.response) {
+      setMessageError(error.response.data.message);
+      setIsError(true);
+      refreshError.current = setTimeout(() => {
+        setIsError(false);
+        setMessageError("");
+      }, 5000);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (data) {
+      if (data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+      setDataComment(data.data);
+    }
+  }, [data]);
+
   useEffect(() => {
     return () => {
       clearTimeout(refreshError.current);
@@ -73,7 +109,7 @@ const Comments = ({ user, socket }) => {
       }
     };
 
-    fetchAPI();
+    // fetchAPI();
   }, []);
 
   const reFetch = async () => {

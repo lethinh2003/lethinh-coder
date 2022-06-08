@@ -60,7 +60,7 @@ const MySelf = (props) => {
     <>
       {dataSystem && (
         <>
-          <h1 className="title">MYSELF</h1>
+          <Typography className="title">MYSELF</Typography>
           <CardCode sx={{ display: "flex", padding: "20px 0px" }}>
             <Box
               sx={{

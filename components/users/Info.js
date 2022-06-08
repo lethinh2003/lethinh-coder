@@ -12,6 +12,7 @@ import LoadingBox from "../homePage/LoadingBox";
 const Info = ({ user, isLoading, account, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
+
   const [dataUser, setDataUser] = useState(null);
 
   const avatarInput = useRef(null);

@@ -26,7 +26,7 @@ const DescCode = (props) => {
           padding: "40px 0",
         }}
       >
-        <h1 className="title">Desciption code</h1>
+        <Typography className="title">Desciption code</Typography>
 
         <Box
           sx={{

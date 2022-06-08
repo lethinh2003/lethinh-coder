@@ -23,17 +23,52 @@ import { ThreeDots } from "react-loading-icons";
 import socketIOClient from "socket.io-client";
 import convertToTime from "../../utils/convertTime";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useQuery } from "react-query";
 
 const Comments = ({ user, socket }) => {
   const router = useRouter();
 
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
+  const callDataApi = async () => {
+    const results = await axios.get(
+      `${hostServer}/api/v1/comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
+    );
+    return results.data;
+  };
+  const getListQuery = useQuery("get-comments-user", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+
+  useEffect(() => {
+    if (error && error.response) {
+      setMessageError(error.response.data.message);
+      setIsError(true);
+      refreshError.current = setTimeout(() => {
+        setIsError(false);
+        setMessageError("");
+      }, 5000);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (data) {
+      if (data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+      setDataComment(data.data);
+    }
+  }, [data]);
+
   const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [dataComment, setDataComment] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(5);
+  const [limitResults, setLimitResults] = useState(50);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
@@ -73,7 +108,7 @@ const Comments = ({ user, socket }) => {
       }
     };
 
-    getComments();
+    // getComments();
   }, []);
 
   const getCommentsByPage = async () => {
@@ -110,7 +145,11 @@ const Comments = ({ user, socket }) => {
       await axios.post(`${hostServer}/api/v1/comments/delete`, {
         commentId: id,
       });
-      socket.emit("get-all-comments", postId);
+      // socket.emit("get-all-comments", postId);
+      const data = {
+        id: id,
+      };
+      socket.emit("delete-comment", data);
       const newArray = [...dataComment];
       const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
       setDataComment(newArrayRemoveItem);

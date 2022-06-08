@@ -27,7 +27,7 @@ const ImagesCode = (props) => {
     }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
   return (
     <>
-      <h1 className="title">Images</h1>
+      <Typography className="title">Images</Typography>
       {isOpenLightBox && imagesLightBox.length > 0 && (
         <Lightbox
           mainSrc={imagesLightBox[photoIndex]}
@@ -54,6 +54,7 @@ const ImagesCode = (props) => {
           sourceCode.images.map((im, i) => {
             return (
               <Image
+                key={i}
                 onClick={() => handleClickOpenLightBoxImage(i)}
                 width={900}
                 height={400}

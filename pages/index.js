@@ -9,13 +9,16 @@ import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
 import Blog from "../models/Blog";
 import Code from "../models/Code";
+import System from "../models/System";
 
 const Home = (props) => {
   const dataSystem = useSelector((state) => state.system.data);
   const [mostDownloadsCode, setMostDownloadsCode] = useState([]);
   const [mostViewsCode, setMostViewsCode] = useState([]);
 
-  let { newCode, newBlog } = props;
+  let { newCode, newBlog, systemData } = props;
+  systemData = JSON.parse(systemData);
+
   useEffect(() => {
     if (newCode) {
       const sortByViews = [...JSON.parse(newCode)];
@@ -26,23 +29,27 @@ const Home = (props) => {
       setMostViewsCode(sortByViews);
     }
   }, []);
-  useEffect(() => {
-    console.log("downloads", mostDownloadsCode);
-    console.log("views", mostViewsCode);
-  }, [mostDownloadsCode, mostViewsCode]);
 
   return (
     <>
-      {dataSystem && (
-        <Head>
-          <title> {dataSystem.meta_title}</title>
-          <meta name="description" content={dataSystem.meta_desc} />
-          <meta name="keywords" content={dataSystem.meta_keywords} />
-          <meta name="author" content={dataSystem.meta_author} />
-          <meta property="og:image" content={dataSystem.meta_thumbnail} />
-          <meta property="og:title" content={dataSystem.meta_title} />
-        </Head>
-      )}
+      <Head>
+        <title> {systemData.meta_title}</title>
+        <meta name="description" content={systemData.meta_desc} />
+        <meta name="keywords" content={systemData.meta_keywords} />
+        <meta name="author" content={systemData.meta_author} />
+        <meta property="og:locale" content="vi_VN" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={systemData.meta_thumbnail} />
+        <meta property="og:title" content={systemData.meta_title} />
+        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
+        <meta property="og:description" content={systemData.meta_desc} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={systemData.meta_title} />
+        <meta property="twitter:description" content={systemData.meta_desc} />
+        <meta property="twitter:creator" content={systemData.meta_author} />
+        <meta property="twitter:image" content={systemData.meta_thumbnail} />
+      </Head>
+
       <Layout>
         <Introduce />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
@@ -67,17 +74,26 @@ export const getServerSideProps = async () => {
   const test = await Promise.all([
     Code.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
     Blog.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
+    System.findOneAndUpdate(
+      {},
+      { $inc: { home_views: 1 } },
+      {
+        new: true,
+      }
+    ),
   ])
     .then((data) => {
       newCode = data[0];
 
       newBlog = data[1];
+      systemData = data[2];
     })
     .catch((err) => console.log(err));
   return {
     props: {
       newCode: JSON.stringify(newCode),
       newBlog: JSON.stringify(newBlog),
+      systemData: JSON.stringify(systemData),
     },
   };
 };
