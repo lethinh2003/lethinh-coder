@@ -6,8 +6,9 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^34.1.0",
     "@ckeditor/ckeditor5-code-block": "^33.0.0",
-    "@ckeditor/ckeditor5-react": "^4.0.0",
+    "@ckeditor/ckeditor5-react": "^5.0.2",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@hookform/resolvers": "^2.8.8",

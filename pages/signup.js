@@ -138,7 +138,7 @@ const Signup = () => {
     color: "#f4604c",
     alignSelf: "flex-start",
     fontWeight: "bold",
-    fontSize: "35px",
+    fontSize: "3.5rem",
   });
   const SignupLink = styled(Link)({
     color: "#54d9b6",
@@ -228,7 +228,7 @@ const Signup = () => {
                   <Typography
                     sx={{
                       fontWeight: "500",
-                      fontSize: "30px",
+                      fontSize: "3rem",
                     }}
                   >
                     Welcome to LT Blog
@@ -236,7 +236,7 @@ const Signup = () => {
                   <Typography
                     sx={{
                       fontWeight: "400",
-                      fontSize: "18px",
+                      fontSize: "1.8rem",
                       display: "flex",
                       gap: "5px",
                       alignItems: "center",

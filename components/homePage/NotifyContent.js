@@ -15,10 +15,14 @@ import {
 import axios from "axios";
 import { useRouter } from "next/router";
 import convertToTime from "../../utils/convertTime";
-import { memo } from "react";
+import { memo, useState } from "react";
+import { toast } from "react-toastify";
 
 const NotifyContent = (props) => {
-  const { item, newContent, handleClickDelete, handleClickNotify } = props;
+  const { item, newContent, handleClickNotify } = props;
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+
   const router = useRouter();
 
   const handleClickLinkNotify = (e, item) => {
@@ -30,13 +34,36 @@ const NotifyContent = (props) => {
       handleClickNotify();
     }
   };
+  const handleClickDelete = async (id) => {
+    // setIsError(false);
+    try {
+      setIsLoadingDelete(true);
+      await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/notifies/delete`, {
+        notifyId: id,
+      });
+      setIsDelete(true);
+      setIsLoadingDelete(false);
+    } catch (err) {
+      setIsLoadingDelete(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+        // setMessageError(err.response.data.message);
+        // setIsError(true);
+        // refreshError.current = setTimeout(() => {
+        //   setIsError(false);
+        //   setMessageError("");
+        // }, 5000);
+      }
+    }
+  };
 
   return (
     <>
-      {item && (
+      {!isDelete && (
         <Box
           sx={{
             opacity: !item.status ? 1 : 0.6,
+            pointerEvents: isLoadingDelete ? "none" : "auto",
           }}
         >
           <ListItem button={true} className="box_notify">

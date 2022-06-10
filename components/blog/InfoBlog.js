@@ -6,26 +6,6 @@ import { memo } from "react";
 import Image from "next/image";
 const InfoBlog = (props) => {
   const { blogData } = props;
-  const CodeButton = styled(Button)({
-    boxShadow: "none",
-    fontSize: "14px",
-    borderRadius: "10px",
-    textTransform: "capitalize",
-    fontFamily: "Noto Sans",
-    color: "#0b9ad1",
-    fontWeight: "bold",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#fff",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
-  });
   return (
     <>
       {blogData && (
@@ -74,8 +54,6 @@ const InfoBlog = (props) => {
               <Image
                 src={blogData.images[0]}
                 layout="fill"
-                width={1920}
-                height={1920}
                 objectFit="cover"
                 alt={blogData.title}
                 placeholder="blur"

@@ -19,11 +19,12 @@ const BackToTop = () => {
   const ArrowButton = styled(KeyboardArrowUpIcon)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
 
-    fontSize: "80px",
+    fontSize: "8rem",
     fontWeight: "bold",
 
     path: {
       color: theme.palette.mode === "light" ? "#ffffff" : "#0e1217",
+      fill: theme.palette.mode === "light" ? "#ffffff" : "#0e1217",
     },
   }));
   const ArrowButtonParent = styled(Fab)({

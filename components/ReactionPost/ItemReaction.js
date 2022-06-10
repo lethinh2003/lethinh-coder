@@ -6,7 +6,7 @@ import { memo, useState } from "react";
 const ItemReaction = ({ item, handleClickReation, dataBlog }) => {
   const ReactionButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "30px",
     minWidth: "70px",
 

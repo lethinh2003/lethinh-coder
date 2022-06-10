@@ -12,7 +12,7 @@ const AllBlogs = (props) => {
   const [blogData, setBlogData] = useState([]);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
   const AllBlog = useRef();
   const callDataApi = async () => {
     const results = await axios.get(
@@ -91,7 +91,7 @@ const AllBlogs = (props) => {
   });
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   return (
@@ -114,7 +114,7 @@ const AllBlogs = (props) => {
         </BlogTitle>
         <Box
           sx={{
-            padding: { xs: "0px 0px", md: "20px 100px" },
+            padding: { xs: "0px 0px", md: "20px 0px" },
           }}
         >
           <Box
@@ -124,8 +124,9 @@ const AllBlogs = (props) => {
                 xs: "repeat(1, minmax(0,1fr))",
 
                 sm: "repeat(2, minmax(0,1fr))",
+                md: "repeat(3, minmax(0,1fr))",
 
-                lg: "repeat(3, minmax(0,1fr))",
+                lg: "repeat(4, minmax(0,1fr))",
               },
               gap: "20px",
             }}

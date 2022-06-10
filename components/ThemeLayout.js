@@ -20,7 +20,35 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const getDesignTokens = (mode) => ({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          boxShadow: "none",
+          fontSize: "1.4rem",
+          borderRadius: "10px",
+          textTransform: "capitalize",
+          fontFamily: "Noto Sans",
+          color: "#0b9ad1",
+          fontWeight: "bold",
+          backgroundColor: "#fff",
+          border: "1px solid #0b9ad1",
+
+          "&:hover": {
+            boxShadow: "none",
+            backgroundColor: "#fff",
+            borderColor: "#005cbf",
+          },
+
+          "&:focus": {
+            boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
+          },
+        }),
+      },
+    },
+  },
   typography: {
+    fontSize: 25,
     fontFamily: ["Noto Sans", "League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "sans-serif"].join(","),
   },
   palette: {
@@ -41,6 +69,19 @@ const getDesignTokens = (mode) => ({
           }
         : {
             default: "#ffffff",
+          }),
+    },
+    navItem: {
+      ...(mode === "dark"
+        ? {
+            background: "#0e1217",
+            hover: "#20262d",
+            active: "#20262d",
+          }
+        : {
+            background: "#ffffff",
+            hover: "#eaebec",
+            active: "#eaebec",
           }),
     },
     iconColor: {

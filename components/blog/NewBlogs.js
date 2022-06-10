@@ -12,7 +12,7 @@ const NewBlogs = (props) => {
 
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const BoxNewBlog = styled(Box)({
@@ -33,7 +33,7 @@ const NewBlogs = (props) => {
   });
   const ChildTitleNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
@@ -99,7 +99,7 @@ const NewBlogs = (props) => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
               <Typography
                 sx={{
-                  fontSize: { xs: "14px", md: "16px" },
+                  fontSize: { xs: "1.4rem", md: "1.6rem" },
                 }}
               >
                 📆 {convertTime(newBlog[0].createdAt)}
@@ -107,7 +107,7 @@ const NewBlogs = (props) => {
               <Link href={`blog/${newBlog[0].slug}`}>
                 <ChildTitleNewBlog
                   sx={{
-                    fontSize: { xs: "16px", md: "18px" },
+                    fontSize: { xs: "1.6rem", md: "1.8rem" },
                   }}
                 >
                   {newBlog[0].title}
@@ -116,7 +116,7 @@ const NewBlogs = (props) => {
               <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                 <Typography
                   sx={{
-                    fontSize: { xs: "14px", md: "16px" },
+                    fontSize: { xs: "1.4rem", md: "1.6rem" },
                   }}
                 >
                   🕐 {getReadingTime(newBlog[0].content)} phút đọc
@@ -149,7 +149,7 @@ const NewBlogs = (props) => {
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                   <Typography
                     sx={{
-                      fontSize: { xs: "14px", md: "16px" },
+                      fontSize: { xs: "1.4rem", md: "1.6rem" },
                     }}
                   >
                     📆 {convertTime(item.createdAt)}
@@ -157,7 +157,7 @@ const NewBlogs = (props) => {
                   <Link href={`blog/${item.slug}`}>
                     <ChildTitleNewBlog
                       sx={{
-                        fontSize: { xs: "16px", md: "18px" },
+                        fontSize: { xs: "1.6rem", md: "1.8rem" },
                       }}
                     >
                       {item.title}
@@ -166,7 +166,7 @@ const NewBlogs = (props) => {
                   <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <Typography
                       sx={{
-                        fontSize: { xs: "14px", md: "16px" },
+                        fontSize: { xs: "1.4rem", md: "1.6rem" },
                       }}
                     >
                       🕐 {getReadingTime(item.content)} phút đọc

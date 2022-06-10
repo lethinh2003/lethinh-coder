@@ -224,7 +224,7 @@ const Modal = (props) => {
                 </DialogContentText>
                 {!editorLoaded && <div>Editor loading</div>}
                 {editorLoaded && (
-                  <Box sx={{ width: "100%", color: "black", pt: 2 }}>
+                  <Box sx={{ width: "100%", color: "black", pt: 2, fontSize: "2rem" }}>
                     <CKEditor
                       editor={ClassicEditor}
                       data={dataContent}

@@ -96,7 +96,7 @@ const Modal = (props) => {
     getDetailCode();
     editorRef.current = {
       CKEditor: require("@ckeditor/ckeditor5-react").CKEditor, // v3+
-      ClassicEditor: require("../../../ckeditor5-build-with-htmlembed-master"),
+      ClassicEditor: require("../../../ckeditor5-34.1.0-8ogafsbogmr7"),
     };
     setEditorLoaded(true);
   }, [id]);
@@ -185,6 +185,7 @@ const Modal = (props) => {
                   flexDirection: "column",
                   width: "100%",
                   gap: "15px",
+                  fontSize: "2rem",
                 }}
                 onSubmit={handleSubmit(onSubmit)}
               >
@@ -224,7 +225,7 @@ const Modal = (props) => {
                 </DialogContentText>
                 {!editorLoaded && <div>Editor loading</div>}
                 {editorLoaded && (
-                  <Box sx={{ width: "100%", color: "black", pt: 2 }}>
+                  <Box sx={{ width: "100%", color: "black", pt: 2, fontSize: "2rem" }}>
                     <CKEditor
                       editor={ClassicEditor}
                       data={dataContent}

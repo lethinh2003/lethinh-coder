@@ -56,7 +56,7 @@ const Footer = () => {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     color: "#fff",
 
     "&:hover": {
@@ -81,7 +81,7 @@ const Footer = () => {
     borderTop: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
   }));
   const BottomNavigationActionComponent = styled(BottomNavigationAction)(({ theme }) => ({
-    fontSize: "40px",
+    fontSize: "4rem",
 
     "&.Mui-selected": {
       color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",

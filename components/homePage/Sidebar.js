@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import AvatarProfile from "./AvatarProfile";
 import Notify from "./Notify";
 import { useDispatch, useSelector } from "react-redux";
-
+import Image from "next/image";
 import { getSystem } from "../../redux/actions/getSystem";
 const Sidebar = (props) => {
   const { status, handleClickSidebarMobile, handleClickSwitch } = props;
@@ -23,7 +23,7 @@ const Sidebar = (props) => {
 
   const LoginButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
@@ -162,17 +162,17 @@ const Sidebar = (props) => {
           component="div"
         >
           <Link href="/">
-            <Button
+            <Box
               sx={{
-                display: { xs: "none", md: "block" },
+                display: { xs: "none", md: "block", width: "50px", height: "50px", position: "relative" },
               }}
             >
-              <Avatar
-                src="https://i.imgur.com/U0BdIic.png"
-                variant="square"
-                sx={{ width: "50px", height: "50px", objectFit: "cover" }}
+              <Image
+                src={"https://i.imgur.com/U0BdIic.png"}
+                layout="fill"
+                alt={dataSystem ? dataSystem.meta_title : "Le Thinh Blog"}
               />
-            </Button>
+            </Box>
           </Link>
           <IconButton onClick={handleClickSidebarMobile}>
             <MenuIcon

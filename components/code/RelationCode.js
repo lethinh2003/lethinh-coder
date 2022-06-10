@@ -1,149 +1,115 @@
-import { Button, Box, Typography, Card, CardActions, CardContent, CardMedia } from "@mui/material";
-
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import { Box, Button, CardMedia, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { memo } from "react";
-import NumberFormat from "react-number-format";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import ItemCode from "./ItemCode";
 
-const RelationCode = (props) => {
-  const { sourceCodeRelationship } = props;
-  const CardCode = styled(Card)(({ theme }) => ({
-    padding: "15px",
-    borderRadius: "20px",
-    minWidth: 300,
-    overflow: "unset",
-    scrollSnapAlign: "center",
-    border: `1px solid ${theme.palette.card.borderColor.default}`,
-    backgroundColor: theme.palette.card.bgColor.default,
+const RelationCodes = ({ data }) => {
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadMore, setIsLoadMore] = useState(false);
+  const [sourceCode, setSourceCode] = useState([]);
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const AllBlog = useRef();
+  let countPage = useRef(1);
+  useEffect(() => {
+    countPage.current = 1;
+  }, [data]);
+  useEffect(() => {
+    const getBlog = async () => {
+      try {
+        setIsLoading(true);
+        const results = await axios.get(
+          `${process.env.ENDPOINT_SERVER}/api/v1/source-codes/relationship?labels=${data.labels.join(",")}&page=${
+            countPage.current
+          }&results=${itemsPerPage}`
+        );
+        if (results.data.results === itemsPerPage) {
+          setIsLoadMore(true);
+          // setPageCount((prev) => prev + 1);
+          countPage.current = countPage.current + 1;
+        } else {
+          setIsLoadMore(false);
+        }
+        setSourceCode(results.data.data);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    };
+    getBlog();
+  }, [data]);
+
+  const handleClickLoadMore = async () => {
+    try {
+      setIsLoadingMore(true);
+
+      setIsLoadMore(false);
+      const results = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/source-codes/relationship?labels=${data.labels.join(",")}&page=${
+          countPage.current
+        }&results=${itemsPerPage}`
+      );
+      if (results.data.results === itemsPerPage) {
+        setIsLoadMore(true);
+        // setPageCount((prev) => prev + 1);
+        countPage.current = countPage.current + 1;
+      } else {
+        setIsLoadMore(false);
+      }
+      setIsLoadingMore(false);
+
+      setSourceCode((prev) => [...prev, ...results.data.data]);
+    } catch (err) {
+      console.log(err);
+      setIsLoadingMore(false);
+
+      setIsLoadMore(false);
+    }
+  };
+  const BoxChild2NewBlog = styled(Box)({
+    display: "flex",
+    gap: "10px",
+    flexDirection: "column",
+  });
+  const ChildTitleNewBlog = styled(Typography)({
+    fontFamily: "Noto Sans",
+    fontSize: "2rem",
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    cursor: "pointer",
 
     "&:hover": {
-      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+      opacity: 0.8,
     },
-  }));
-  const CardContentCode = styled(CardContent)({
-    display: "flex",
-    flexDirection: "column",
-    padding: "20px 0",
-    maxHeight: "130px",
+  });
+  const ChildImageNewBlog = styled(CardMedia)({
+    width: "100%",
     height: "100%",
   });
-  const CardContentCodeTitle = styled(Typography)({
-    fontFamily: "Noto Sans",
-    fontSize: "20px",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    cursor: "pointer",
-  });
-  const CodeTitle = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "25px",
-    fontWeight: "bold",
-  });
-  const CodeTitleSecond = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "18px",
-    fontWeight: "bold",
-    opacity: 0.8,
-    cursor: "pointer",
-
-    "&:hover": {
-      opacity: 0.7,
-    },
-
-    "&:active, &:focus": {
-      color: "#0b9ad1",
-    },
-  });
-  const BoxCodeTitle = styled(Box)({
-    width: "100%",
-    justifyContent: "space-between",
-    display: "flex",
-    alignItems: "center",
-  });
-  const CodeButton = styled(Button)({
-    boxShadow: "none",
-    fontSize: "14px",
+  const Child2ImageNewBlog = styled(CardMedia)({
+    minWidth: "250px",
+    height: "150px",
     borderRadius: "10px",
-    textTransform: "capitalize",
-    fontFamily: "Noto Sans",
-    color: "#0b9ad1",
-    fontWeight: "bold",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#fff",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
   });
-
+  const BlogTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "2.5rem",
+    fontWeight: "bold",
+  });
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
   return (
     <>
-      <Typography
-        component="h1"
-        className="title"
-        sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
-        id="relation"
-      >
-        Code liên quan
-      </Typography>
-      <Box
-        className="box-code_mobile"
-        sx={{
-          padding: { xs: "0 10px", md: "0 20px" },
-          display: { xs: "block", md: "none" },
-        }}
-      >
-        <div className="box-code_mobile__wrapper">
-          {sourceCodeRelationship.length > 0 &&
-            sourceCodeRelationship.map((item, i) => {
-              return (
-                <CardCode key={i}>
-                  <CardMedia
-                    className="code-container__image"
-                    component="img"
-                    height="140"
-                    image={item.images[0]}
-                    alt={item.title}
-                    sx={{
-                      borderRadius: "20px",
-                    }}
-                  />
-                  <CardContentCode>
-                    <Link href={`/source-code/${item.slug}`}>
-                      <CardContentCodeTitle component="div" className="code-title">
-                        {item.title}
-                      </CardContentCodeTitle>
-                    </Link>
-                    <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                      {item.desc}
-                    </Typography>
-                  </CardContentCode>
-                  <Typography sx={{ marginTop: "20px", display: "flex" }}>
-                    {item.costs > 0 && (
-                      <CodeButton variant="outlined">
-                        <NumberFormat
-                          value={item.costs}
-                          displayType={"text"}
-                          thousandSeparator={"."}
-                          decimalSeparator={","}
-                          suffix={" VNĐ"}
-                        />{" "}
-                      </CodeButton>
-                    )}
-                    {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                  </Typography>
-                </CardCode>
-              );
-            })}
-        </div>
-      </Box>
+      <TitleContent className="title">Relationship Code</TitleContent>
       <Box
         sx={{
           width: "100%",
@@ -151,56 +117,100 @@ const RelationCode = (props) => {
           bgcolor: "background.default",
           justifyContent: "space-between",
           color: "text.primary",
-          gap: "10px",
-          padding: "40px 20px",
-          display: { xs: "none", md: "grid" },
-          gridTemplateColumns: { sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
+          gap: "20px",
+          padding: { xs: "20px 10px", md: "20px 20px" },
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        {sourceCodeRelationship.length > 0 &&
-          sourceCodeRelationship.map((item, i) => {
-            return (
-              <CardCode key={i}>
-                <CardMedia
-                  className="code-container__image"
-                  component="img"
-                  height="140"
-                  image={item.images[0]}
-                  alt={item.title}
-                  sx={{
-                    borderRadius: "20px",
-                  }}
-                />
-                <CardContentCode>
-                  <Link href={`/source-code/${item.slug}`}>
-                    <CardContentCodeTitle component="div" className="code-title">
-                      {item.title}
-                    </CardContentCodeTitle>
-                  </Link>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(1, minmax(0,1fr))",
 
-                  <Typography className="code-container__body--desc" sx={{ fontFamily: "IBM Plex Sans" }}>
-                    {item.desc}
-                  </Typography>
-                </CardContentCode>
-                <Typography sx={{ marginTop: "20px" }}>
-                  {item.costs > 0 && (
-                    <CodeButton variant="outlined">
-                      <NumberFormat
-                        value={item.costs}
-                        displayType={"text"}
-                        thousandSeparator={"."}
-                        decimalSeparator={","}
-                        suffix={" VNĐ"}
-                      />
-                    </CodeButton>
-                  )}
-                  {item.costs === 0 && <CodeButton variant="outlined">Free</CodeButton>}
-                </Typography>
-              </CardCode>
-            );
-          })}
+              sm: "repeat(2, minmax(0,1fr))",
+
+              lg: "repeat(3, minmax(0,1fr))",
+            },
+            gap: "20px",
+          }}
+        >
+          {isLoading &&
+            Array.from({ length: itemsPerPage }).map((item, i) => (
+              <BoxChild2NewBlog key={i}>
+                <Skeleton
+                  sx={{
+                    minWidth: { xs: "150px", md: "250px" },
+                    height: { xs: "100px", md: "150px" },
+                    borderRadius: "10px",
+                  }}
+                  variant="rectangular"
+                />
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                  <Skeleton height={20} width={100} />
+                  <Skeleton height={50} width={200} />
+                </Box>
+              </BoxChild2NewBlog>
+            ))}
+          {!isLoading &&
+            sourceCode &&
+            sourceCode.length > 0 &&
+            sourceCode.map((item, i) => {
+              return <ItemCode key={i} item={item} />;
+            })}
+          {isLoadingMore &&
+            Array.from({ length: itemsPerPage }).map((item, i) => (
+              <BoxChild2NewBlog key={i}>
+                <Skeleton
+                  sx={{
+                    minWidth: { xs: "150px", md: "250px" },
+                    height: { xs: "100px", md: "150px" },
+                    borderRadius: "10px",
+                  }}
+                  variant="rectangular"
+                />
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                  <Skeleton height={20} width={100} />
+                  <Skeleton height={50} width={200} />
+                </Box>
+              </BoxChild2NewBlog>
+            ))}
+        </Box>
+        {/* {isLoading &&
+          Array.from({ length: 5 }).map((item, i) => (
+            <BoxChild2NewBlog key={i}>
+              <Skeleton
+                sx={{
+                  minWidth: { xs: "150px", md: "250px" },
+                  height: { xs: "100px", md: "150px" },
+                  borderRadius: "10px",
+                }}
+                variant="rectangular"
+              />
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                <Skeleton height={20} width={100} />
+                <Skeleton height={50} width={200} />
+              </Box>
+            </BoxChild2NewBlog>
+          ))}
+        {!isLoading &&
+          sourceCode &&
+          sourceCode.length > 0 &&
+          sourceCode.map((item, i) => {
+            return <ItemBlog key={i} item={item} />;
+          })} */}
       </Box>
+
+      {isLoadMore && (
+        <Button variant="contained" onClick={() => handleClickLoadMore()}>
+          Load more
+        </Button>
+      )}
     </>
   );
 };
-export default memo(RelationCode);
+export default RelationCodes;

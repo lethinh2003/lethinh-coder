@@ -46,7 +46,7 @@ const Info = ({ user, isLoading, account, socket }) => {
     textAlign: "center",
     padding: "8px 0",
     fontFamily: "Noto Sans",
-    fontSize: "16px",
+    fontSize: "1.6rem",
     cursor: "pointer",
 
     "&:active": {
@@ -125,7 +125,7 @@ const Info = ({ user, isLoading, account, socket }) => {
   const AvatarPersonal = styled(Avatar)({
     width: "100px",
     height: "100px",
-    fontSize: "40px",
+    fontSize: "4rem",
     position: "relative",
 
     "&::before": {
@@ -194,7 +194,7 @@ const Info = ({ user, isLoading, account, socket }) => {
           </Modal>
         )}
         {isLoading && <Skeleton variant="circular" width={150} height={150} />}
-        {dataUser && (
+        {!isLoading && dataUser && (
           <Box
             sx={{
               backgroundColor: (theme) => theme.palette.dialog.bgColor.default,
@@ -232,11 +232,11 @@ const Info = ({ user, isLoading, account, socket }) => {
               <Skeleton variant="text" width={150} />
             </>
           )}
-          {dataUser && (
+          {!isLoading && dataUser && (
             <>
               <Typography
                 sx={{
-                  fontSize: "30px",
+                  fontSize: "3rem",
                   fontWeight: "700",
                 }}
               >
@@ -244,7 +244,7 @@ const Info = ({ user, isLoading, account, socket }) => {
               </Typography>
               <Typography
                 sx={{
-                  fontSize: "20px",
+                  fontSize: "2rem",
                   fontWeight: "500",
                   color: (theme) => theme.palette.iconColor.default,
                 }}
@@ -254,7 +254,7 @@ const Info = ({ user, isLoading, account, socket }) => {
               <Typography
                 sx={{
                   textTransform: "capitalize",
-                  fontSize: "14px",
+                  fontSize: "1.4rem",
                   fontWeight: "500",
                 }}
               >

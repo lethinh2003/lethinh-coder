@@ -47,19 +47,19 @@ const Items = ({ currentItems, isLoading }) => {
   });
   const CardContentCodeTitle = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "18px",
+    fontSize: "1.8rem",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",
@@ -80,7 +80,7 @@ const Items = ({ currentItems, isLoading }) => {
   });
   const CodeButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
@@ -195,7 +195,7 @@ const Items = ({ currentItems, isLoading }) => {
 const SourceCode = () => {
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const optionsPrice = [
@@ -292,7 +292,7 @@ const SourceCode = () => {
           <Typography
             component="h1"
             className="title"
-            sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
+            sx={{ fontFamily: "Bebas Neue", fontSize: "4rem", fontWeight: "bold" }}
           >
             All Source Code
           </Typography>

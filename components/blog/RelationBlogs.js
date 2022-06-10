@@ -78,7 +78,7 @@ const RelationBlogs = ({ data }) => {
   });
   const ChildTitleNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
@@ -98,12 +98,18 @@ const RelationBlogs = ({ data }) => {
   });
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
+    fontWeight: "bold",
+  });
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
     fontWeight: "bold",
   });
   return (
     <>
-      <Typography className="title">Relationship Blogs</Typography>
+      <TitleContent className="title">Relationship Blogs</TitleContent>
       <Box
         sx={{
           width: "100%",

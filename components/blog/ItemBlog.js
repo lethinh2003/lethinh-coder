@@ -1,19 +1,28 @@
-import { Box, CardMedia, Typography } from "@mui/material";
+import { Box, CardMedia, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
 import convertTime from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import { memo } from "react";
+import { motion } from "framer-motion";
+
 const ItemBlog = ({ item }) => {
-  const BoxChild2NewBlog = styled(Box)({
+  const BoxChild2NewBlog = styled(Box)(({ theme }) => ({
     display: "flex",
     gap: "10px",
+    padding: "15px",
+    borderRadius: "20px",
     flexDirection: "column",
-  });
+    border: `1px solid ${theme.palette.card.borderColor.default}`,
+    backgroundColor: theme.palette.card.bgColor.default,
+    "&:hover": {
+      border: `1px solid ${theme.palette.card.borderColor.hover}`,
+    },
+  }));
   const ChildTitleNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
@@ -24,7 +33,7 @@ const ItemBlog = ({ item }) => {
   });
   const ChildDescNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     color: "#848c9b",
   });
 
@@ -33,13 +42,30 @@ const ItemBlog = ({ item }) => {
     height: "150px",
     borderRadius: "10px",
   });
+  const TagButton = styled(Box)({
+    boxShadow: "none",
+    fontSize: "1.2rem",
+    borderRadius: "20px",
+    textTransform: "lowercase",
+    fontFamily: "Noto Sans",
+    color: "#4b5563",
+    fontWeight: "bold",
+    backgroundColor: "#e5e6e9",
+    padding: "5px 10px",
+    cursor: "pointer",
+  });
 
   return (
     <>
-      <BoxChild2NewBlog>
+      <BoxChild2NewBlog
+        as={motion.div}
+        whileHover={{
+          scale: 1.02,
+        }}
+      >
         <Child2ImageNewBlog
           sx={{
-            minWidth: { xs: "150px", md: "250px" },
+            minWidth: { xs: "150px", md: "150px" },
             height: "200px",
             // height: { xs: "100px", md: "150px" },
             position: "relative",
@@ -55,7 +81,7 @@ const ItemBlog = ({ item }) => {
             blurDataURL="https://i.imgur.com/HYNKD6V.png"
           />
         </Child2ImageNewBlog>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <Box
             sx={{
               display: "flex",
@@ -66,14 +92,14 @@ const ItemBlog = ({ item }) => {
           >
             <Typography
               sx={{
-                fontSize: { xs: "14px", md: "16px" },
+                fontSize: { xs: "1.4rem", md: "1.6rem" },
               }}
             >
               📆 {convertTime(item.createdAt)}
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: "14px", md: "16px" },
+                fontSize: { xs: "1.4rem", md: "1.6rem" },
               }}
             >
               🕐 {getReadingTime(item.content)} phút đọc
@@ -82,7 +108,7 @@ const ItemBlog = ({ item }) => {
           <Link href={`/blog/${item.slug}`}>
             <ChildTitleNewBlog
               sx={{
-                fontSize: { xs: "16px", md: "18px" },
+                fontSize: { xs: "1.6rem", md: "1.8rem" },
               }}
             >
               {item.title}
@@ -90,11 +116,30 @@ const ItemBlog = ({ item }) => {
           </Link>
           <ChildDescNewBlog
             sx={{
-              fontSize: { xs: "16px", md: "18px" },
+              fontSize: { xs: "1.6rem", md: "1.8rem" },
             }}
           >
             {item.desc}
           </ChildDescNewBlog>
+          <Box
+            sx={{
+              display: "inline-flex",
+              gap: "10px",
+              flexWrap: "wrap",
+            }}
+          >
+            {item.labels.map((item, i) => (
+              <TagButton
+                key={i}
+                sx={{
+                  textTransform: "lowercase",
+                }}
+                variant="outlined"
+              >
+                #{item.toLowerCase()}
+              </TagButton>
+            ))}
+          </Box>
         </Box>
       </BoxChild2NewBlog>
     </>

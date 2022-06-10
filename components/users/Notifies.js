@@ -33,7 +33,7 @@ const Notifies = ({ user, socket }) => {
   const [dataNoti, setDataNoti] = useState([]);
   const [numberNotify, setNumberNotify] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(5);
+  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
@@ -242,15 +242,7 @@ const Notifies = ({ user, socket }) => {
                   newContent = newContent.replace("{name}", item.account_send[0].name);
                 }
 
-                return (
-                  <NotifyContent
-                    key={i}
-                    item={item}
-                    i={i}
-                    newContent={newContent}
-                    handleClickDelete={handleClickDelete}
-                  />
-                );
+                return <NotifyContent key={i} item={item} newContent={newContent} />;
               })}
           </Box>
         </InfiniteScroll>

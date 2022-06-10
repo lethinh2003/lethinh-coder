@@ -2,19 +2,20 @@ import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import Link from "next/link";
 import { memo, useState } from "react";
-import ItemCode from "./Code/ItemCode";
+
+import ItemCode from "../code/ItemCode";
 const ShowCodes = (props) => {
   const source = props.sourceCode;
   const [sourceCode, setSourceCode] = useState(typeof source === "string" ? JSON.parse(source) : source);
 
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "18px",
+    fontSize: "1.8rem",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",

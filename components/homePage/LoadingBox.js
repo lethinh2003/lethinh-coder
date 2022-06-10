@@ -45,7 +45,7 @@ const LoadingBox = (props) => {
     opacity: "0.7",
   });
   const LoadingIconSuccess = styled(BsCheckSquare)({
-    fontSize: "50px",
+    fontSize: "5rem",
     color: "#41bf90",
   });
   return (

@@ -6,9 +6,12 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { styled } from "@mui/material/styles";
 import { memo } from "react";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 const MySelf = (props) => {
-  const { dataSystem } = props;
+  // const { dataSystem } = props;
+  const dataSystem = useSelector((state) => state.system.data);
+
   const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
@@ -31,19 +34,19 @@ const MySelf = (props) => {
   });
   const CardContentCodeTitle = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "20px",
+    fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
     cursor: "pointer",
   });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "18px",
+    fontSize: "1.8rem",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",
@@ -56,11 +59,17 @@ const MySelf = (props) => {
       color: "#0b9ad1",
     },
   });
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
   return (
     <>
       {dataSystem && (
         <>
-          <Typography className="title">MYSELF</Typography>
+          <TitleContent className="title">MYSELF</TitleContent>
           <CardCode sx={{ display: "flex", padding: "20px 0px" }}>
             <Box
               sx={{
@@ -95,21 +104,14 @@ const MySelf = (props) => {
                   padding: "unset",
                 }}
               >
-                <Typography sx={{ fontFamily: "Noto Sans", fontWeight: "bold" }} component="div" variant="div">
+                <Typography sx={{ fontWeight: "bold" }} component="div">
                   {dataSystem.myself_name}
                 </Typography>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontFamily: "Noto Sans",
-                  }}
-                  color="text.secondary"
-                  component="div"
-                >
+                <Typography color="text.secondary" component="div">
                   {dataSystem.myself_desc}
                 </Typography>
               </CardContent>
-              <Typography sx={{ fontFamily: "Noto Sans", fontWeight: "bold" }} component="div" variant="div">
+              <Typography sx={{ fontWeight: "bold" }} component="div">
                 Theo dõi tôi
               </Typography>
               <Box sx={{ display: "flex", gap: "10px" }}>

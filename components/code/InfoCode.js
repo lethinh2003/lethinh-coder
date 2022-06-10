@@ -9,12 +9,18 @@ import { FaMoneyCheckAlt } from "react-icons/fa";
 import { BsCloudDownload } from "react-icons/bs";
 import { memo } from "react";
 import NumberFormat from "react-number-format";
-
+import Image from "next/image";
 const InfoCode = (props) => {
   const { sourceCode } = props;
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
   const CodeButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
@@ -31,6 +37,18 @@ const InfoCode = (props) => {
     "&:focus": {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
+  });
+  const TagButton = styled(Box)({
+    boxShadow: "none",
+    fontSize: "1.2rem",
+    borderRadius: "20px",
+    textTransform: "lowercase",
+    fontFamily: "Noto Sans",
+    color: "#4b5563",
+    fontWeight: "bold",
+    backgroundColor: "#e5e6e9",
+    padding: "5px 10px",
+    cursor: "pointer",
   });
   return (
     <>
@@ -55,7 +73,7 @@ const InfoCode = (props) => {
             </Link>
             <Typography color="text.primary">{sourceCode.title}</Typography>
           </Breadcrumbs>
-          <Typography className="title">Trang thông tin code</Typography>
+          <TitleContent className="title">Trang thông tin code</TitleContent>
 
           <Box
             sx={{
@@ -67,18 +85,26 @@ const InfoCode = (props) => {
               padding: "20px",
             }}
           >
-            <CardMedia
+            <Box
               sx={{
                 height: "200px",
                 width: "200px",
                 borderRadius: "50%",
                 objectFit: "cover",
+                overflow: "hidden",
+                position: "relative",
                 boxShadow: "0px 5px 50px 0px #52f18a, 0px 0px 0px 7px rgb(31 195 127)",
               }}
-              component="img"
-              image={sourceCode.images[0]}
-              alt={sourceCode.title}
-            />
+            >
+              <Image
+                src={sourceCode.images[0]}
+                layout="fill"
+                objectFit="cover"
+                alt={sourceCode.title}
+                placeholder="blur"
+                blurDataURL="https://i.imgur.com/HYNKD6V.png"
+              />
+            </Box>
             <CardContent
               sx={{
                 borderRadius: "20px",
@@ -91,21 +117,21 @@ const InfoCode = (props) => {
                   fontWeight: "500",
                 }}
               >
-                <AiFillFileZip /> Tên code: {sourceCode.title}{" "}
+                📁 Tên code: {sourceCode.title}{" "}
               </Typography>
               <Typography
                 sx={{
                   fontWeight: "500",
                 }}
               >
-                <AiOutlineEye /> Lượt xem: {sourceCode.views}{" "}
+                👁️ Lượt xem: {sourceCode.views}{" "}
               </Typography>
               <Typography
                 sx={{
                   fontWeight: "500",
                 }}
               >
-                <FaMoneyCheckAlt /> Phí tải:{" "}
+                💰 Phí tải:{" "}
                 <NumberFormat
                   value={sourceCode.costs}
                   displayType={"text"}
@@ -119,14 +145,14 @@ const InfoCode = (props) => {
                   fontWeight: "500",
                 }}
               >
-                <BsCloudDownload /> Lượt tải: {sourceCode.downloads}{" "}
+                📥 Lượt tải: {sourceCode.downloads}{" "}
               </Typography>
               <Typography
                 sx={{
                   fontWeight: "500",
                 }}
               >
-                <AiOutlineCalendar /> Thời gian: {convertTime(sourceCode.createdAt)}{" "}
+                📅 Thời gian: {convertTime(sourceCode.createdAt)}{" "}
               </Typography>
               {sourceCode.labels.length > 0 && (
                 <Typography
@@ -134,7 +160,7 @@ const InfoCode = (props) => {
                     fontWeight: "500",
                   }}
                 >
-                  <AiFillTags /> Labels:{" "}
+                  🏷️ Labels:{" "}
                   <Box
                     sx={{
                       display: "inline-flex",
@@ -143,9 +169,7 @@ const InfoCode = (props) => {
                     }}
                   >
                     {sourceCode.labels.map((item, i) => (
-                      <CodeButton key={i} variant="outlined">
-                        {item}
-                      </CodeButton>
+                      <TagButton key={i}>{item}</TagButton>
                     ))}
                   </Box>
                 </Typography>

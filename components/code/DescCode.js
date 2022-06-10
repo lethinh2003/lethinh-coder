@@ -4,6 +4,9 @@ import { AiOutlineCalendar } from "react-icons/ai";
 import convertTime from "../../utils/convertTime";
 import Email from "../auth/Email";
 import { memo } from "react";
+import { styled } from "@mui/material/styles";
+import ShareButton from "../ShareSocial/ShareButton";
+
 const DescCode = (props) => {
   const { sourceCode, status } = props;
   const [isEmailModal, setIsEmailModal] = useState(false);
@@ -11,7 +14,12 @@ const DescCode = (props) => {
   const handleClickOpenEmail = () => {
     setIsEmailModal(true);
   };
-
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
   return (
     <>
       <Box
@@ -26,7 +34,7 @@ const DescCode = (props) => {
           padding: "40px 0",
         }}
       >
-        <Typography className="title">Desciption code</Typography>
+        <TitleContent className="title">Desciption code</TitleContent>
 
         <Box
           sx={{
@@ -41,14 +49,14 @@ const DescCode = (props) => {
           }}
         >
           <Email isEmailModal={isEmailModal} setIsEmailModal={setIsEmailModal} codeId={sourceCode._id} />
-          <h1 style={{ fontFamily: "Noto Sans" }}>{sourceCode.title}</h1>
+          <h1 style={{ fontFamily: "Noto Sans", fontSize: "3.5rem" }}>{sourceCode.title}</h1>
           {sourceCode.updatedAt && (
             <Typography
               sx={{
                 fontWeight: "500",
               }}
             >
-              <AiOutlineCalendar /> Cập nhật: {convertTime(sourceCode.updatedAt)}{" "}
+              📅 Cập nhật: {convertTime(sourceCode.updatedAt)}{" "}
             </Typography>
           )}
           <Typography component="div" sx={{ fontFamily: "Noto Sans" }}>
@@ -69,6 +77,7 @@ const DescCode = (props) => {
                 Download Code
               </Button>
             )}
+            <ShareButton blogData={sourceCode} />
             {status === "unauthenticated" && sourceCode.costs === 0 && (
               <Button variant="outlined">Đăng Nhập Để Download Code</Button>
             )}

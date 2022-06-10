@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
 import CommentsBlog from "../../components/blog/CommentsBlog";
 import DescBlog from "../../components/blog/DescBlog";
 import InfoBlog from "../../components/blog/InfoBlog";
@@ -21,9 +20,9 @@ const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   const timeRefLoading = useRef(null);
 
-  const dataSystem = useSelector((state) => state.system.data);
-  let { sourceBySlug } = props;
+  let { sourceBySlug, systemData } = props;
   const [blogData, setBlogData] = useState(JSON.parse(sourceBySlug));
+
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -45,20 +44,6 @@ const DetailSourceCode = (props) => {
       setBlogData(data);
     }
   }, [router.query.slug]);
-  useEffect(() => {
-    setIsLoading(false);
-    timeRefLoading.current = setTimeout(() => {
-      setIsLoading(true);
-    }, 500);
-    return () => {
-      clearTimeout(timeRefLoading.current);
-    };
-  }, [blogData]);
-
-  const variants = {
-    open: { opacity: 1 },
-    closed: { opacity: 0 },
-  };
 
   return (
     <>
@@ -67,9 +52,8 @@ const DetailSourceCode = (props) => {
           <Head>
             <title>{`${blogData.title} - LT Blog`}</title>
             <meta name="description" content={blogData.desc} />
-            {dataSystem && (
-              <meta name="keywords" content={`${dataSystem.meta_keywords},  ${blogData.keywords.join(", ")}`} />
-            )}
+
+            <meta name="keywords" content={`${blogData.keywords.join(", ")}`} />
             <meta property="og:locale" content="vi_VN" />
             <meta property="og:type" content="article" />
             <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
@@ -132,7 +116,7 @@ const DetailSourceCode = (props) => {
                 </Box>
               </Box>
               <CommentsBlog status={status} session={session} blogData={blogData} router={router} />
-              <MySelf dataSystem={dataSystem} />
+              <MySelf />
               <RelationBlogs data={blogData} />
               <Tag data={blogData} />
             </Box>
@@ -148,6 +132,7 @@ export const getServerSideProps = async (context) => {
   const test = params.slug.join("/");
   await dbConnect();
   let sourceBySlug = [];
+  let systemData;
   await Promise.all([
     Blog.findOneAndUpdate(
       { slug: { $in: test }, status: true },
@@ -168,6 +153,7 @@ export const getServerSideProps = async (context) => {
   ])
     .then((data) => {
       sourceBySlug = data[0];
+      systemData = data[1];
     })
     .catch((err) => console.log(err));
   return {

@@ -8,55 +8,25 @@ import ShareButton from "../ShareSocial/ShareButton";
 
 const DescBlog = (props) => {
   const { blogData } = props;
-
-  const CodeButton = styled(Button)({
+  const TagButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "14px",
-    borderRadius: "10px",
+    fontSize: "1.2rem",
+    borderRadius: "20px",
     textTransform: "lowercase",
     fontFamily: "Noto Sans",
-    color: "#0b9ad1",
+    color: "#4b5563",
     fontWeight: "bold",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#fff",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
-  });
-  const ReactionButton = styled(Box)({
-    boxShadow: "none",
-    fontSize: "14px",
-    borderRadius: "30px",
-    minWidth: "70px",
-
-    color: "#0b9ad1",
-    fontWeight: "bold",
-    backgroundColor: "#fff",
-    position: "relative",
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: "10px",
-    padding: "5px",
+    backgroundColor: "#e5e6e9",
+    padding: "5px 10px",
     cursor: "pointer",
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#E5E7EB",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
   });
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
+
   return (
     <>
       <Box
@@ -71,7 +41,7 @@ const DescBlog = (props) => {
           padding: "40px 0",
         }}
       >
-        <Typography className="title">Desciption blog</Typography>
+        <TitleContent className="title">Desciption blog</TitleContent>
         {blogData && (
           <Box
             sx={{
@@ -85,7 +55,7 @@ const DescBlog = (props) => {
               padding: { xs: "10px", md: "20px" },
             }}
           >
-            <h1 style={{ fontFamily: "Noto Sans" }}>{blogData.title}</h1>
+            <h1 style={{ fontFamily: "Noto Sans", fontSize: "3.5rem" }}>{blogData.title}</h1>
             <Typography
               sx={{
                 fontWeight: "500",
@@ -117,9 +87,15 @@ const DescBlog = (props) => {
               }}
             >
               {blogData.labels.map((item, i) => (
-                <CodeButton key={i} variant="outlined">
+                <TagButton
+                  key={i}
+                  sx={{
+                    textTransform: "lowercase",
+                  }}
+                  variant="outlined"
+                >
                   #{item.toLowerCase()}
-                </CodeButton>
+                </TagButton>
               ))}
             </Box>
             <Typography component="div" sx={{ fontFamily: "Noto Sans" }}>

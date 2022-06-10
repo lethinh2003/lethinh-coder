@@ -12,7 +12,7 @@ const Sidebar = (props) => {
 
   const LoginButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",

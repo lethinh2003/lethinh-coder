@@ -21,11 +21,9 @@ import System from "../../models/System";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   const timeRefLoading = useRef(null);
-  const dataSystem = useSelector((state) => state.system.data);
 
   let { sourceBySlug, newSource, systemData } = props;
   const [sourceCode, setSourceCode] = useState(JSON.parse(sourceBySlug));
-  systemData = JSON.parse(systemData);
   const [sourceCodeRelationship, setSourceCodeRelationship] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,22 +47,8 @@ const DetailSourceCode = (props) => {
         console.log(err);
       }
     };
-    fetchAPI();
+    // fetchAPI();
   }, [router.query.slug]);
-  useEffect(() => {
-    setIsLoading(false);
-    timeRefLoading.current = setTimeout(() => {
-      setIsLoading(true);
-    }, 500);
-    return () => {
-      clearTimeout(timeRefLoading.current);
-    };
-  }, [sourceCode]);
-
-  const variants = {
-    open: { opacity: 1 },
-    closed: { opacity: 0 },
-  };
 
   return (
     <>
@@ -73,14 +57,21 @@ const DetailSourceCode = (props) => {
           <Head>
             <title>{`${sourceCode.title} - LT Blog`}</title>
             <meta name="description" content={sourceCode.desc} />
-            {dataSystem && (
-              <meta name="keywords" content={`${dataSystem.meta_keywords},  ${sourceCode.keywords.join(", ")}`} />
-            )}
+
+            <meta name="keywords" content={` ${sourceCode.keywords.join(", ")}`} />
+            <meta property="og:locale" content="vi_VN" />
+            <meta property="og:type" content="article" />
+
             <meta property="og:title" content={`${sourceCode.title} - LT Blog`} />
             <meta property="og:description" content={sourceCode.desc} />
             <meta property="og:image" content={sourceCode.images[0]} />
             <meta property="og:image:width" content="600" />
             <meta property="og:image:height" content="315" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="twitter:title" content={`${sourceCode.title} - LT Blog`} />
+            <meta property="twitter:description" content={sourceCode.desc} />
+            <meta property="twitter:creator" content={"Thinh Le"} />
+            <meta property="twitter:image" content={sourceCode.images[0]} />
           </Head>
 
           <Layout>
@@ -90,10 +81,8 @@ const DetailSourceCode = (props) => {
             <Box
               as={motion.div}
               initial={{ opacity: 0 }}
-              // animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              animate={isLoading ? "open" : "closed"}
-              variants={variants}
+              animate={{ opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
               sx={{
                 display: "flex",
@@ -106,54 +95,50 @@ const DetailSourceCode = (props) => {
                 padding: "40px 0",
               }}
             >
-              {isLoading && (
-                <>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      flexDirection: "column",
-                      bgcolor: "background.default",
-                      justifyContent: "center",
-                      color: "text.primary",
-                      gap: "10px",
-                      padding: "40px 0",
-                    }}
-                  >
-                    <InfoCode sourceCode={sourceCode} />
-                    <Box
-                      className="thinhle"
-                      sx={{
-                        display: "flex",
-                        alignItems: "flex-start",
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  bgcolor: "background.default",
+                  justifyContent: "center",
+                  color: "text.primary",
+                  gap: "10px",
+                  padding: "40px 0",
+                }}
+              >
+                <InfoCode sourceCode={sourceCode} />
+                <Box
+                  className="thinhle"
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
 
-                        bgcolor: "background.default",
-                        justifyContent: "center",
-                        color: "text.primary",
-                        gap: "10px",
-                        padding: "40px 0",
-                      }}
-                    >
-                      <DescCode sourceCode={sourceCode} status={status} />
-                      <TableOfContent dataPost={sourceCode} status={status} />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        padding: { xs: "10px", md: "20px" },
-                      }}
-                    >
-                      <ImagesCode sourceCode={sourceCode} />
-                    </Box>
-                  </Box>
-                  <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
-                  <MySelf dataSystem={dataSystem} />
-                  <RelationCode sourceCodeRelationship={sourceCodeRelationship} />
-                  <Tag data={sourceCode} />
-                </>
-              )}
+                    bgcolor: "background.default",
+                    justifyContent: "center",
+                    color: "text.primary",
+                    gap: "10px",
+                    padding: "40px 0",
+                  }}
+                >
+                  <DescCode sourceCode={sourceCode} status={status} />
+                  <TableOfContent dataPost={sourceCode} status={status} />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    padding: { xs: "10px", md: "20px" },
+                  }}
+                >
+                  {/* <ImagesCode sourceCode={sourceCode} /> */}
+                </Box>
+              </Box>
+              <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
+              <MySelf />
+              <RelationCode data={sourceCode} />
+              <Tag data={sourceCode} />
             </Box>
           </Layout>
         </>
@@ -194,7 +179,6 @@ export const getServerSideProps = async (context) => {
   return {
     props: {
       sourceBySlug: JSON.stringify(sourceBySlug),
-      systemData: JSON.stringify(systemData),
     },
   };
 };

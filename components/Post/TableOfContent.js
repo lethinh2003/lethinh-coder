@@ -1,13 +1,15 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { memo } from "react";
+import { styled } from "@mui/material/styles";
+
 const TableOfContent = (props) => {
   const { dataPost } = props;
   const [listContents, setListContents] = useState([]);
   const [isContentPos, setIsContentPos] = useState("");
   useEffect(() => {
     const data = [];
-    const getH1elements = document.querySelectorAll(".content-html h1");
+    const getH1elements = document.querySelectorAll(".content-html h2");
     if (getH1elements.length > 0) {
       for (let i = 0; i < getH1elements.length; i++) {
         data.push(getH1elements[i]);
@@ -18,10 +20,10 @@ const TableOfContent = (props) => {
   useEffect(() => {
     const eventScroll = () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
-      if (c <= listContents[0].offsetTop - 150) {
-        setIsContentPos("");
-      } else {
-        if (listContents.length > 0) {
+      if (listContents.length > 0) {
+        if (c < listContents[0].offsetTop - listContents[0].offsetHeight) {
+          setIsContentPos("");
+        } else {
           listContents.map((item) => {
             if (c >= item.offsetTop - item.offsetHeight) {
               setIsContentPos(item.innerText);
@@ -37,11 +39,18 @@ const TableOfContent = (props) => {
   }, [listContents]);
 
   const handleClickContent = (item) => {
+    // window.scrollTo(0, item.offsetTop - item.offsetHeight * 2);
     item.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
   };
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
 
   return (
     <>
@@ -60,14 +69,14 @@ const TableOfContent = (props) => {
           top: 5,
         }}
       >
-        <h1
-          className="title"
-          style={{
-            paddingTop: "10px",
+        <TitleContent
+          sx={{
+            paddingTop: "30px",
           }}
+          className="title"
         >
           Table of Contents
-        </h1>
+        </TitleContent>
         <Box
           className="tableofcontents"
           sx={{
@@ -79,7 +88,7 @@ const TableOfContent = (props) => {
             color: "text.primary",
             gap: "10px",
             padding: { xs: "10px", md: "20px" },
-            minWidth: "300px",
+            width: "300px",
             borderLeft: "1px solid #ccc",
             maxHeight: "calc(100vh - 200px)",
             overflowY: "auto",

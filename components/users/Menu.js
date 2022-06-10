@@ -1,7 +1,7 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Activities from "./Activities";
 import Notifies from "./Notifies";
 import { memo } from "react";
@@ -10,6 +10,9 @@ import { useSession } from "next-auth/react";
 const DetailAccount = ({ user, socket }) => {
   const [value, setValue] = useState("0");
   const { data: session, status } = useSession();
+  useEffect(() => {
+    setValue("0");
+  }, [user]);
 
   const StyledTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
     textTransform: "none",

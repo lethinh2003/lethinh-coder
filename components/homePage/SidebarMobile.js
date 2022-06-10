@@ -67,7 +67,7 @@ const SidebarMobile = (props) => {
                     alignItems: "center",
                     justifyContent: "flex-start",
                     gap: "5px",
-                    fontSize: "25px",
+                    fontSize: "2.5rem",
                     fontWeight: "bold",
                     padding: "5px",
                     textTransform: "capitalize",
@@ -81,12 +81,12 @@ const SidebarMobile = (props) => {
                       display: "flex",
                     }}
                   >
-                    <FaHome style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                    <FaHome style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
                   </div>
                   <div
                     style={{
                       display: "flex",
-                      fontSize: "20px",
+                      fontSize: "2rem",
                     }}
                   >
                     Home
@@ -103,7 +103,7 @@ const SidebarMobile = (props) => {
                         alignItems: "center",
                         justifyContent: "flex-start",
                         gap: "5px",
-                        fontSize: "25px",
+                        fontSize: "2.5rem",
                         fontWeight: "bold",
                         padding: "5px",
                         textTransform: "capitalize",
@@ -111,8 +111,8 @@ const SidebarMobile = (props) => {
                       }}
                       component="div"
                     >
-                      <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                      <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                      <AiOutlineLogin style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
+                      <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
                         Login
                       </Typography>
                     </Button>
@@ -125,7 +125,7 @@ const SidebarMobile = (props) => {
                         alignItems: "center",
                         justifyContent: "flex-start",
                         gap: "5px",
-                        fontSize: "25px",
+                        fontSize: "2.5rem",
                         fontWeight: "bold",
                         padding: "5px",
                         textTransform: "capitalize",
@@ -133,8 +133,8 @@ const SidebarMobile = (props) => {
                       }}
                       component="div"
                     >
-                      <AiOutlineLogin style={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                      <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                      <AiOutlineLogin style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
+                      <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
                         Sign up
                       </Typography>
                     </Button>
@@ -149,7 +149,7 @@ const SidebarMobile = (props) => {
                     alignItems: "center",
                     justifyContent: "flex-start",
                     gap: "5px",
-                    fontSize: "25px",
+                    fontSize: "2.5rem",
                     fontWeight: "bold",
                     padding: "5px",
                     textTransform: "capitalize",
@@ -157,8 +157,8 @@ const SidebarMobile = (props) => {
                   }}
                   component="div"
                 >
-                  <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                  <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                  <SourceIcon sx={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
+                  <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
                     Source
                   </Typography>
                 </Button>
@@ -170,7 +170,7 @@ const SidebarMobile = (props) => {
                     alignItems: "center",
                     justifyContent: "flex-start",
                     gap: "5px",
-                    fontSize: "25px",
+                    fontSize: "2.5rem",
                     fontWeight: "bold",
                     padding: "5px",
                     textTransform: "capitalize",
@@ -178,8 +178,8 @@ const SidebarMobile = (props) => {
                   }}
                   component="div"
                 >
-                  <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                  <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                  <SourceIcon sx={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
+                  <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
                     Blog
                   </Typography>
                 </Button>
@@ -192,7 +192,7 @@ const SidebarMobile = (props) => {
                       alignItems: "center",
                       justifyContent: "flex-start",
                       gap: "5px",
-                      fontSize: "25px",
+                      fontSize: "2.5rem",
                       fontWeight: "bold",
                       padding: "5px",
                       textTransform: "capitalize",

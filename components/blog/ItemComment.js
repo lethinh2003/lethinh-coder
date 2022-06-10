@@ -7,20 +7,22 @@ import { memo } from "react";
 import { styled } from "@mui/material/styles";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import Link from "next/link";
+import ItemRepComment from "./ItemRepComment";
 const ItemComment = (props) => {
-  // const blogData = "lethinhpro";
-  const { item, socket, blogData, handleClickReplyComment } = props;
+  const { item, socket, blogData, handleClickReplyComment, handleDeleteComment } = props;
   const { data: session, status } = useSession();
 
   const elementsContent = item.content.split("\n");
   const [isDelete, setIsDelete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [listRepComment, setListRepComment] = useState(item.reply);
   const [countLikes, setCountLikes] = useState(0);
   const hostServer = process.env.ENDPOINT_SERVER;
   useEffect(() => {
     setIsDelete(false);
     setCountLikes(item.likes.length);
-    console.log("re-render", item._id);
+
     socket.emit("join-room-comment-id", item._id);
     socket.on("update-count-likes", (data) => {
       if (data.id === item._id) {
@@ -30,14 +32,38 @@ const ItemComment = (props) => {
     socket.on("delete-comment", (data) => {
       if (data.id === item._id) {
         setIsDelete(true);
+        handleDeleteComment(data.id);
       }
     });
+
     return () => {
       socket.off("update-count-likes");
       socket.off("delete-comment");
     };
   }, [item]);
+  useEffect(() => {
+    socket.on("delete-rep-comment", (data) => {
+      if (data.room === item._id) {
+        const getListRepComment = [...listRepComment];
 
+        const removeRepComment = getListRepComment.filter((item, index) => item._id !== data.id);
+
+        setListRepComment(removeRepComment);
+      }
+    });
+    socket.on("create-rep-comment", (data) => {
+      if (data.room === item._id) {
+        const getListRepComment = [...listRepComment];
+
+        const createRepComment = getListRepComment.concat([data.data]);
+        setListRepComment(createRepComment);
+      }
+    });
+    return () => {
+      // socket.off("create-rep-comment");
+      // socket.off("delete-rep-comment");
+    };
+  }, [listRepComment, item]);
   const BoxComment = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
@@ -127,7 +153,6 @@ const ItemComment = (props) => {
         await axios.post(`${hostServer}/api/v1/comments/delete`, {
           commentId: item._id,
         });
-        // socket.emit("get-all-comments", blogData._id);
         const data = {
           id: item._id,
         };
@@ -154,16 +179,19 @@ const ItemComment = (props) => {
         >
           <ListItem button={false} sx={{}}>
             <ListItemAvatar>
-              <Avatar
-                sx={{
-                  backgroundColor: (theme) => theme.palette.avatar.default,
-                  borderRadius: "10px",
-                }}
-                alt={item.user[0].name}
-                src={item.user[0].avatar}
-              >
-                {item.user[0].name.charAt(0)}
-              </Avatar>
+              <Link href={`/users/${item.user[0].account}`}>
+                <Avatar
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.avatar.default,
+                    borderRadius: "10px",
+                    cursor: "pointer",
+                  }}
+                  alt={item.user[0].name}
+                  src={item.user[0].avatar}
+                >
+                  {item.user[0].name.charAt(0)}
+                </Avatar>
+              </Link>
             </ListItemAvatar>
             <ListItemText
               primary={
@@ -211,7 +239,7 @@ const ItemComment = (props) => {
               sx={{
                 paddingLeft: "18px",
                 fontStyle: "italic",
-                fontSize: "12px",
+                fontSize: "1.2rem",
               }}
             >
               {convertTime(item.createdAt)}
@@ -221,7 +249,7 @@ const ItemComment = (props) => {
                 sx={{
                   paddingLeft: "18px",
                   fontStyle: "italic",
-                  fontSize: "12px",
+                  fontSize: "1.2rem",
                   cursor: "pointer",
                 }}
                 onClick={() => handleClickReplyComment(item)}
@@ -234,7 +262,7 @@ const ItemComment = (props) => {
                 sx={{
                   paddingLeft: "18px",
                   fontStyle: "italic",
-                  fontSize: "12px",
+                  fontSize: "1.2rem",
                   cursor: "pointer",
                 }}
                 onClick={() => handleClickDeleteComment(item)}
@@ -244,36 +272,15 @@ const ItemComment = (props) => {
             )}
           </Typography>
 
-          {item.reply.length > 0 &&
-            item.reply.map((replyItem) => (
-              <Box key={replyItem._id} sx={{ paddingLeft: "20px" }}>
-                <ListItem button={false}>
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        backgroundColor: (theme) => theme.palette.avatar.default,
-                      }}
-                      alt={replyItem.user[0].name}
-                      src={replyItem.user[0].avatar}
-                    >
-                      {replyItem.user[0].name.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`${replyItem.user[0].name} - ${replyItem.user[0].role === "admin" ? "Admin" : "Member"} `}
-                    secondary={replyItem.content}
-                  ></ListItemText>
-                </ListItem>
-                <Typography
-                  sx={{
-                    paddingLeft: "18px",
-                    fontStyle: "italic",
-                    fontSize: "12px",
-                  }}
-                >
-                  {convertTime(replyItem.createdAt)}
-                </Typography>
-              </Box>
+          {listRepComment.length > 0 &&
+            listRepComment.map((replyItem) => (
+              <ItemRepComment
+                key={replyItem._id}
+                socket={socket}
+                blogData={blogData}
+                replyItem={replyItem}
+                item={item}
+              />
             ))}
         </BoxComment>
       )}

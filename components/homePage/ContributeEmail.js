@@ -56,7 +56,7 @@ const Introduce = (props) => {
   };
   const IntroduceButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
@@ -81,7 +81,7 @@ const Introduce = (props) => {
     color: "#272fec",
   });
   const IntroduceDesc = styled(Typography)({
-    fontSize: "20px",
+    fontSize: "2rem",
     fontFamily: "Noto Sans",
     color: "#0c1842",
   });
@@ -182,7 +182,7 @@ const Introduce = (props) => {
               <CardContent>
                 <IntroduceTitle
                   sx={{
-                    fontSize: { xs: "25px", md: "30px" },
+                    fontSize: { xs: "2.5rem", md: "3rem" },
                   }}
                   component="div"
                 >

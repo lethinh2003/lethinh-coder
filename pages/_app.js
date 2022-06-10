@@ -30,6 +30,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             <link rel="icon" type="image/x-icon" href="https://i.imgur.com/U0BdIic.png" />
             <meta name="author" content="Thinh Le" />
+            <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
+
             {/* <title>LT Blog - Le Thinh Blog</title>
 
           <meta name="description" content="LT Blog - Le Thinh Blog" />

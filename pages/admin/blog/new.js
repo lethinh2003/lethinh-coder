@@ -23,7 +23,7 @@ import Modal from "../../../components/homePage/Modal";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-
+import { toast } from "react-toastify";
 export default function MyEditor() {
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -45,6 +45,7 @@ export default function MyEditor() {
   const editorRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
+  const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
 
   const [isModal, setIsModal] = useState(false);
@@ -52,10 +53,49 @@ export default function MyEditor() {
   useEffect(() => {
     editorRef.current = {
       CKEditor: require("@ckeditor/ckeditor5-react").CKEditor, // v3+
-      ClassicEditor: require("../../../ckeditor5-build-with-htmlembed-master"),
+      ClassicEditor: require("../../../ckeditor5-34.1.0-8ogafsbogmr7"),
+      // ClassicEditor: require("../../../ckeditor5-custom"),
     };
     setEditorLoaded(true);
   }, []);
+  const uploadAdapter = (loader) => {
+    return {
+      upload: () => {
+        return new Promise((resolve, reject) => {
+          const body = new FormData();
+          loader.file.then((file) => {
+            body.append("file", file);
+            setIsLoadingUploadImage(true);
+
+            fetch(`${process.env.ENDPOINT_SERVER}/api/v1/posts/upload-file`, {
+              method: "post",
+              body: body,
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                setIsLoadingUploadImage(false);
+                resolve({
+                  default: res.data,
+                });
+              })
+              .catch((err) => {
+                if (err.response) {
+                  setIsLoadingUploadImage(false);
+                  toast.error(err.response.data.message);
+                }
+
+                reject(err);
+              });
+          });
+        });
+      },
+    };
+  };
+  const uploadPlugin = (editor) => {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return uploadAdapter(loader);
+    };
+  };
   const onSubmit = async (dataForm) => {
     try {
       setIsLoading(true);
@@ -227,6 +267,54 @@ export default function MyEditor() {
 
                 <Box sx={{ width: "100%", color: "black" }}>
                   <CKEditor
+                    config={{
+                      extraPlugins: [uploadPlugin],
+                      heading: {
+                        options: [
+                          {
+                            model: "paragraph",
+                            title: "Paragraph",
+                            class: "ck-heading_paragraph",
+                          },
+                          {
+                            model: "heading1",
+                            view: "h1",
+                            title: "Heading 1",
+                            class: "ck-heading_heading1",
+                          },
+                          {
+                            model: "heading2",
+                            view: "h2",
+                            title: "Heading 2",
+                            class: "ck-heading_heading2",
+                          },
+                          {
+                            model: "heading3",
+                            view: "h3",
+                            title: "Heading 3",
+                            class: "ck-heading_heading3",
+                          },
+                          {
+                            model: "heading4",
+                            view: "h4",
+                            title: "Heading 4",
+                            class: "ck-heading_heading4",
+                          },
+                          {
+                            model: "heading5",
+                            view: "h5",
+                            title: "Heading 5",
+                            class: "ck-heading_heading5",
+                          },
+                          {
+                            model: "heading6",
+                            view: "h6",
+                            title: "Heading 6",
+                            class: "ck-heading_heading6",
+                          },
+                        ],
+                      },
+                    }}
                     editor={ClassicEditor}
                     data={localStorage.getItem("postDataBlog") || null}
                     onReady={(editor) => {
@@ -235,6 +323,7 @@ export default function MyEditor() {
                     }}
                     onChange={(event, editor) => {
                       const data = editor.getData();
+                      console.log(data);
                       localStorage.setItem("postDataBlog", data);
                     }}
                   />

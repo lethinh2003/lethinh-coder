@@ -63,6 +63,7 @@ const Notify = () => {
     socket.emit("join-notify", session.user.id);
     socket.emit("get-notify", session.user.id);
     socket.on("send-notify", (data) => {
+      console.log("data nek", data);
       let notifyNum = 0;
       if (data.length > 0) {
         data.map((item) => {

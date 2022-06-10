@@ -62,7 +62,7 @@ const AvatarProfile = () => {
       },
     },
     "&.MuiMenuItem-root .MuiTypography-root": {
-      fontSize: "15px",
+      fontSize: "1.5rem",
       color: theme.palette.mode === "light" ? "#515254" : "#a8b3cf",
     },
   }));

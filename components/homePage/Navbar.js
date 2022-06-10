@@ -9,7 +9,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FaBlog } from "react-icons/fa";
-
+import { AiFillHome } from "react-icons/ai";
+import { MdSource } from "react-icons/md";
 const Navbar = (props) => {
   const { data: session, status } = useSession();
   const theme = useTheme();
@@ -24,6 +25,47 @@ const Navbar = (props) => {
 
     borderRight: theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e",
   }));
+  const MenuNavBarItem = styled(Box)(({ theme }) => ({
+    flexDirection: "column",
+    width: "80px",
+    height: "80px",
+    fontWeight: "700",
+    cursor: "pointer",
+    color: "#1a1a1a",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    opacity: 0.85,
+    backgroundColor: theme.palette.navItem.background,
+
+    "&:hover": {
+      backgroundColor: theme.palette.navItem.hover,
+      borderRadius: "20px",
+    },
+
+    "&.active": {
+      backgroundColor: theme.palette.navItem.active,
+      borderRadius: "20px",
+    },
+  }));
+  const listItem = [
+    {
+      key: "/",
+      value: "Home",
+      icon: <AiFillHome />,
+    },
+    {
+      key: "/source-code",
+      value: "Source",
+      icon: <MdSource />,
+    },
+    {
+      key: "/blog",
+      value: "Blog",
+      icon: <FaBlog />,
+    },
+  ];
 
   return (
     <>
@@ -52,93 +94,41 @@ const Navbar = (props) => {
               color: "text.primary",
             }}
           >
-            <Link href="/">
-              <Button
-                className={router.pathname === "/" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"}
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                <Box
-                  className="ms-navbar__item--icon"
-                  sx={{
-                    color: "text.primary",
-                  }}
+            {listItem.map((item, i) => (
+              <Link href={item.key} key={i}>
+                <MenuNavBarItem
+                  className={
+                    i > 0 && router.pathname.startsWith(item.key)
+                      ? `active`
+                      : i === 0 && router.pathname === item.key
+                      ? `active`
+                      : null
+                  }
                 >
-                  <HomeIcon />
-                </Box>
-                <Box
-                  className="ms-navbar__item--title"
-                  sx={{
-                    color: "text.primary",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Home
-                </Box>
-              </Button>
-            </Link>
-            <Link href="/source-code">
-              <Button
-                className={
-                  router.pathname === "/source-code"
-                    ? `ms-navbar__item active_${theme.palette.mode}`
-                    : "ms-navbar__item"
-                }
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                <Box
-                  className="ms-navbar__item--icon"
-                  sx={{
-                    color: "text.primary",
-                  }}
-                >
-                  <AttachmentIcon />
-                </Box>
-                <Box
-                  className="ms-navbar__item--title"
-                  sx={{
-                    color: "text.primary",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Sources
-                </Box>
-              </Button>
-            </Link>
-            <Link href="/blog">
-              <Button
-                className={
-                  router.pathname === "/blog" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"
-                }
-                sx={{
-                  color: "text.primary",
-                }}
-              >
-                <Box
-                  className="ms-navbar__item--icon"
-                  sx={{
-                    color: "text.primary",
-                  }}
-                >
-                  <FaBlog />
-                </Box>
-                <Box
-                  className="ms-navbar__item--title"
-                  sx={{
-                    color: "text.primary",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Blog
-                </Box>
-              </Button>
-            </Link>
+                  <Box
+                    className="ms-navbar__item--icon"
+                    sx={{
+                      color: "text.primary",
+                    }}
+                  >
+                    {item.icon}
+                  </Box>
+                  <Box
+                    className="ms-navbar__item--title"
+                    sx={{
+                      color: "text.primary",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {item.value}
+                  </Box>
+                </MenuNavBarItem>
+              </Link>
+            ))}
+
             {session && session.user.role === "admin" && (
               <Link href="/admin">
-                <Button
+                <Box
                   className={
                     router.pathname === "/admin" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"
                   }
@@ -163,7 +153,7 @@ const Navbar = (props) => {
                   >
                     Admin
                   </Box>
-                </Button>
+                </Box>
               </Link>
             )}
           </Typography>

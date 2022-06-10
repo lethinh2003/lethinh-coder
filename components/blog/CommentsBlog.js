@@ -1,30 +1,22 @@
-import CancelIcon from "@mui/icons-material/Cancel";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import {
-  Avatar,
   Backdrop,
-  Badge,
   Box,
-  Button,
   CircularProgress,
-  IconButton,
-  Input,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Skeleton,
   Typography,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import socketIOClient from "socket.io-client";
-import convertTime from "../../utils/convertTime";
+import { useContext, useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import SocketContext from "../../context/socket";
-import { useContext } from "react";
-import ItemComment from "./ItemComment";
 import InputComment from "./InputComment";
+import ItemComment from "./ItemComment";
+
 const CommentsCode = (props) => {
   const socket = useContext(SocketContext);
   const { status, session, blogData, router } = props;
@@ -42,7 +34,7 @@ const CommentsCode = (props) => {
   const [isPostingComment, setIsPostingComment] = useState(false);
   const [isTypingComment, setIsTypingComment] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(50);
+  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
   const inputComment = useRef();
   const hostServer = process.env.ENDPOINT_SERVER;
   const [hasMore, setHasMore] = useState(false);
@@ -60,36 +52,32 @@ const CommentsCode = (props) => {
       }
     };
   }, [blogData, socket]);
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.on("create-new-comment", (comment) => {
-  //       setCount((count) => count + 1);
-  //       const currentComments = listComments;
 
-  //       const newComments = [comment].concat(currentComments);
-  //       setListComment(newComments);
-  //     });
-  //   }
-  //   return () => {
-  //     if (socket) {
-  //       socket.off("create-new-comment");
-  //     }
-  //   };
-  // }, [listComments, socket]);
+  useEffect(() => {
+    if (socket) {
+      socket.on("create-comment", (data) => {
+        const currentListComment = [...listComments];
 
+        const newListComment = [data].concat(currentListComment);
+
+        setListComment(newListComment);
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off("create-comment");
+      }
+    };
+  }, [listComments, socket]);
   const socketInitializer = () => {
     socket.emit("join-room", blogData._id);
-    // socket.on("create-new-comment", (comment) => {
-    //   // setCount((count) => count + 1);
-    //   const currentComments = listComments;
-    //   const newComments = [comment].concat(currentComments);
-    //   setListComment(newComments);
-    // });
+
     socket.on("send-all-comments", async (getComments) => {
       setHasMore(false);
       setListComment(getComments);
       setListCommentAll(getComments);
     });
+
     socket.on("send-room-history-likes", async () => {
       if (status === "authenticated") {
         const getHistoryCommentsLiked = await axios.get(`${hostServer}/api/v1/comments/history-like`);
@@ -109,11 +97,7 @@ const CommentsCode = (props) => {
   useEffect(() => {
     const eventScrollCommentsBox = async () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
-      if (
-        getPSComment.current &&
-        c >= getPSComment.current.offsetTop - getPSComment.current.offsetHeight &&
-        isGetListComments === false
-      ) {
+      if (getPSComment.current && c >= getPSComment.current.offsetTop - 500 && isGetListComments === false) {
         setCurrentPage(1);
         await getAPI();
       }
@@ -198,45 +182,30 @@ const CommentsCode = (props) => {
 
   const handleClickReplyComment = (comment) => {
     if (!isPostingComment) {
-      const content = [
-        {
-          commentId: comment._id,
-          commentAccount: comment.user[0].account,
-          commentAccountName: comment.user[0].name,
-          accountCommentId: comment.user[0]._id,
-          comment,
-        },
-      ];
-      console.log(content);
       setReplyComment(comment);
-      window.scrollTo(0, getPSComment.current.offsetTop);
+      getPSComment.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
-  const handleClickCancelReply = () => {
-    if (!isPostingComment) {
-      setReplyComment(null);
-    }
-  };
-  const handleClickDeleteComment = async (item) => {
-    try {
-      if (!session || !(session.user.id === item.user[0]._id)) {
-        throw new Error("Co loi xay ra!");
-      } else {
-        await axios.post(`${hostServer}/api/v1/comments/delete`, {
-          commentId: item._id,
-        });
-        socket.emit("get-all-comments", blogData._id);
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const handleDeleteComment = (commentID) => {
+    const currentListComment = [...listComments];
+    const removeComment = currentListComment.filter((item, i) => item._id !== commentID);
+    setListComment(removeComment);
   };
 
+  const TitleContent = styled(Typography)({
+    fontFamily: "Bebas Neue",
+    position: "relative",
+    fontSize: "3rem",
+    fontWeight: "bold",
+  });
   return (
     <>
-      <h1 className="title" ref={getPSComment} id="comments">
+      <TitleContent className="title" ref={getPSComment} id="comments">
         Comments
-      </h1>
+      </TitleContent>
       <Backdrop sx={{ color: "#fff", zIndex: 99999 }} open={isLoading}>
         <CircularProgress color="inherit" />
       </Backdrop>
@@ -297,7 +266,8 @@ const CommentsCode = (props) => {
             listComments.length > 0 &&
             listComments.map((item, i) => (
               <ItemComment
-                key={i}
+                handleDeleteComment={handleDeleteComment}
+                key={item._id}
                 blogData={blogData}
                 handleClickReplyComment={handleClickReplyComment}
                 item={item}

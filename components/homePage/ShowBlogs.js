@@ -1,54 +1,20 @@
-import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import Link from "next/link";
-import { useState } from "react";
-import NumberFormat from "react-number-format";
-import convertTime from "../../utils/convertTime";
-import { memo } from "react";
-import getReadingTime from "../../utils/getReadingTime";
-import Image from "next/image";
-import ItemBlog from "./Blog/ItemBlog";
+import { memo, useState } from "react";
+
+import ItemBlog from "../blog/ItemBlog";
 const ShowBlogs = (props) => {
   const [blogData, setBlogData] = useState(JSON.parse(props.blogData));
 
-  const theme = useTheme();
-  const CardCode = styled(Card)(({ theme }) => ({
-    padding: "15px",
-    borderRadius: "20px",
-    maxWidth: 400,
-    width: "100%",
-    overflow: "unset",
-    scrollSnapAlign: "center",
-    border: `1px solid ${theme.palette.card.borderColor.default}`,
-    backgroundColor: theme.palette.card.bgColor.default,
-    justifySelf: "center",
-
-    "&:hover": {
-      border: `1px solid ${theme.palette.card.borderColor.hover}`,
-    },
-  }));
-  const CardContentCode = styled(CardContent)({
-    display: "flex",
-    flexDirection: "column",
-    padding: "20px 0",
-    maxHeight: "160px",
-    height: "100%",
-  });
-  const CardContentCodeTitle = styled(Typography)({
-    fontFamily: "Noto Sans",
-    fontSize: "20px",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    cursor: "pointer",
-  });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "25px",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const CodeTitleSecond = styled(Typography)({
     fontFamily: "Noto sans",
-    fontSize: "18px",
+    fontSize: "1.8rem",
     fontWeight: "bold",
     opacity: 0.8,
     cursor: "pointer",
@@ -66,26 +32,6 @@ const ShowBlogs = (props) => {
     justifyContent: "space-between",
     display: "flex",
     alignItems: "center",
-  });
-  const CodeButton = styled(Button)({
-    boxShadow: "none",
-    fontSize: "14px",
-    borderRadius: "10px",
-    textTransform: "capitalize",
-    fontFamily: "Noto Sans",
-    color: "#0b9ad1",
-    fontWeight: "bold",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      boxShadow: "none",
-      backgroundColor: "#fff",
-      borderColor: "#005cbf",
-    },
-
-    "&:focus": {
-      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-    },
   });
 
   return (
@@ -123,7 +69,7 @@ const ShowBlogs = (props) => {
         </BoxCodeTitle>
         <Box
           sx={{
-            padding: { xs: "10px", md: "20px 100px" },
+            padding: { xs: "10px", md: "40px 20px" },
             width: "100%",
             bgcolor: "background.default",
           }}
@@ -133,7 +79,10 @@ const ShowBlogs = (props) => {
               display: "grid",
               gridTemplateColumns: {
                 xs: "repeat(1, minmax(0,1fr))",
+
                 sm: "repeat(2, minmax(0,1fr))",
+                md: "repeat(3, minmax(0,1fr))",
+
                 lg: "repeat(3, minmax(0,1fr))",
               },
               gap: "10px",

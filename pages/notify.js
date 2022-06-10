@@ -35,7 +35,7 @@ const Signup = () => {
   const [dataNoti, setDataNoti] = useState([]);
   const [numberNotify, setNumberNotify] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(5);
+  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();

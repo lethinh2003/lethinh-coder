@@ -23,7 +23,7 @@ const DataNotify = () => {
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
   const [isClickNotify, setIsClickNotify] = useState(false);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(true);
   const [dataNoti, setDataNoti] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [limitResults, setLimitResults] = useState(10);
@@ -88,26 +88,28 @@ const DataNotify = () => {
     setIsClickNotify(!isClickNotify);
   };
 
-  const handleClickDelete = async (id) => {
-    setIsError(false);
-    try {
-      await axios.post(`${hostServer}/api/v1/notifies/delete`, {
-        notifyId: id,
-      });
-      const newArray = [...dataNoti];
-      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataNoti(newArrayRemoveItem);
-    } catch (err) {
-      if (err.response) {
-        setMessageError(err.response.data.message);
-        setIsError(true);
-        refreshError.current = setTimeout(() => {
-          setIsError(false);
-          setMessageError("");
-        }, 5000);
-      }
-    }
-  };
+  // const handleClickDelete = async (id) => {
+  //   setIsError(false);
+  //   try {
+  //     setIsLoadingDelete(true)
+  //     await axios.post(`${hostServer}/api/v1/notifies/delete`, {
+  //       notifyId: id,
+  //     });
+  //     const newArray = [...dataNoti];
+  //     const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
+  //     setDataNoti(newArrayRemoveItem);
+  //     setIsLoadingDelete(false)
+  //   } catch (err) {
+  //     if (err.response) {
+  //       setMessageError(err.response.data.message);
+  //       setIsError(true);
+  //       refreshError.current = setTimeout(() => {
+  //         setIsError(false);
+  //         setMessageError("");
+  //       }, 5000);
+  //     }
+  //   }
+  // };
 
   return (
     <>
@@ -116,12 +118,12 @@ const DataNotify = () => {
           display: "flex",
           flexDirection: "column",
           gap: "10px",
-          marginTop: "20px",
+          margin: "10px 0px",
           color: (theme) => theme.palette.iconColor.default,
         }}
       >
         {isLoading &&
-          Array.from({ length: 4 }).map((item, i) => (
+          Array.from({ length: limitResults }).map((item, i) => (
             <ListItem
               button={true}
               key={i}
@@ -171,26 +173,17 @@ const DataNotify = () => {
               newContent = newContent.replace("{name}", item.account_send[0].name);
             }
 
-            return (
-              <NotifyContent
-                key={i}
-                item={item}
-                handleClickNotify={handleClickNotify}
-                handleClickDelete={handleClickDelete}
-                newContent={newContent}
-              />
-            );
+            return <NotifyContent key={i} item={item} handleClickNotify={handleClickNotify} newContent={newContent} />;
           })}
         {dataNoti.length >= 10 && (
-          <Link href={`/users/${session.user.account}`}>
-            <Typography
-              sx={{
-                textAlign: "center",
-              }}
-            >
-              Xem thêm
-            </Typography>
-          </Link>
+          <Typography
+            sx={{
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+          >
+            <Link href={`/users/${session.user.account}`}>Xem thêm</Link>
+          </Typography>
         )}
       </Box>
     </>

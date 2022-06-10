@@ -7,7 +7,7 @@ import { memo } from "react";
 const Introduce = (props) => {
   const IntroduceButton = styled(Button)({
     boxShadow: "none",
-    fontSize: "14px",
+    fontSize: "1.4rem",
     borderRadius: "10px",
     textTransform: "capitalize",
     fontFamily: "Noto Sans",
@@ -32,7 +32,7 @@ const Introduce = (props) => {
     color: "#fff",
   });
   const IntroduceDesc = styled(Typography)({
-    fontSize: "20px",
+    fontSize: "2rem",
     fontFamily: "Noto Sans",
     color: "#fff",
   });
@@ -78,19 +78,19 @@ const Introduce = (props) => {
               <CardContent>
                 <IntroduceTitle
                   sx={{
-                    fontSize: { xs: "25px", md: "30px" },
+                    fontSize: { xs: "2.5rem", md: "3rem" },
                   }}
-                  as={motion.div}
-                  initial={{ opacity: 0, scale: 1 }}
-                  animate={{ opacity: 1, scale: 1.04, y: [-100, 0] }}
+                  // as={motion.div}
+                  // initial={{ opacity: 0, scale: 1 }}
+                  // animate={{ opacity: 1, scale: 1.04, y: [-100, 0] }}
                 >
                   Tải xuống mã nguồn miễn phí
                 </IntroduceTitle>
                 <IntroduceDesc
                   variant="span"
-                  as={motion.div}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, scale: 1.04, y: [100, 0] }}
+                  // as={motion.div}
+                  // initial={{ opacity: 0 }}
+                  // animate={{ opacity: 1, scale: 1.04, y: [100, 0] }}
                 >
                   Hệ thống chia sẻ mã nguồn miễn phí, chất lượng
                 </IntroduceDesc>
@@ -147,10 +147,10 @@ const Introduce = (props) => {
                 <CardContent>
                   <IntroduceDesc
                     variant="span"
-                    as={motion.div}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, scale: 1.04, x: [100, 0] }}
-                    transition={{ ease: "easeOut", duration: 1 }}
+                    // as={motion.div}
+                    // initial={{ opacity: 0 }}
+                    // animate={{ opacity: 1, scale: 1.04, x: [100, 0] }}
+                    // transition={{ ease: "easeOut", duration: 1 }}
                   >
                     Các bài blog đa dạng, hấp dẫn
                   </IntroduceDesc>
@@ -194,10 +194,10 @@ const Introduce = (props) => {
                 <CardContent>
                   <IntroduceDesc
                     variant="span"
-                    as={motion.div}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, scale: 1.04, y: [50, 0] }}
-                    transition={{ ease: "easeOut", duration: 1 }}
+                    // as={motion.div}
+                    // initial={{ opacity: 0 }}
+                    // animate={{ opacity: 1, scale: 1.04, y: [50, 0] }}
+                    // transition={{ ease: "easeOut", duration: 1 }}
                   >
                     Chia sẻ các thủ thuật máy tính
                   </IntroduceDesc>

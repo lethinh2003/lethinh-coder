@@ -1,12 +1,12 @@
 import InputUnstyled from "@mui/base/InputUnstyled";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import React, { useContext, useRef, useState, useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import SocketContext from "../../context/socket";
 import RepCommentContent from "./RepCommentContent";
-import { toast } from "react-toastify";
 const blue = {
   100: "#DAECFF",
   200: "#80BFFF",
@@ -54,7 +54,7 @@ const StyledInputElement = styled("input")(
 const StyledTextareaElement = styled("textarea")(
   ({ theme }) => `
     width: 320px;
-    font-size: 0.875rem;
+    font-size: 2rem;
     font-family: IBM Plex Sans, sans-serif;
     font-weight: 400;
     line-height: 1.5;
@@ -87,6 +87,7 @@ const InputComment = (props) => {
   const { blogData, replyComment, setReplyComment } = props;
 
   const [comment, setComment] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
   const [isComment, setIsComment] = useState(false);
   const [isPostingComment, setIsPostingComment] = useState(false);
   const inputComment = useRef();
@@ -95,22 +96,6 @@ const InputComment = (props) => {
     setIsComment(false);
     setComment("");
   }, [blogData]);
-  const BoxComment = styled(Box)(({ theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    fontFamily: "Noto Sans",
-
-    marginBottom: "10px",
-
-    borderRadius: "10px",
-    padding: "5px 0px",
-    border: `1px solid ${theme.palette.card.borderColor.default}`,
-    backgroundColor: theme.palette.card.bgColor.default,
-
-    "&:hover": {
-      border: `1px solid ${theme.palette.card.borderColor.hover}`,
-    },
-  }));
 
   const handleSubmitComment = async (e, receiveId) => {
     e.preventDefault();
@@ -122,20 +107,37 @@ const InputComment = (props) => {
             content: comment,
             type: "blog",
           });
+          const data = {
+            room: blogData._id,
+            id: result.data.data._id,
+          };
+          // socket.emit("get-all-comments", blogData._id);
+          socket.emit("create-comment", data);
         } else {
           const result = await axios.post(`${hostServer}/api/v1/comments/reply`, {
             commentId: replyComment._id,
             content: comment,
             linkNotify: `/blog/${blogData.slug}`,
           });
+          const data = {
+            room: replyComment._id,
+            id: result.data.data._id,
+          };
+          socket.emit("create-rep-comment", data);
           socket.emit("get-notify", receiveId);
+          const listUserGetNotify = result.data.meta.user_receive;
+          if (listUserGetNotify.length > 0) {
+            listUserGetNotify.forEach((item, i) => {
+              socket.emit("get-notify", item.accountID);
+            });
+          }
+
           setReplyComment(null);
         }
         setComment("");
         setIsComment(false);
 
         setIsPostingComment(false);
-        socket.emit("get-all-comments", blogData._id);
       } catch (err) {
         setIsPostingComment(false);
         if (err.response) {
@@ -146,15 +148,8 @@ const InputComment = (props) => {
   };
   const handleChangeComment = (e) => {
     if (!isPostingComment) {
-      // socket.emit("typing-comment", blogData[0]._id);
       setIsComment(true);
       setComment(e.target.value);
-    }
-  };
-
-  const handleClickCancelReply = () => {
-    if (!isPostingComment) {
-      setReplyComment(null);
     }
   };
 
