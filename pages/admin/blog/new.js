@@ -1,35 +1,18 @@
-import React, { useState, useEffect, useRef } from "react";
-import validator from "validator";
-import axios from "axios";
-import Layout from "../../../components/admin/Layout";
-import {
-  Button,
-  Box,
-  TextField,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  Backdrop,
-  DialogContentText,
-  CircularProgress,
-} from "@mui/material";
-import Modal from "../../../components/homePage/Modal";
-import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Backdrop, Box, Button, CircularProgress, DialogContentText, TextField, Typography } from "@mui/material";
+import axios from "axios";
+import Head from "next/head";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
+import Layout from "../../../components/admin/Layout";
+import Modal from "../../../components/homePage/Modal";
+
 export default function MyEditor() {
   // form validation rules
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
     desc: Yup.string().required("Desc is required"),
-
     images: Yup.string().required("Images is required"),
     keywords: Yup.string().required("Keywords is required"),
     labels: Yup.string().required("Labels is required"),
@@ -45,16 +28,16 @@ export default function MyEditor() {
   const editorRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
-  const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
+  const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
 
   const [isModal, setIsModal] = useState(false);
   const [text, setText] = useState("");
+
   useEffect(() => {
     editorRef.current = {
       CKEditor: require("@ckeditor/ckeditor5-react").CKEditor, // v3+
       ClassicEditor: require("../../../ckeditor5-34.1.0-8ogafsbogmr7"),
-      // ClassicEditor: require("../../../ckeditor5-custom"),
     };
     setEditorLoaded(true);
   }, []);
@@ -104,10 +87,9 @@ export default function MyEditor() {
       const labelsArray = dataForm.labels.split(", ");
       const keywordsArray = dataForm.keywords.split(", ");
 
-      const response = await axios.post("/api/admin/blog", {
+      const response = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/admin/blogs`, {
         title: dataForm.title,
         content: data,
-        readTime: dataForm.readTime,
         images: imagesArray,
         labels: labelsArray,
         keywords: keywordsArray,
@@ -115,7 +97,7 @@ export default function MyEditor() {
       });
       setIsModal(true);
       setText(response.data.message);
-      reset({ title: "", desc: "", readTime: 0, images: "", labels: "", keywords: "" });
+      reset({ title: "", desc: "", images: "", labels: "", keywords: "" });
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -128,6 +110,9 @@ export default function MyEditor() {
 
   return (
     <>
+      <Head>
+        <title>New Blog - Trang quản trị Admin</title>
+      </Head>
       <Layout>
         <Backdrop sx={{ color: "#fff", zIndex: 99999 }} open={isLoading}>
           <CircularProgress color="inherit" />
@@ -198,23 +183,6 @@ export default function MyEditor() {
                   )}
                   defaultValue=""
                 />
-                <Controller
-                  name="readTime"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      size="small"
-                      fullWidth
-                      label="Read time"
-                      type="number"
-                      variant="outlined"
-                      error={errors.readTime ? true : false}
-                      helperText={errors.readTime ? errors.readTime.message : ""}
-                      {...field}
-                    />
-                  )}
-                  defaultValue={0}
-                />
 
                 <Controller
                   name="images"
@@ -265,56 +233,8 @@ export default function MyEditor() {
                   defaultValue=""
                 />
 
-                <Box sx={{ width: "100%", color: "black" }}>
+                <Box sx={{ width: "100%", color: "black", fontSize: "2rem" }}>
                   <CKEditor
-                    config={{
-                      extraPlugins: [uploadPlugin],
-                      heading: {
-                        options: [
-                          {
-                            model: "paragraph",
-                            title: "Paragraph",
-                            class: "ck-heading_paragraph",
-                          },
-                          {
-                            model: "heading1",
-                            view: "h1",
-                            title: "Heading 1",
-                            class: "ck-heading_heading1",
-                          },
-                          {
-                            model: "heading2",
-                            view: "h2",
-                            title: "Heading 2",
-                            class: "ck-heading_heading2",
-                          },
-                          {
-                            model: "heading3",
-                            view: "h3",
-                            title: "Heading 3",
-                            class: "ck-heading_heading3",
-                          },
-                          {
-                            model: "heading4",
-                            view: "h4",
-                            title: "Heading 4",
-                            class: "ck-heading_heading4",
-                          },
-                          {
-                            model: "heading5",
-                            view: "h5",
-                            title: "Heading 5",
-                            class: "ck-heading_heading5",
-                          },
-                          {
-                            model: "heading6",
-                            view: "h6",
-                            title: "Heading 6",
-                            class: "ck-heading_heading6",
-                          },
-                        ],
-                      },
-                    }}
                     editor={ClassicEditor}
                     data={localStorage.getItem("postDataBlog") || null}
                     onReady={(editor) => {
@@ -323,7 +243,6 @@ export default function MyEditor() {
                     }}
                     onChange={(event, editor) => {
                       const data = editor.getData();
-                      console.log(data);
                       localStorage.setItem("postDataBlog", data);
                     }}
                   />

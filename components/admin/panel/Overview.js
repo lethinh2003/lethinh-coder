@@ -1,42 +1,54 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-} from "@mui/material";
+import { Box, Button, Card, IconButton, Skeleton, Typography } from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { AiFillFileZip, AiOutlineCheck, AiOutlineUser } from "react-icons/ai";
 import { HiTemplate } from "react-icons/hi";
-import { AiOutlineCheck, AiFillFileZip, AiOutlineUser } from "react-icons/ai";
 import { MdPendingActions } from "react-icons/md";
 import NumberFormat from "react-number-format";
-import { useEffect, useState } from "react";
-import axios from "axios";
-const Overview = () => {
+import { useQuery } from "react-query";
+
+import { toast } from "react-toastify";
+const Overview = ({ status }) => {
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
+  const callDataApi = async () => {
+    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/overview`);
+
+    return results.data;
+  };
+  const getListQuery = useQuery("get-admin-overview", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
   useEffect(() => {
-    const getHistoryCode = async () => {
+    if (error && error.response) {
+      toast.error(error.response.data.message);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (dataQuery) {
+      setData(dataQuery.data);
+    }
+  }, [dataQuery]);
+  useEffect(() => {
+    const getOverview = async () => {
       try {
-        const results = await axios.get("/api/admin/overviews");
+        setIsLoading(true);
+        const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/overview`);
         setData(results.data.data);
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
-        console.log(err);
+        if (err.response) {
+          toast.error(err.response.data.message);
+        }
       }
     };
-
-    getHistoryCode();
-  }, []);
+    if (status === "authenticated") {
+      // getOverview();
+    }
+  }, [status]);
   const displayIcon = (type) => {
     if (type === "orders") {
       return <HiTemplate />;
@@ -61,18 +73,21 @@ const Overview = () => {
       </Typography>
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(2, minmax(0,1fr))",
+
+            md: "repeat(2, minmax(0,1fr))",
+
+            lg: "repeat(4, minmax(0,1fr))",
+          },
           gap: "20px",
-          flexWrap: "wrap",
-          justifyContent: "center",
         }}
       >
         {isLoading &&
           Array.from({ length: 5 }).map((item, i) => (
             <Card
               sx={{
-                width: "220px",
                 height: "220px",
                 borderRadius: "10px",
                 display: "flex",
@@ -94,7 +109,6 @@ const Overview = () => {
             <Card
               key={i}
               sx={{
-                width: "220px",
                 height: "220px",
                 borderRadius: "10px",
                 display: "flex",

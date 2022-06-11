@@ -1,32 +1,14 @@
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  Alert,
-  AlertTitle,
-  Badge,
-  Box,
-  Dialog,
-  DialogTitle,
-  Fade,
-  IconButton,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Skeleton,
-  Typography,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
-import { TransitionGroup } from "react-transition-group";
-import NotifyContent from "./NotifyContent";
-import { motion } from "framer-motion";
+import { Badge, Box, IconButton } from "@mui/material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { useContext } from "react";
+import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { TransitionGroup } from "react-transition-group";
 import SocketContext from "../../context/socket";
-import DataNotify from "./DataNotify";
+import DataNotify from "../notify/DataNotify";
 const Notify = () => {
   const socket = useContext(SocketContext);
   const hostServer = process.env.ENDPOINT_SERVER;
@@ -63,7 +45,6 @@ const Notify = () => {
     socket.emit("join-notify", session.user.id);
     socket.emit("get-notify", session.user.id);
     socket.on("send-notify", (data) => {
-      console.log("data nek", data);
       let notifyNum = 0;
       if (data.length > 0) {
         data.map((item) => {

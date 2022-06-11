@@ -1,25 +1,43 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-} from "@mui/material";
-import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import { Box, Skeleton, Typography } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import convertTime from "../../../utils/convertTime";
+import { useQuery } from "react-query";
+
 const HistoryCode = () => {
   const [historyCode, setHistoryCode] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const callDataApi = async () => {
+    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/history-download-code`);
+
+    return results.data;
+  };
+  const getListQuery = useQuery("get-admin-history-download-code", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  useEffect(() => {
+    if (error && error.response) {
+      toast.error(error.response.data.message);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (dataQuery && dataQuery.data.length > 0) {
+      const newData = dataQuery.data.map((item, i) => ({
+        id: item._id,
+        stt: i + 1,
+        account: item.account,
+        email: item.email,
+        content: item.content,
+        status: item.status,
+        time: convertTime(item.createdAt),
+        ip: item.ipAddress,
+      }));
+      setHistoryCode(newData);
+    }
+  }, [dataQuery]);
   useEffect(() => {
     const getHistoryCode = async () => {
       try {
@@ -34,7 +52,7 @@ const HistoryCode = () => {
             email: item.email,
             content: item.content,
             status: item.status,
-            time: convertToTime(item.createdAt),
+            time: convertTime(item.createdAt),
             ip: item.ipAddress,
           }));
           setHistoryCode(newData);
@@ -46,20 +64,9 @@ const HistoryCode = () => {
       }
     };
 
-    getHistoryCode();
+    // getHistoryCode();
   }, []);
-  const convertToTime = (timeISOString) => {
-    let date = `Gần đây`;
-    const getFullDate = new Date(timeISOString);
-    const getDay = `${getFullDate.getDate() < 10 ? "0" + getFullDate.getDate() : getFullDate.getDate()}/${
-      getFullDate.getMonth() < 9 ? "0" + (getFullDate.getMonth() + 1) : getFullDate.getMonth() + 1
-    }/${getFullDate.getFullYear()}`;
-    const getTime = `${getFullDate.getHours() < 10 ? "0" + getFullDate.getHours() : getFullDate.getHours()}:${
-      getFullDate.getMinutes() < 10 ? "0" + getFullDate.getMinutes() : getFullDate.getMinutes()
-    }:${getFullDate.getSeconds() < 10 ? "0" + getFullDate.getSeconds() : getFullDate.getSeconds()}`;
-    date = getDay + " " + getTime;
-    return date;
-  };
+
   const GridRowsProp = historyCode;
 
   const GridColDef = [
@@ -79,13 +86,13 @@ const HistoryCode = () => {
         className="title"
         sx={{ fontFamily: "Bebas Neue", fontSize: "40px", fontWeight: "bold" }}
       >
-        History Code
+        History Download Code
       </Typography>
       <div style={{ height: 500, width: "100%" }}>
         {isLoading && (
           <>
             {Array.from({ length: 5 }).map((item, i) => (
-              <Box sx={{ marginTop: "10px" }}>
+              <Box key={i} sx={{ marginTop: "10px" }}>
                 <Skeleton variant="rectangular" height={50} />
               </Box>
             ))}

@@ -2,79 +2,71 @@ import { Box, Button, CardMedia, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import ItemBlog from "./ItemBlog";
-import { useQuery } from "react-query";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
-
-const AllBlogs = (props) => {
-  // const [isLoading, setIsLoading] = useState(true);
-  const [isEndLoadingMore, setIsEndLoadingMore] = useState(false);
-
+import ItemCode from "./ItemCode";
+const CodesOfLabel = ({ label }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoadMore, setIsLoadMore] = useState(false);
-  const [blogData, setBlogData] = useState([]);
+  const [souceCode, setSouceCode] = useState([]);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const AllBlog = useRef();
-  const callDataApi = async () => {
-    const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
-    );
-    return results.data;
-  };
-  const getListQuery = useQuery("get-all-blogs", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-    refetchOnWindowFocus: false,
-  });
-  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  const currentPage = useRef(1);
   useEffect(() => {
-    if (error && error.response) {
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
+    currentPage.current = 1;
+  }, [label]);
   useEffect(() => {
-    if (data) {
-      if (data.results === itemsPerPage) {
-        setIsLoadMore(true);
-        setPageCount((prev) => prev + 1);
-      } else {
-        setIsLoadMore(false);
-      }
-      if (data.results === 0) {
-        setIsEndLoadingMore(true);
-      } else {
-        setIsEndLoadingMore(false);
-      }
-      setBlogData(data.data);
+    if (label) {
+      const getBlogsByLabel = async () => {
+        try {
+          setIsLoading(true);
+          const results = await axios.get(
+            `${process.env.ENDPOINT_SERVER}/api/v1/source-codes/relationship?labels=${label}&page=${currentPage.current}&results=${itemsPerPage}`
+          );
+          if (results.data.results === itemsPerPage) {
+            setIsLoadMore(true);
+            currentPage.current = currentPage.current + 1;
+          } else {
+            setIsLoadMore(false);
+          }
+
+          setIsLoading(false);
+          setSouceCode(results.data.data);
+        } catch (err) {
+          setIsLoading(false);
+          if (err.response) {
+            toast.error(err.response.data.message);
+          }
+          setIsLoadMore(false);
+        }
+      };
+      getBlogsByLabel();
     }
-  }, [data]);
+  }, [label]);
 
   const handleClickLoadMore = async () => {
     try {
       setIsLoadingMore(true);
       setIsLoadMore(false);
       const results = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
+        `${process.env.ENDPOINT_SERVER}/api/v1/source-codes/relationship?labels=${label}&page=${currentPage.current}&results=${itemsPerPage}`
       );
       if (results.data.results === itemsPerPage) {
         setIsLoadMore(true);
-        setPageCount((prev) => prev + 1);
+        currentPage.current = currentPage.current + 1;
       } else {
         setIsLoadMore(false);
       }
-      if (results.data.results === 0) {
-        setIsEndLoadingMore(true);
-      } else {
-        setIsEndLoadingMore(false);
-      }
       setIsLoadingMore(false);
 
-      setBlogData((prev) => [...prev, ...results.data.data]);
+      setSouceCode((prev) => [...prev, ...results.data.data]);
     } catch (err) {
       setIsLoadingMore(false);
-      console.log(err);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
       setIsLoadMore(false);
     }
   };
@@ -124,7 +116,7 @@ const AllBlogs = (props) => {
         }}
       >
         <BlogTitle component="h1" ref={AllBlog}>
-          All Blog
+          All Source Code : {label}
         </BlogTitle>
         <Box
           sx={{
@@ -164,10 +156,10 @@ const AllBlogs = (props) => {
                 </BoxChild2NewBlog>
               ))}
             {!isLoading &&
-              blogData &&
-              blogData.length > 0 &&
-              blogData.map((item, i) => {
-                return <ItemBlog key={i} item={item} />;
+              souceCode &&
+              souceCode.length > 0 &&
+              souceCode.map((item, i) => {
+                return <ItemCode key={i} item={item} />;
               })}
             {isLoadingMore &&
               Array.from({ length: itemsPerPage }).map((item, i) => (
@@ -188,6 +180,30 @@ const AllBlogs = (props) => {
                 </BoxChild2NewBlog>
               ))}
           </Box>
+          {/* {isLoading &&
+          Array.from({ length: 5 }).map((item, i) => (
+            <BoxChild2NewBlog key={i}>
+              <Skeleton
+                sx={{
+                  minWidth: { xs: "150px", md: "250px" },
+                  height: { xs: "100px", md: "150px" },
+                  borderRadius: "10px",
+                }}
+                variant="rectangular"
+              />
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                <Skeleton height={20} width={100} />
+                <Skeleton height={50} width={200} />
+              </Box>
+            </BoxChild2NewBlog>
+          ))}
+        {!isLoading &&
+          souceCode &&
+          souceCode.length > 0 &&
+          souceCode.map((item, i) => {
+            return <ItemBlog key={i} item={item} />;
+          })} */}
         </Box>
       </Box>
       {isLoadMore && (
@@ -195,23 +211,7 @@ const AllBlogs = (props) => {
           Load more
         </Button>
       )}
-      {isEndLoadingMore && (
-        <Box
-          as={motion.div}
-          initial={{ scale: 1 }}
-          animate={{ scale: 1.02 }}
-          sx={{
-            backgroundColor: "#374151",
-            padding: "15px",
-            borderRadius: "10px",
-            fontSize: "2rem",
-            color: "#ffffff",
-          }}
-        >
-          Đã hết danh sách 👏🏼
-        </Box>
-      )}
     </>
   );
 };
-export default AllBlogs;
+export default CodesOfLabel;

@@ -1,72 +1,69 @@
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-  DialogContentText,
-} from "@mui/material";
-import { DataGrid, GridRowsProp, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+import InfoIcon from "@mui/icons-material/Info";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import axios from "axios";
+import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import NumberFormat from "react-number-format";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SecurityIcon from "@mui/icons-material/Security";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import InfoIcon from "@mui/icons-material/Info";
-import EditIcon from "@mui/icons-material/Edit";
-import ModalInfoCode from "./ModalInfoCode";
-import ModalDeleteCode from "./ModalDeleteCode";
+import { useQuery } from "react-query";
+import { toast } from "react-toastify";
 import convertToTime from "../../../utils/convertTime";
-
+import ModalDeleteCode from "./ModalDeleteCode";
 const Code = () => {
   const [historyCode, setHistoryCode] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isModalInfo, setIsModalInfo] = useState(false);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  const [id, setId] = useState("");
+  const [idDelete, setIDDelete] = useState(null);
+  const [dataDelete, setDataDelete] = useState(null);
+  const callDataApi = async () => {
+    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/source-codes`);
+
+    return results.data;
+  };
+  const getListQuery = useQuery("get-admin-source-codes", callDataApi, {
+    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    refetchOnWindowFocus: false,
+  });
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
   useEffect(() => {
-    const getHistoryCode = async () => {
-      try {
-        const results = await axios.get("/api/admin/source-code");
-        const data = results.data.data;
-        setIsLoading(false);
-        if (data.length > 0) {
-          const newData = data.map((item, i) => ({
-            id: item._id,
-            action: item._id,
-            stt: i + 1,
-            title: item.title,
-            costs: item.costs,
-            views: item.views,
-            downloads: item.downloads,
-            time: convertToTime(item.createdAt),
-            link: item.link,
-            status: item.status,
-          }));
-          setHistoryCode(newData);
-        }
-      } catch (err) {
-        setIsLoading(false);
+    if (error && error.response) {
+      toast.error(error.response.data.message);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (dataQuery && dataQuery.data.length > 0) {
+      const newData = dataQuery.data.map((item, i) => ({
+        id: item._id,
+        action: item._id,
+        stt: i + 1,
+        title: item.title,
+        costs: item.costs,
+        views: item.views,
+        downloads: item.downloads,
+        time: convertToTime(item.createdAt),
+        link: item.link,
+        status: item.status,
+      }));
+      setHistoryCode(newData);
+    }
+  }, [dataQuery]);
 
-        console.log(err);
-      }
-    };
+  useEffect(() => {
+    if (idDelete) {
+      const getCurrentList = [...historyCode];
+      const newList = getCurrentList.filter((item, i) => item.id !== idDelete);
+      setHistoryCode(newList);
+    }
+  }, [idDelete]);
 
-    getHistoryCode();
-  }, []);
-
-  const handleClickDelete = (id) => {
-    setId(id);
+  const handleClickDelete = (data) => {
+    setDataDelete({
+      id: data.row.id,
+      title: data.row.title,
+    });
     setIsModalDelete(true);
   };
   const GridRowsProp = historyCode;
@@ -113,41 +110,29 @@ const Code = () => {
         <GridActionsCellItem
           key={params.id}
           icon={<DeleteIcon />}
-          onClick={() => handleClickDelete(params.id)}
+          onClick={() => handleClickDelete(params)}
           label="Delete"
         />,
-        <GridActionsCellItem
-          key={params.id}
-          icon={<InfoIcon />}
-          onClick={() => handleClickInfo(params.id)}
-          label="Info"
-        />,
+        <Link href={`/admin/source-code/${params.id}`} label="Info">
+          <InfoIcon />
+        </Link>,
       ],
     },
   ];
-  const handleClickInfo = (id) => {
-    setId(id);
-    setIsModalInfo(true);
-  };
 
   return (
     <>
-      {isModalInfo && (
-        <ModalInfoCode
-          title={"Thông tin code"}
-          isModal={isModalInfo}
-          setIsModal={setIsModalInfo}
-          id={id}
-          setId={setId}
-        ></ModalInfoCode>
-      )}
+      <Head>
+        <title>Source Code - Trang quản trị Admin</title>
+      </Head>
+
       {isModalDelete && (
         <ModalDeleteCode
-          title={"Xoá code"}
+          setIDDelete={setIDDelete}
           isModal={isModalDelete}
           setIsModal={setIsModalDelete}
-          id={id}
-          setId={setId}
+          dataDelete={dataDelete}
+          setDataDelete={setDataDelete}
         ></ModalDeleteCode>
       )}
       <Typography
@@ -161,7 +146,7 @@ const Code = () => {
         {isLoading && (
           <>
             {Array.from({ length: 5 }).map((item, i) => (
-              <Box sx={{ marginTop: "10px" }}>
+              <Box key={i} sx={{ marginTop: "10px" }}>
                 <Skeleton variant="rectangular" height={50} />
               </Box>
             ))}

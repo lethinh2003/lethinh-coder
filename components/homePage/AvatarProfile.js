@@ -31,7 +31,6 @@ const AvatarProfile = () => {
       callbackUrl: "/",
     });
     localStorage.removeItem("listLikeComments");
-    localStorage.removeItem("avatarProfile");
   };
 
   const handleCloseUserMenu = () => {

@@ -10,7 +10,7 @@ import convertToTime from "../../utils/convertTime";
 import { memo } from "react";
 const RepCommentContent = ({ user, socket, item, newContent }) => {
   const router = useRouter();
-  console.log("re render", item._id);
+
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);

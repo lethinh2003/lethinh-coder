@@ -5,7 +5,7 @@ import convertTime from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
 import ShareButton from "../ShareSocial/ShareButton";
-
+import Link from "next/link";
 const DescBlog = (props) => {
   const { blogData } = props;
   const TagButton = styled(Box)({
@@ -87,15 +87,16 @@ const DescBlog = (props) => {
               }}
             >
               {blogData.labels.map((item, i) => (
-                <TagButton
-                  key={i}
-                  sx={{
-                    textTransform: "lowercase",
-                  }}
-                  variant="outlined"
-                >
-                  #{item.toLowerCase()}
-                </TagButton>
+                <Link key={i} href={`/blog/label/${item}`}>
+                  <TagButton
+                    sx={{
+                      textTransform: "lowercase",
+                    }}
+                    variant="outlined"
+                  >
+                    #{item.toLowerCase()}
+                  </TagButton>
+                </Link>
               ))}
             </Box>
             <Typography component="div" sx={{ fontFamily: "Noto Sans" }}>

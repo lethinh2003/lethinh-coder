@@ -3,9 +3,11 @@ import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import ItemCode from "./ItemCode";
+import { motion } from "framer-motion";
 
 const RelationCodes = ({ data }) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isEndLoadingMore, setIsEndLoadingMore] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadMore, setIsLoadMore] = useState(false);
@@ -34,6 +36,11 @@ const RelationCodes = ({ data }) => {
         } else {
           setIsLoadMore(false);
         }
+        if (results.data.results === 0) {
+          setIsEndLoadingMore(true);
+        } else {
+          setIsEndLoadingMore(false);
+        }
         setSourceCode(results.data.data);
         setIsLoading(false);
       } catch (err) {
@@ -61,6 +68,12 @@ const RelationCodes = ({ data }) => {
       } else {
         setIsLoadMore(false);
       }
+      if (results.data.results === 0) {
+        setIsEndLoadingMore(true);
+      } else {
+        setIsEndLoadingMore(false);
+      }
+
       setIsLoadingMore(false);
 
       setSourceCode((prev) => [...prev, ...results.data.data]);
@@ -76,31 +89,7 @@ const RelationCodes = ({ data }) => {
     gap: "10px",
     flexDirection: "column",
   });
-  const ChildTitleNewBlog = styled(Typography)({
-    fontFamily: "Noto Sans",
-    fontSize: "2rem",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    cursor: "pointer",
 
-    "&:hover": {
-      opacity: 0.8,
-    },
-  });
-  const ChildImageNewBlog = styled(CardMedia)({
-    width: "100%",
-    height: "100%",
-  });
-  const Child2ImageNewBlog = styled(CardMedia)({
-    minWidth: "250px",
-    height: "150px",
-    borderRadius: "10px",
-  });
-  const BlogTitle = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "2.5rem",
-    fontWeight: "bold",
-  });
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
@@ -179,36 +168,28 @@ const RelationCodes = ({ data }) => {
               </BoxChild2NewBlog>
             ))}
         </Box>
-        {/* {isLoading &&
-          Array.from({ length: 5 }).map((item, i) => (
-            <BoxChild2NewBlog key={i}>
-              <Skeleton
-                sx={{
-                  minWidth: { xs: "150px", md: "250px" },
-                  height: { xs: "100px", md: "150px" },
-                  borderRadius: "10px",
-                }}
-                variant="rectangular"
-              />
-
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                <Skeleton height={20} width={100} />
-                <Skeleton height={50} width={200} />
-              </Box>
-            </BoxChild2NewBlog>
-          ))}
-        {!isLoading &&
-          sourceCode &&
-          sourceCode.length > 0 &&
-          sourceCode.map((item, i) => {
-            return <ItemBlog key={i} item={item} />;
-          })} */}
       </Box>
 
       {isLoadMore && (
         <Button variant="contained" onClick={() => handleClickLoadMore()}>
           Load more
         </Button>
+      )}
+      {isEndLoadingMore && (
+        <Box
+          as={motion.div}
+          initial={{ scale: 1 }}
+          animate={{ scale: 1.02 }}
+          sx={{
+            backgroundColor: "#374151",
+            padding: "15px",
+            borderRadius: "10px",
+            fontSize: "2rem",
+            color: "#ffffff",
+          }}
+        >
+          Đã hết danh sách 👏🏼
+        </Box>
       )}
     </>
   );

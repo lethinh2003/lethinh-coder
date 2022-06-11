@@ -129,15 +129,16 @@ const ItemBlog = ({ item }) => {
             }}
           >
             {item.labels.map((item, i) => (
-              <TagButton
-                key={i}
-                sx={{
-                  textTransform: "lowercase",
-                }}
-                variant="outlined"
-              >
-                #{item.toLowerCase()}
-              </TagButton>
+              <Link key={i} href={`/blog/label/${item}`}>
+                <TagButton
+                  sx={{
+                    textTransform: "lowercase",
+                  }}
+                  variant="outlined"
+                >
+                  #{item.toLowerCase()}
+                </TagButton>
+              </Link>
             ))}
           </Box>
         </Box>

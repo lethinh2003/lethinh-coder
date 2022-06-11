@@ -6,7 +6,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 const RepCommentContent = (props) => {
   const { replyComment, setReplyComment, session } = props;
-  console.log("re-render");
+
   const BoxComment = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",

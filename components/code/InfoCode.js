@@ -169,7 +169,9 @@ const InfoCode = (props) => {
                     }}
                   >
                     {sourceCode.labels.map((item, i) => (
-                      <TagButton key={i}>{item}</TagButton>
+                      <Link key={i} href={`/source-code/label/${item}`}>
+                        <TagButton>#{item}</TagButton>
+                      </Link>
                     ))}
                   </Box>
                 </Typography>

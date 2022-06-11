@@ -6,10 +6,9 @@ const SocketProvider = (props) => {
   const [value, setValue] = useState();
   useEffect(() => {
     socketInitializer();
-    console.log("khoi tao");
+
     return () => {
       value.disconnect();
-      console.log("huy tao");
     };
   }, []);
   const socketInitializer = () => {

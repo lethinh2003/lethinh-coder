@@ -128,7 +128,7 @@ const Navbar = (props) => {
 
             {session && session.user.role === "admin" && (
               <Link href="/admin">
-                <Box
+                <MenuNavBarItem
                   className={
                     router.pathname === "/admin" ? `ms-navbar__item active_${theme.palette.mode}` : "ms-navbar__item"
                   }
@@ -153,7 +153,7 @@ const Navbar = (props) => {
                   >
                     Admin
                   </Box>
-                </Box>
+                </MenuNavBarItem>
               </Link>
             )}
           </Typography>

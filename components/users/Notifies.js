@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-import NotifyContent from "../../components/homePage/NotifyContent";
+import NotifyContent from "../../components/notify/NotifyContent";
 import { useQuery } from "react-query";
 
 const Notifies = ({ user, socket }) => {

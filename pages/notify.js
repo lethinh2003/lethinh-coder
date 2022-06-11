@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import socketIOClient from "socket.io-client";
-import NotifyContent from "../components/homePage/NotifyContent";
+import NotifyContent from "../components/notify/NotifyContent";
 import Layout from "../components/Layout";
 const Signup = () => {
   const { data: session, status } = useSession();
@@ -80,7 +80,7 @@ const Signup = () => {
       setDataNoti(newData);
     } catch (err) {}
   };
-  console.log("render");
+
   const handleClose = () => {
     setCurrentPage(1);
     setHasMore(false);

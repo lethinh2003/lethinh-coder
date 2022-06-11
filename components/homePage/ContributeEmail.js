@@ -3,6 +3,7 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import Image from "next/image";
 import {
   Alert,
   Badge,
@@ -18,25 +19,79 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SocketContext from "../../context/socket";
 import { useContext } from "react";
 import { memo } from "react";
+import InputUnstyled from "@mui/base/InputUnstyled";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+const blue = {
+  100: "#DAECFF",
+  200: "#80BFFF",
+  400: "#3399FF",
+  600: "#0072E5",
+};
+
+const grey = {
+  50: "#F3F6F9",
+  100: "#E7EBF0",
+  200: "#E0E3E7",
+  300: "#CDD2D7",
+  400: "#B2BAC2",
+  500: "#A0AAB4",
+  600: "#6F7E8C",
+  700: "#3E5060",
+  800: "#2D3843",
+  900: "#1A2027",
+};
+
+const StyledInputElement = styled("input")(
+  ({ theme }) => `
+ 
+  width: 100%;
+  font-size: 1.5rem;
+  font-family: IBM Plex Sans, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+  background: ${theme.palette.mode === "dark" ? grey[900] : grey[50]};
+  border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
+  border-radius: 8px;
+  padding: 12px 12px;
+
+  &:hover {
+    background: ${theme.palette.mode === "dark" ? "" : grey[100]};
+    border-color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
+  }
+
+  &:focus {
+    outline: 3px solid ${theme.palette.mode === "dark" ? blue[600] : blue[100]};
+  }
+`
+);
+
+const CustomInput = React.forwardRef(function CustomInput(props, ref) {
+  return <InputUnstyled components={{ Input: StyledInputElement }} {...props} ref={ref} />;
+});
 const Introduce = (props) => {
   const socket = useContext(SocketContext);
   const timeOutAlert = useRef();
   const [data, setData] = useState([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const dataSystem = useSelector((state) => state.system.data);
+
   useEffect(() => {
     if (socket) {
-      socketInitializer();
-      console.log("socket tao", socket);
+      // socketInitializer();
     }
     return () => {
       if (socket) {
         socket.off("send-event-homepage-express");
-        console.log("socket huy", socket);
       }
       clearTimeout(timeOutAlert.current);
     };
@@ -130,7 +185,29 @@ const Introduce = (props) => {
     socket.emit("send-event-homepage-express", id);
     setIsLoading(true);
   };
-
+  const handleClickSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/subscribes`, {
+        email,
+        dataSystem,
+      });
+      setIsLoading(false);
+      setIsSuccess(true);
+      setEmail("");
+      clearTimeout(timeOutAlert.current);
+      timeOutAlert.current = setTimeout(() => {
+        setIsSuccess(false);
+      }, 1000);
+    } catch (err) {
+      clearTimeout(timeOutAlert.current);
+      setIsLoading(false);
+      setIsSuccess(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
   return (
     <>
       <Box
@@ -172,10 +249,10 @@ const Introduce = (props) => {
             }}
           >
             <Box>
-              {isLoading && (
+              {isSuccess && (
                 <Fade in={isSuccess}>
                   <AlertExpress icon={<CheckIcon fontSize="inherit" />} severity="success">
-                    Cảm ơn bạn đã đánh giá
+                    Cảm ơn bạn đã đăng ký nhận tin
                   </AlertExpress>
                 </Fade>
               )}
@@ -189,10 +266,10 @@ const Introduce = (props) => {
                   Hey, wait...
                 </IntroduceTitle>
                 <IntroduceDesc variant="span">
-                  Trước khi rời đi, xin một đóng góp ý kiến của bạn về website này nhé!!
+                  Trước khi rời đi, bạn hãy đăng ký để nhận thông báo bài viết mới nhất về email nhé!
                 </IntroduceDesc>
               </CardContent>
-              <CardActions
+              {/* <CardActions
                 sx={{
                   padding: "0 16px",
                   display: "flex",
@@ -228,19 +305,33 @@ const Introduce = (props) => {
                     </IconButton>
                   </Badge>
                 </Tooltip>
-              </CardActions>
+              </CardActions> */}
+              <Box
+                sx={{
+                  opacity: isLoading ? 0.7 : 1,
+                  pointerEvents: isLoading ? "none" : "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  fontSize: "2rem",
+                  padding: "0 16px",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <CustomInput value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Type email..." />
+                <Button onClick={handleClickSubmit}>Subscribe</Button>
+              </Box>
             </Box>
-            <CardMedia
-              component="img"
+            <Box
               sx={{
-                objectFit: "contain",
-                flex: 1,
                 display: { xs: "none", md: "block" },
+                height: "240px",
+                width: "240px",
+                position: "relative",
               }}
-              height="240"
-              image="https://i.imgur.com/jziB6hJ.png"
-              alt="Lethinh blog"
-            />
+            >
+              <Image src="https://i.imgur.com/jziB6hJ.png" layout="fill" alt="Lethinh blog" objectFit="contain" />
+            </Box>
           </Card>
         </Box>
       </Box>

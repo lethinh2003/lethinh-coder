@@ -34,6 +34,9 @@ const getDesignTokens = (mode) => ({
           backgroundColor: "#fff",
           border: "1px solid #0b9ad1",
 
+          "&.Mui-disabled": {
+            color: "#0b9ad18c",
+          },
           "&:hover": {
             boxShadow: "none",
             backgroundColor: "#fff",
