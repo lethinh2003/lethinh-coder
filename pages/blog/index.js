@@ -24,8 +24,8 @@ const BlogComponent = (props) => {
         <meta property="og:description" content="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://i.imgur.com/FnvSDKF.png" />
-        <meta property="og:image:width" content="600" />
-        <meta property="og:image:height" content="315" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:title" content={`Blog lập trình viên - LT Blog`} />
         <meta property="twitter:description" content="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog" />

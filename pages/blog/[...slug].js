@@ -29,14 +29,8 @@ const DetailSourceCode = (props) => {
 
   useEffect(() => {
     if (!blogData) {
-      return router.push("/");
-    }
-    const slug = router.query.slug.join("/");
-  }, [router]);
-
-  useEffect(() => {
-    if (!blogData) {
-      return router.push("/");
+      return (window.location.href = "/err?code=404");
+      // return router.push("/");
     }
     const slug = router.query.slug.join("/");
     const data = JSON.parse(sourceBySlug);
@@ -60,8 +54,8 @@ const DetailSourceCode = (props) => {
             <meta property="og:title" content={`${blogData.title} - LT Blog`} />
             <meta property="og:description" content={blogData.desc} />
             <meta property="og:image" content={blogData.images[0]} />
-            <meta property="og:image:width" content="600" />
-            <meta property="og:image:height" content="315" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta property="twitter:title" content={`${blogData.title} - LT Blog`} />
             <meta property="twitter:description" content={blogData.desc} />

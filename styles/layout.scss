@@ -124,6 +124,11 @@
     scroll-snap-type: x mandatory;
     padding-bottom: 20px;
 
+    & > div {
+      min-width: 300px;
+
+    }
+
     .code-container {
       scroll-snap-align: center;
       // &.light {

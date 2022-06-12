@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import axiosCustom from "../../configs/axios";
 import convertTime from "../../utils/convertTime";
 import LoadingBox from "../homePage/LoadingBox";
-
+import { getUser } from "../../redux/actions/getUser";
 const Info = ({ user, isLoading, account, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -84,6 +84,7 @@ const Info = ({ user, isLoading, account, socket }) => {
       });
 
       setDataUser(res.data.data);
+      dispatch(getUser(user.account));
 
       setAvatarUpload("");
       setIsLoadingUpload(false);
@@ -111,7 +112,7 @@ const Info = ({ user, isLoading, account, socket }) => {
         avatar: "",
       });
       setDataUser(res.data.data);
-
+      dispatch(getUser(user.account));
       setIsLoadingUpload(false);
       setIsSuccessUpload(true);
     } catch (err) {

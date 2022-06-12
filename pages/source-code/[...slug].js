@@ -31,7 +31,9 @@ const DetailSourceCode = (props) => {
 
   useEffect(() => {
     if (!sourceCode) {
-      return router.push("/");
+      return (window.location.href = "/err?code=404");
+
+      // return router.push("/");
     }
     const slug = router.query.slug.join("/");
     const data = JSON.parse(sourceBySlug);
@@ -65,8 +67,8 @@ const DetailSourceCode = (props) => {
             <meta property="og:title" content={`${sourceCode.title} - LT Blog`} />
             <meta property="og:description" content={sourceCode.desc} />
             <meta property="og:image" content={sourceCode.images[0]} />
-            <meta property="og:image:width" content="600" />
-            <meta property="og:image:height" content="315" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta property="twitter:title" content={`${sourceCode.title} - LT Blog`} />
             <meta property="twitter:description" content={sourceCode.desc} />

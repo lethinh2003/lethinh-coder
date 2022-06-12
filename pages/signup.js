@@ -186,11 +186,25 @@ const Signup = () => {
 
   return (
     <>
+      <Head>
+        <title> Đăng ký tài khoản - LT Blog</title>
+        <meta name="description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
+        <meta property="og:locale" content="vi_VN" />
+        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
+        <meta property="og:title" content={`Đăng ký tài khoản - LT Blog`} />
+        <meta property="og:description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://i.imgur.com/0rWGRIi.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={`Đăng ký tài khoản - LT Blog`} />
+        <meta property="twitter:description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
+        <meta property="twitter:creator" content={"Thinh Le"} />
+        <meta property="twitter:image" content={"https://i.imgur.com/0rWGRIi.png"} />
+      </Head>
       {status !== "authenticated" && (
         <>
-          <Head>
-            <title> Đăng ký tài khoản</title>
-          </Head>
           <Layout>
             <LoadingBox isSuccess={isSuccess} isLoading={isLoading} />
 

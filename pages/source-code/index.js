@@ -132,8 +132,8 @@ const SourceCode = () => {
         />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://i.imgur.com/Zvzfhl7.png" />
-        <meta property="og:image:width" content="600" />
-        <meta property="og:image:height" content="315" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:title" content={`Danh sách source code miễn phí và có phí - LT Blog`} />
         <meta
