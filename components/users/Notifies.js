@@ -21,7 +21,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
 import NotifyContent from "../../components/notify/NotifyContent";
 import { useQuery } from "react-query";
-
+import Head from "next/head";
 const Notifies = ({ user, socket }) => {
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
@@ -163,6 +163,9 @@ const Notifies = ({ user, socket }) => {
 
   return (
     <>
+      <Head>
+        <title>Thông báo tài khoản {user.account}</title>
+      </Head>
       <Box
         sx={{
           paddingTop: "16px",
@@ -184,9 +187,18 @@ const Notifies = ({ user, socket }) => {
           }
           height={400}
           endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Đã hết thông báo</b>
-            </p>
+            <Box
+              sx={{
+                marginTop: "10px",
+                backgroundColor: "#374151",
+                padding: "15px",
+                borderRadius: "10px",
+                fontSize: "1.5rem",
+                color: "#ffffff",
+              }}
+            >
+              Đã hết danh sách 👏🏼
+            </Box>
           }
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>

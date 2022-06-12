@@ -66,7 +66,18 @@ const NotifyContent = (props) => {
             pointerEvents: isLoadingDelete ? "none" : "auto",
           }}
         >
-          <ListItem button={true} className="box_notify">
+          <ListItem
+            sx={{
+              borderRadius: "20px",
+              border: (theme) => `1px solid ${theme.palette.card.borderColor.default}`,
+              backgroundColor: (theme) => theme.palette.card.bgColor.default,
+              "&:hover": {
+                border: (theme) => `1px solid ${theme.palette.card.borderColor.hover}`,
+              },
+            }}
+            button={false}
+            className="box_notify"
+          >
             <ListItemAvatar>
               <Avatar
                 sx={{
@@ -80,14 +91,22 @@ const NotifyContent = (props) => {
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              onClick={(e) => handleClickLinkNotify(e, item.link)}
               sx={{
                 color: (theme) => theme.palette.iconColor.default,
               }}
-              primary={newContent}
+              primary={
+                <Typography
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => handleClickLinkNotify(e, item.link)}
+                >
+                  {newContent}
+                </Typography>
+              }
               secondary={convertToTime(item.createdAt)}
             ></ListItemText>
-            <IconButton onClick={() => handleClickDelete(item._id)} className="button_notify">
+            <IconButton onClick={() => handleClickDelete(item._id)}>
               <DeleteIcon />
             </IconButton>
           </ListItem>

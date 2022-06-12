@@ -5,6 +5,8 @@ module.exports = {
     domains: ["i.imgur.com", "anonyviet.com"],
   },
   env: {
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     LIMIT_RESULTS: process.env.LIMIT_RESULTS,
     FACEBOOK_APPID: process.env.FACEBOOK_APPID,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,

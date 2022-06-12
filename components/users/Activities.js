@@ -5,10 +5,13 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import Comments from "./Comments";
 import RepComments from "./RepComments";
-
+import Head from "next/head";
 const Activities = ({ user, socket }) => {
   return (
     <>
+      <Head>
+        <title>Hoạt động tài khoản {user.account}</title>
+      </Head>
       <Box
         sx={{
           paddingTop: "16px",

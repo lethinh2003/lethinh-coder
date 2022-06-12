@@ -44,6 +44,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Image from "next/image";
+
 const Signup = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -103,7 +105,7 @@ const Signup = () => {
         setIsLoading(true);
         setIsSuccess(false);
         setIsError(false);
-        const result = await axios.post("/api/auth/signup", {
+        const result = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/users/sign-up`, {
           account: data.account,
           password: data.password,
           confirmPassword: data.confirmPassword,
@@ -115,7 +117,7 @@ const Signup = () => {
           setIsLoading(false);
           reset({ account: "", password: "", name: "" });
         }, 3000);
-        const login = await signIn("login", {
+        await signIn("login", {
           account: data.account,
           password: data.password,
           redirect: false,
@@ -175,7 +177,7 @@ const Signup = () => {
   });
   const ErrorPassWord = styled(Typography)({
     fontWeight: "400",
-    fontSize: "0.75rem",
+    fontSize: "1.3rem",
     lineHeight: 1.66,
     textAlign: "left",
     margin: "4px 14px 0 14px",
@@ -436,11 +438,18 @@ const Signup = () => {
                   </ButtonLoginSocial>
                 </Box>
               </Box>
-              <CardMedia
-                component="img"
-                sx={{ maxWidth: "450px", display: { xs: "none", md: "block" } }}
-                image="https://i.imgur.com/hXCY8V3.png"
-              />
+
+              <Box
+                sx={{
+                  maxWidth: "450px",
+                  width: "100%",
+                  height: "400px",
+                  display: { xs: "none", md: "block" },
+                  position: "relative",
+                }}
+              >
+                <Image src="https://i.imgur.com/hXCY8V3.png" priority={true} layout="fill" alt="Đăng ký - LT Blog" />
+              </Box>
             </Box>
           </Layout>
         </>

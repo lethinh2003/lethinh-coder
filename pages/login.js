@@ -28,6 +28,7 @@ import LoadingBox from "../components/homePage/LoadingBox";
 import Layout from "../components/Layout";
 import { getUser } from "../redux/actions/getUser";
 import { useDispatch } from "react-redux";
+import Image from "next/image";
 const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -153,7 +154,7 @@ const Login = () => {
   });
   const ErrorPassWord = styled(Typography)({
     fontWeight: "400",
-    fontSize: "0.75rem",
+    fontSize: "1.3rem",
     lineHeight: 1.66,
     textAlign: "left",
     margin: "4px 14px 0 14px",
@@ -180,11 +181,17 @@ const Login = () => {
                 padding: { xs: "0 10px", md: "0 20px" },
               }}
             >
-              <CardMedia
-                component="img"
-                sx={{ maxWidth: "450px", display: { xs: "none", md: "block" } }}
-                image="https://i.imgur.com/25eZxv6.png"
-              />
+              <Box
+                sx={{
+                  maxWidth: "450px",
+                  width: "100%",
+                  height: "400px",
+                  display: { xs: "none", md: "block" },
+                  position: "relative",
+                }}
+              >
+                <Image src="https://i.imgur.com/25eZxv6.png" priority={true} layout="fill" alt="Đăng nhập - LT Blog" />
+              </Box>
               <Box
                 sx={{
                   display: "flex",

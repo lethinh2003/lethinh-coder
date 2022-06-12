@@ -11,7 +11,7 @@ const ItemCode = ({ item }) => {
   const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",
-    minWidth: 300,
+
     overflow: "unset",
     scrollSnapAlign: "center",
     border: `1px solid ${theme.palette.card.borderColor.default}`,

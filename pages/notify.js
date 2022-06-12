@@ -142,9 +142,18 @@ const Signup = () => {
                 }
                 height={400}
                 endMessage={
-                  <p style={{ textAlign: "center" }}>
-                    <b>Đã hết thông báo</b>
-                  </p>
+                  <Box
+                    sx={{
+                      marginTop: "10px",
+                      backgroundColor: "#374151",
+                      padding: "15px",
+                      borderRadius: "10px",
+                      fontSize: "1.5rem",
+                      color: "#ffffff",
+                    }}
+                  >
+                    Đã hết danh sách 👏🏼
+                  </Box>
                 }
               >
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>

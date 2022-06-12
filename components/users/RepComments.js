@@ -200,9 +200,18 @@ const Comments = ({ user, socket }) => {
           }
           height={400}
           endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Đã hết danh sách</b>
-            </p>
+            <Box
+              sx={{
+                marginTop: "10px",
+                backgroundColor: "#374151",
+                padding: "15px",
+                borderRadius: "10px",
+                fontSize: "1.5rem",
+                color: "#ffffff",
+              }}
+            >
+              Đã hết danh sách 👏🏼
+            </Box>
           }
         >
           <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>

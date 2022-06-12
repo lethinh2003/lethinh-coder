@@ -7,8 +7,13 @@ import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import Layout from "../../../components/admin/Layout";
 import Modal from "../../../components/homePage/Modal";
+import { useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
 
 export default function MyEditor() {
+  const dataSystem = useSelector((state) => state.system.data);
+
+  const { data: session, status } = useSession();
   // form validation rules
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
@@ -50,9 +55,10 @@ export default function MyEditor() {
             body.append("file", file);
             setIsLoadingUploadImage(true);
 
-            fetch(`${process.env.ENDPOINT_SERVER}/api/v1/posts/upload-file`, {
+            fetch(`${process.env.ENDPOINT_SERVER}/api/v1/admin/upload-file`, {
               method: "post",
               body: body,
+              headers: { Authorization: `Bearer ${session.user.access_token}` },
             })
               .then((res) => res.json())
               .then((res) => {
@@ -88,6 +94,8 @@ export default function MyEditor() {
       const keywordsArray = dataForm.keywords.split(", ");
 
       const response = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/admin/blogs`, {
+        dataSystem,
+
         title: dataForm.title,
         content: data,
         images: imagesArray,
@@ -140,7 +148,7 @@ export default function MyEditor() {
             New Blog
           </Typography>
           {!editorLoaded && <div>Editor loading</div>}
-          {editorLoaded && (
+          {editorLoaded && session && session.user && (
             <>
               <form
                 style={{
@@ -235,6 +243,9 @@ export default function MyEditor() {
 
                 <Box sx={{ width: "100%", color: "black", fontSize: "2rem" }}>
                   <CKEditor
+                    config={{
+                      extraPlugins: [uploadPlugin],
+                    }}
                     editor={ClassicEditor}
                     data={localStorage.getItem("postDataBlog") || null}
                     onReady={(editor) => {
@@ -247,8 +258,16 @@ export default function MyEditor() {
                     }}
                   />
                 </Box>
-                <Button variant="outlined" type="submit" onClick={() => onSubmit()}>
-                  Send
+                <Button
+                  sx={{
+                    pointerEvents: isLoadingUploadImage ? "none" : "visible",
+                    opacity: isLoadingUploadImage ? "0.7" : "1",
+                  }}
+                  onClick={onSubmit}
+                  variant="outlined"
+                  type="submit"
+                >
+                  {isLoadingUploadImage ? "Đang tải ảnh..." : "Tạo"}
                 </Button>
               </form>
             </>

@@ -6,6 +6,8 @@ import { comparePassword } from "../../../utils/hashPassword";
 import bcrypt from "bcrypt";
 import User from "../../../models/User";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+
 import sendEmail from "../../../utils/email";
 var randomstring = require("randomstring");
 var jwt = require("jsonwebtoken");
@@ -16,9 +18,16 @@ export default NextAuth({
     // maxAge: 60,
   },
   providers: [
+    // GitHubProvider({
+    //   clientId: process.env.GITHUB_CLIENT_ID,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 40000,
+      },
       authorizationUrl:
         "https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&response_type=code",
     }),
@@ -48,13 +57,35 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ account, profile }) {
+      // if (account.provider === "github") {
+      //   console.log("account", account);
+      //   console.log("profile", profile);
+      //   const checkUser = await User.findOne({
+      //     account: profile.login,
+      //   });
+      //   if (checkUser) {
+      //     profile.account = checkUser;
+      //   } else {
+      //     const generatePassword = randomstring.generate({
+      //       length: 10,
+      //       charset: "alphabetic",
+      //     });
+      //     const createUser = User.create({
+      //       account: profile.email,
+      //       password: generatePassword,
+      //       confirmPassword: generatePassword,
+      //       avatar: profile.picture,
+      //       name: profile.name,
+      //     });
+      //   }
+      // } else
       if (account.provider === "google") {
         try {
           if (profile.email_verified) {
-            const checkUser = await User.find({
+            const checkUser = await User.findOne({
               account: profile.email,
             });
-            if (checkUser.length === 0) {
+            if (!checkUser) {
               const generatePassword = randomstring.generate({
                 length: 10,
                 charset: "alphabetic",
@@ -88,7 +119,7 @@ export default NextAuth({
 
               profile.account = data[0];
             } else {
-              profile.account = checkUser[0];
+              profile.account = checkUser;
             }
           }
           return profile.email_verified;
@@ -113,7 +144,7 @@ export default NextAuth({
           { account: profile.account.account, role: profile.account.role, id: profile.account._id },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 60 * 60 * 24 * 30, ///Expire default jwt next-auth
+            expiresIn: 60 * 60 * 24 * 90, ///Expire default jwt next-auth
           }
         );
         token.account = profile.account.account;
@@ -126,10 +157,9 @@ export default NextAuth({
           { account: user.account, role: user.role, id: user._id },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 60 * 60 * 24 * 30, ///Expire default jwt next-auth
+            expiresIn: 60 * 60 * 24 * 90, ///Expire default jwt next-auth
           }
         );
-        console.log(generateToken);
         token.account = user.account;
         token.role = user.role;
         token.id = user._id;

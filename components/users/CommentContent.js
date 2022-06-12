@@ -55,7 +55,17 @@ const CommentContent = ({ user, socket, item, newContent }) => {
             pointerEvents: isLoadingDelete ? "none" : "auto",
           }}
         >
-          <ListItem button={true}>
+          <ListItem
+            sx={{
+              borderRadius: "20px",
+              border: (theme) => `1px solid ${theme.palette.card.borderColor.default}`,
+              backgroundColor: (theme) => theme.palette.card.bgColor.default,
+              "&:hover": {
+                border: (theme) => `1px solid ${theme.palette.card.borderColor.hover}`,
+              },
+            }}
+            button={false}
+          >
             <ListItemAvatar>
               <Avatar
                 sx={{
@@ -69,11 +79,19 @@ const CommentContent = ({ user, socket, item, newContent }) => {
               </Avatar>
             </ListItemAvatar>
             <ListItemText
-              onClick={(e) => handleClickLinkComment(item)}
               sx={{
                 color: (theme) => theme.palette.iconColor.default,
               }}
-              primary={newContent}
+              primary={
+                <Typography
+                  sx={{
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => handleClickLinkComment(item)}
+                >
+                  {newContent}
+                </Typography>
+              }
               secondary={convertToTime(item.createdAt)}
             ></ListItemText>
             {session && session.user && user.account === session.user.account && (

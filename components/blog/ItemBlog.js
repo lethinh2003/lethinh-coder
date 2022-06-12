@@ -81,7 +81,7 @@ const ItemBlog = ({ item }) => {
             blurDataURL="https://i.imgur.com/HYNKD6V.png"
           />
         </Child2ImageNewBlog>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", padding: "20px 0px" }}>
           <Box
             sx={{
               display: "flex",
@@ -121,26 +121,26 @@ const ItemBlog = ({ item }) => {
           >
             {item.desc}
           </ChildDescNewBlog>
-          <Box
-            sx={{
-              display: "inline-flex",
-              gap: "10px",
-              flexWrap: "wrap",
-            }}
-          >
-            {item.labels.map((item, i) => (
-              <Link key={i} href={`/blog/label/${item}`}>
-                <TagButton
-                  sx={{
-                    textTransform: "lowercase",
-                  }}
-                  variant="outlined"
-                >
-                  #{item.toLowerCase()}
-                </TagButton>
-              </Link>
-            ))}
-          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "inline-flex",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          {item.labels.map((item, i) => (
+            <Link key={i} href={`/blog/label/${item}`}>
+              <TagButton
+                sx={{
+                  textTransform: "lowercase",
+                }}
+                variant="outlined"
+              >
+                #{item.toLowerCase()}
+              </TagButton>
+            </Link>
+          ))}
         </Box>
       </BoxChild2NewBlog>
     </>

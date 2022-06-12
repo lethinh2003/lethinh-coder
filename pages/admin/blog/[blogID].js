@@ -38,6 +38,7 @@ const Code = ({ blogID }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [editorLoaded, setEditorLoaded] = useState(false);
   const { CKEditor, ClassicEditor } = editorRef.current || {};
+  const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
 
   const [dataCode, setDataCode] = useState(null);
   const [dataStatus, setDataStatus] = useState(true);
@@ -70,7 +71,45 @@ const Code = ({ blogID }) => {
     };
     setEditorLoaded(true);
   }, []);
-  console.log(dataContent);
+  const uploadAdapter = (loader) => {
+    return {
+      upload: () => {
+        return new Promise((resolve, reject) => {
+          const body = new FormData();
+          loader.file.then((file) => {
+            body.append("file", file);
+            setIsLoadingUploadImage(true);
+
+            fetch(`${process.env.ENDPOINT_SERVER}/api/v1/admin/upload-file`, {
+              method: "post",
+              body: body,
+              headers: { Authorization: `Bearer ${session.user.access_token}` },
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                setIsLoadingUploadImage(false);
+                resolve({
+                  default: res.data,
+                });
+              })
+              .catch((err) => {
+                if (err.response) {
+                  setIsLoadingUploadImage(false);
+                  toast.error(err.response.data.message);
+                }
+
+                reject(err);
+              });
+          });
+        });
+      },
+    };
+  };
+  const uploadPlugin = (editor) => {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return uploadAdapter(loader);
+    };
+  };
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
@@ -216,9 +255,12 @@ const Code = ({ blogID }) => {
                 />
 
                 {!editorLoaded && <div>Editor loading</div>}
-                {editorLoaded && editorContentRef.current && (
+                {editorLoaded && session && session.user && editorContentRef.current && (
                   <Box sx={{ width: "100%", color: "black", pt: 2, fontSize: "2rem" }}>
                     <CKEditor
+                      config={{
+                        extraPlugins: [uploadPlugin],
+                      }}
                       editor={ClassicEditor}
                       data={editorContentRef.current}
                       onReady={(editor) => {
@@ -247,8 +289,16 @@ const Code = ({ blogID }) => {
                 </DialogContentText>
 
                 <DialogContentText sx={{ pt: 2, display: "flex", justifyContent: "center" }}>
-                  <Button variant="outlined" type="submit" onClick={handleSubmit(onSubmit)}>
-                    Chỉnh sửa
+                  <Button
+                    sx={{
+                      pointerEvents: isLoadingUploadImage ? "none" : "visible",
+                      opacity: isLoadingUploadImage ? "0.7" : "1",
+                    }}
+                    variant="outlined"
+                    type="submit"
+                    onClick={handleSubmit(onSubmit)}
+                  >
+                    {isLoadingUploadImage ? "Đang tải ảnh..." : "Edit"}
                   </Button>
                 </DialogContentText>
               </form>
