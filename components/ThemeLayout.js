@@ -10,6 +10,25 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.palette.background.default};
   }
+  pre {
+    color: #ffffff;
+    font-size: 2rem;
+    padding: 1.5rem 1rem;
+    overflow-x: auto;
+    background-color: ${({ theme }) => theme.palette.background.preCode};
+
+    code {
+      color: #ffffff;
+      background-color: unset;
+
+    }
+  }
+
+    code {
+    color: #1b1b1b;
+    overflow-x: auto;
+    background-color: #eeeeee;
+  } 
   ::-webkit-scrollbar-thumb {
   background-color:  ${({ theme }) => theme.palette.iconColor.default};
 
@@ -69,9 +88,11 @@ const getDesignTokens = (mode) => ({
       ...(mode === "dark"
         ? {
             default: "#0e1217",
+            preCode: "#525257",
           }
         : {
             default: "#ffffff",
+            preCode: "#0e1217",
           }),
     },
     navItem: {

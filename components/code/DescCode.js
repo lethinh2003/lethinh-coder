@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AiOutlineCalendar } from "react-icons/ai";
 import convertTime from "../../utils/convertTime";
 import Email from "../auth/Email";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import ShareButton from "../ShareSocial/ShareButton";
 
@@ -20,6 +20,14 @@ const DescCode = (props) => {
     fontSize: "3rem",
     fontWeight: "bold",
   });
+  useEffect(() => {
+    const getImage = document.querySelectorAll(".image_resized");
+    if (getImage.length > 0) {
+      getImage.forEach((item, i) => {
+        item.style.width = null;
+      });
+    }
+  }, [sourceCode]);
   return (
     <>
       <Box

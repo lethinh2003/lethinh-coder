@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import convertTime from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
@@ -26,6 +26,14 @@ const DescBlog = (props) => {
     fontSize: "3rem",
     fontWeight: "bold",
   });
+  useEffect(() => {
+    const getImage = document.querySelectorAll(".image_resized");
+    if (getImage.length > 0) {
+      getImage.forEach((item, i) => {
+        item.style.width = null;
+      });
+    }
+  }, [blogData]);
 
   return (
     <>

@@ -16,6 +16,7 @@
 .content-html {
   word-wrap: break-word;
   max-width: calc(100vw - 40px);
+  width: 100%;
 
   @include responsive(600px) {
     max-width: calc(100vw - 20px);
@@ -23,6 +24,10 @@
 
   a {
     color: #23b9d1;
+  }
+  img {
+    width: 100%;
+    border-radius: 10px;
   }
 }
 
@@ -350,4 +355,9 @@
 }
 .Toastify {
   font-size: 1.5rem;
+}
+pre {
+  
+  overflow-x: auto;
+
 }
