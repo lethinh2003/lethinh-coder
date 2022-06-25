@@ -164,7 +164,7 @@ export const getServerSideProps = async (context) => {
       {
         new: true,
       }
-    ),
+    ).select("-link"),
     System.findOneAndUpdate(
       {},
       { $inc: { home_views: 1 } },

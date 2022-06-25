@@ -20,13 +20,16 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
+import { useSelector } from "react-redux";
 
 import validator from "validator";
 import axios from "axios";
 import Modal from "../homePage/Modal";
 const Email = (props) => {
-  const { isEmailModal, setIsEmailModal, status, codeId } = props;
+  const { isEmailModal, setIsEmailModal, status, sourceCode } = props;
   const [isLoading, setIsLoading] = useState(false);
+  const dataSystem = useSelector((state) => state.system.data);
+
   const [isError, setIsError] = useState(false);
   const [emailValue, setEmailValue] = useState("");
   const [messageError, setMessageError] = useState("");
@@ -49,9 +52,10 @@ const Email = (props) => {
       try {
         setIsLoading(true);
 
-        const result = await axios.post("/api/source-code/email", {
+        const result = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/source-codes/download`, {
           email: emailValue,
-          codeId: codeId,
+          sourceCode,
+          dataSystem,
         });
         setIsModal(true);
         setText(result.data.message);
@@ -101,8 +105,8 @@ const Email = (props) => {
               />
               <DialogContentText>
                 Lưu ý: <br />- Code miễn phí thì chỉ cần nhập mail, sau đó check mail.
-                <br />- Code có phí thì bạn phải thanh toán trước sau đó mới nhập mail, đội ngũ BQT sẽ gửi mail cho bạn
-                sau khi check thành công
+                {/* <br />- Code có phí thì bạn phải thanh toán trước sau đó mới nhập mail, đội ngũ BQT sẽ gửi mail cho bạn
+                sau khi check thành công */}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -56,7 +56,7 @@ const DescCode = (props) => {
             padding: { xs: "10px", md: "20px" },
           }}
         >
-          <Email isEmailModal={isEmailModal} setIsEmailModal={setIsEmailModal} codeId={sourceCode._id} />
+          <Email isEmailModal={isEmailModal} setIsEmailModal={setIsEmailModal} sourceCode={sourceCode} />
           <h1 style={{ fontFamily: "Noto Sans", fontSize: "3.5rem" }}>{sourceCode.title}</h1>
           {sourceCode.updatedAt && (
             <Typography

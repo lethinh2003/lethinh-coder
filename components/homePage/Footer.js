@@ -102,156 +102,155 @@ const Footer = () => {
 
         <BottomNavigationActionComponent value="blog" icon={<FaBlog />} />
       </BottomNavigationComponent>
-      {dataSystem && (
+
+      <Box
+        className="footer"
+        sx={{
+          padding: { xs: "20px 10px 100px 10px", md: "20px 20px 100px 20px" },
+          display: "flex",
+          flexWrap: { xs: "wrap", md: "nowrap" },
+          gap: { xs: "20px", md: "unset" },
+          justifyContent: { md: "center" },
+        }}
+      >
         <Box
-          className="footer"
+          className="about"
           sx={{
-            padding: { xs: "20px 10px 100px 10px", md: "20px 20px 100px 20px" },
             display: "flex",
-            flexWrap: { xs: "wrap", md: "nowrap" },
-            gap: { xs: "20px", md: "unset" },
-            justifyContent: { md: "center" },
+            flexWrap: "wrap",
+            height: "100%",
+            gap: "50px",
+            alignItems: "flex-start",
           }}
         >
           <Box
-            className="about"
+            className="about-column"
             sx={{
+              padding: "10px",
               display: "flex",
-              flexWrap: "wrap",
-              height: "100%",
-              gap: "50px",
-              alignItems: "flex-start",
-            }}
-          >
-            <Box
-              className="about-column"
-              sx={{
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
-            >
-              <Typography
-                component="div"
-                sx={{
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                }}
-              >
-                Hỗ trợ
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  Liên hệ
-                </Typography>
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  Bảo mật
-                </Typography>
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  Điều khoản
-                </Typography>
-              </Box>
-            </Box>
-            <Box
-              className="about-column"
-              sx={{
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
-            >
-              <Typography
-                component="div"
-                sx={{
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                }}
-              >
-                ABOUT ME
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  Giới thiệu
-                </Typography>
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  Đối tác
-                </Typography>
-              </Box>
-            </Box>
-            <Box
-              className="about-column"
-              sx={{
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "10px",
-              }}
-            >
-              <Typography
-                component="div"
-                sx={{
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                }}
-              >
-                CONTACT
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  {dataSystem.myself_email}
-                </Typography>
-                <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
-                  {dataSystem.myself_name}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-          <Box
-            className="social"
-            sx={{
-              display: "flex",
-              justifyContent: { xs: "center", md: "flex-end" },
-              alignItems: "flex-start",
-              flex: "1 1",
+              flexDirection: "column",
               gap: "10px",
             }}
           >
-            <a href={dataSystem.myself_fb} target="_blank" rel="noopener noreferrer">
-              <SocialButton>
-                <FaFacebookF />
-              </SocialButton>
-            </a>
-            <a href={dataSystem.myself_instagram} target="_blank" rel="noopener noreferrer">
-              <SocialButton>
-                <BsInstagram />
-              </SocialButton>
-            </a>
-            <SocialButton>
-              <BsTwitter />
-            </SocialButton>
+            <Typography
+              component="div"
+              sx={{
+                fontWeight: "700",
+                textTransform: "uppercase",
+              }}
+            >
+              Hỗ trợ
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Liên hệ
+              </Typography>
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Bảo mật
+              </Typography>
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Điều khoản
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            className="about-column"
+            sx={{
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
+            <Typography
+              component="div"
+              sx={{
+                fontWeight: "700",
+                textTransform: "uppercase",
+              }}
+            >
+              ABOUT ME
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Giới thiệu
+              </Typography>
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Đối tác
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            className="about-column"
+            sx={{
+              padding: "10px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
+            <Typography
+              component="div"
+              sx={{
+                fontWeight: "700",
+                textTransform: "uppercase",
+              }}
+            >
+              CONTACT
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                lethinh.developer@gmail.com
+              </Typography>
+              <Typography sx={{ fontFamily: "IBM Plex Sans" }} component="span">
+                Le Thinh
+              </Typography>
+            </Box>
           </Box>
         </Box>
-      )}
+        <Box
+          className="social"
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "center", md: "flex-end" },
+            alignItems: "flex-start",
+            flex: "1 1",
+            gap: "10px",
+          }}
+        >
+          <a href={dataSystem ? dataSystem.myself_fb : "#"} target="_blank" rel="noopener noreferrer">
+            <SocialButton>
+              <FaFacebookF />
+            </SocialButton>
+          </a>
+          <a href={dataSystem ? dataSystem.myself_instagram : "#"} target="_blank" rel="noopener noreferrer">
+            <SocialButton>
+              <BsInstagram />
+            </SocialButton>
+          </a>
+          <SocialButton>
+            <BsTwitter />
+          </SocialButton>
+        </Box>
+      </Box>
     </>
   );
 };
