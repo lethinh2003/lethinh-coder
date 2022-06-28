@@ -153,7 +153,7 @@ const Sidebar = (props) => {
       <BoxMenuSideBar>
         <Typography
           sx={{
-            paddingLeft: "4px",
+            paddingLeft: "10px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
