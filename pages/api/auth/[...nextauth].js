@@ -82,6 +82,7 @@ export default NextAuth({
       if (account.provider === "google") {
         try {
           if (profile.email_verified) {
+            await dbConnect();
             const checkUser = await User.findOne({
               account: profile.email,
             });
