@@ -11,6 +11,8 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.palette.background.default};
   }
   pre {
+    max-width: 700px;
+    width: 100%;
     color: #ffffff;
     font-size: 2rem;
     padding: 1.5rem 1rem;
