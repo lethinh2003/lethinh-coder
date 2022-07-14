@@ -21,6 +21,7 @@
     "bcrypt": "^5.0.1",
     "cloudinary": "^1.28.1",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.3",
     "dotenv": "^16.0.0",
     "framer-motion": "^6.2.8",
     "fs": "^0.0.1-security",

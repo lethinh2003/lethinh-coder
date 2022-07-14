@@ -40,12 +40,16 @@ const DescCode = (props) => {
           color: "text.primary",
           gap: "10px",
           padding: "40px 0",
+          width: { xs: "100%", lg: "calc(100% - 260px)" },
+          flex: 1,
         }}
       >
         <TitleContent className="title">Desciption code</TitleContent>
 
         <Box
           sx={{
+            width: "100%",
+
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
@@ -57,7 +61,12 @@ const DescCode = (props) => {
           }}
         >
           <Email isEmailModal={isEmailModal} setIsEmailModal={setIsEmailModal} sourceCode={sourceCode} />
-          <h1 style={{ fontFamily: "Noto Sans", fontSize: "3.5rem" }}>{sourceCode.title}</h1>
+          <Typography
+            component={"h1"}
+            sx={{ fontFamily: "Noto Sans", fontSize: { xs: "2rem", lg: "3.5rem" }, fontWeight: "bold" }}
+          >
+            {sourceCode.title}
+          </Typography>
           {sourceCode.updatedAt && (
             <Typography
               sx={{
@@ -67,7 +76,7 @@ const DescCode = (props) => {
               📅 Cập nhật: {convertTime(sourceCode.updatedAt)}{" "}
             </Typography>
           )}
-          <Typography component="div" sx={{ fontFamily: "Noto Sans" }}>
+          <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
             <div className="content-html" dangerouslySetInnerHTML={{ __html: sourceCode.content }} />
           </Typography>
           <Typography

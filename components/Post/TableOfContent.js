@@ -56,7 +56,7 @@ const TableOfContent = (props) => {
     <>
       <Box
         sx={{
-          display: { xs: "none", md: "flex" },
+          display: { xs: "none", lg: "flex" },
           alignItems: "center",
           flexDirection: "column",
           bgcolor: "background.default",
@@ -67,6 +67,8 @@ const TableOfContent = (props) => {
           position: "-webkit-sticky",
           position: "sticky",
           top: 5,
+          width: "250px",
+          maxWidth: "250px",
         }}
       >
         <TitleContent
@@ -88,7 +90,7 @@ const TableOfContent = (props) => {
             color: "text.primary",
             gap: "10px",
             padding: { xs: "10px", md: "20px" },
-            width: "300px",
+            width: "100%",
             borderLeft: "1px solid #ccc",
             maxHeight: "calc(100vh - 200px)",
             overflowY: "auto",

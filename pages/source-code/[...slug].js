@@ -94,11 +94,15 @@ const DetailSourceCode = (props) => {
                 justifyContent: "center",
                 color: "text.primary",
                 gap: "10px",
-                padding: "40px 0",
+                padding: "20px 0",
+                width: "100%",
+                maxWidth: { xs: "100%", md: "calc(100vw - 0px)" },
               }}
             >
               <Box
                 sx={{
+                  width: "100%",
+
                   display: "flex",
                   alignItems: "center",
                   flexDirection: "column",
@@ -106,7 +110,6 @@ const DetailSourceCode = (props) => {
                   justifyContent: "center",
                   color: "text.primary",
                   gap: "10px",
-                  padding: "40px 0",
                 }}
               >
                 <InfoCode sourceCode={sourceCode} />
@@ -115,12 +118,12 @@ const DetailSourceCode = (props) => {
                   sx={{
                     display: "flex",
                     alignItems: "flex-start",
+                    width: "100%",
 
                     bgcolor: "background.default",
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                     color: "text.primary",
                     gap: "10px",
-                    padding: "40px 0",
                   }}
                 >
                   <DescCode sourceCode={sourceCode} status={status} />

@@ -11,7 +11,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.palette.background.default};
   }
   pre {
-    max-width: 700px;
+    ${"" /* max-width: 700px; */}
     width: 100%;
     color: #ffffff;
     font-size: 2rem;
@@ -22,14 +22,26 @@ const GlobalStyle = createGlobalStyle`
     code {
       color: #ffffff;
       background-color: unset;
+      font-weight: 500;
+      &:before, &:after
+    {
+      content: "";
+    }
 
     }
   }
 
     code {
-    color: #1b1b1b;
+    font-weight: 600;
+
+    color: ${({ theme }) => (theme.palette.mode === "dark" ? "#ffffff" : "#1b1b1b")};
     overflow-x: auto;
-    background-color: #eeeeee;
+  
+
+    &:before, &:after
+    {
+      content: "${"`"}";
+    }
   } 
   ::-webkit-scrollbar-thumb {
   background-color:  ${({ theme }) => theme.palette.iconColor.default};
@@ -90,11 +102,11 @@ const getDesignTokens = (mode) => ({
       ...(mode === "dark"
         ? {
             default: "#0e1217",
-            preCode: "#525257",
+            preCode: "#000000",
           }
         : {
             default: "#ffffff",
-            preCode: "#0e1217",
+            preCode: "#000000",
           }),
     },
     navItem: {

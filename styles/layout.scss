@@ -15,11 +15,11 @@
 }
 .content-html {
   word-wrap: break-word;
-  max-width: calc(100vw - 40px);
+  max-width: calc(100% - 0px);
   width: 100%;
 
   @include responsive(600px) {
-    max-width: calc(100vw - 20px);
+    max-width: calc(100% - 0px);
   }
 
   a {
@@ -33,7 +33,8 @@
 
 .box-container {
   min-height: 100vh;
-  padding-top: 66px;
+  padding-top: 70px;
+  width: 100%;
 }
 .ms-sidebar {
   align-items: center;

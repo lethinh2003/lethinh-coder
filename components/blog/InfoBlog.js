@@ -42,7 +42,7 @@ const InfoBlog = (props) => {
           >
             <Box
               sx={{
-                height: "500px",
+                height: { xs: "200px", md: "300px", lg: "500px" },
 
                 width: "100%",
                 borderRadius: "10px",

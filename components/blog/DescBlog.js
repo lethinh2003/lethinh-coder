@@ -39,6 +39,7 @@ const DescBlog = (props) => {
     <>
       <Box
         sx={{
+          flex: 1,
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
@@ -47,12 +48,14 @@ const DescBlog = (props) => {
           color: "text.primary",
           gap: "10px",
           padding: "40px 0",
+          width: { xs: "100%", lg: "calc(100% - 260px)" },
         }}
       >
         <TitleContent className="title">Desciption blog</TitleContent>
         {blogData && (
           <Box
             sx={{
+              width: "100%",
               display: "flex",
               alignItems: "center",
               flexDirection: "column",
@@ -63,7 +66,12 @@ const DescBlog = (props) => {
               padding: { xs: "10px", md: "20px" },
             }}
           >
-            <h1 style={{ fontFamily: "Noto Sans", fontSize: "3.5rem" }}>{blogData.title}</h1>
+            <Typography
+              component={"h1"}
+              sx={{ fontFamily: "Noto Sans", fontSize: { xs: "2rem", lg: "3.5rem" }, fontWeight: "bold" }}
+            >
+              {blogData.title}
+            </Typography>
             <Typography
               sx={{
                 fontWeight: "500",
@@ -107,7 +115,7 @@ const DescBlog = (props) => {
                 </Link>
               ))}
             </Box>
-            <Typography component="div" sx={{ fontFamily: "Noto Sans" }}>
+            <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
               <div className="content-html" dangerouslySetInnerHTML={{ __html: blogData.content }} />
             </Typography>
             <Reaction blogData={blogData} />
