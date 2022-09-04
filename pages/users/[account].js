@@ -17,27 +17,30 @@ const AccountDetail = () => {
   const { account } = router.query;
 
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        setIsLoading(true);
-        const res = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/users?account=${account}`);
-
-        setUser(res.data.data);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.response.data) {
-          toast.error(err.response.data.message);
-        }
-      }
-    };
-    if (account) {
-      getUser();
+  const callDataApi = async (account) => {
+    if (!account) {
+      return null;
     }
-  }, [account]);
+    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/users?account=${account}`);
+    return results.data;
+  };
+  const getListQuery = useQuery(["get-detail-user", account], () => callDataApi(account), {
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  useEffect(() => {
+    if (error && error.response) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (data) {
+      setUser(data.data);
+    }
+  }, [data]);
 
   return (
     <>

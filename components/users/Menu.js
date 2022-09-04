@@ -35,6 +35,18 @@ const DetailAccount = ({ user, socket }) => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const TabMenu = [
+    {
+      label: "Activities",
+      value: "0",
+      type: 0,
+    },
+    {
+      label: "Notifications",
+      value: "1",
+      type: 1,
+    },
+  ];
   return (
     <>
       {user && (
@@ -60,10 +72,15 @@ const DetailAccount = ({ user, socket }) => {
                 borderBottom: (theme) => (theme.palette.mode === "light" ? "1px solid #dcdee0" : "1px solid #4b4c4e"),
               }}
             >
-              <StyledTab label="Activity" value="0" />
-              {session && session.user && session.user.account === user.account && (
-                <StyledTab label="Notification" value="1" />
-              )}
+              {TabMenu.map((item, i) => {
+                if (item.type === 1) {
+                  if (session && session.user && session.user.account === user.account) {
+                    return <StyledTab key={item.value} label={item.label} value={item.value} />;
+                  }
+                } else {
+                  return <StyledTab key={item.value} label={item.label} value={item.value} />;
+                }
+              })}
             </TabList>
 
             <TabPanel
@@ -75,17 +92,25 @@ const DetailAccount = ({ user, socket }) => {
             >
               <Activities user={user} socket={socket} />
             </TabPanel>
-            {session && session.user && session.user.account === user.account && (
-              <TabPanel
-                sx={{
-                  padding: 0,
-                  width: "100%",
-                }}
-                value="1"
-              >
-                <Notifies user={user} socket={socket} />
-              </TabPanel>
-            )}
+
+            <TabPanel
+              sx={{
+                padding: 0,
+                width: "100%",
+              }}
+              value="1"
+            >
+              <Notifies user={user} socket={socket} />
+            </TabPanel>
+            <TabPanel
+              sx={{
+                padding: 0,
+                width: "100%",
+              }}
+              value="2"
+            >
+              <Notifies user={user} socket={socket} />
+            </TabPanel>
           </TabContext>
         </Box>
       )}

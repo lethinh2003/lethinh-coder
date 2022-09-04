@@ -1,20 +1,38 @@
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import BookIcon from "@mui/icons-material/Book";
+import HomeIcon from "@mui/icons-material/Home";
+import InputIcon from "@mui/icons-material/Input";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import SourceIcon from "@mui/icons-material/Source";
-import { Box, Button, Slide, Typography } from "@mui/material";
+import { Box, Slide, Typography, ClickAwayListener } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef } from "react";
-import { AiOutlineLogin } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
-import { FaHome } from "react-icons/fa";
-import { FaBlog } from "react-icons/fa";
-
+import { useRef, useState, useEffect } from "react";
 const SidebarMobile = (props) => {
-  const { session, status, handleClickSidebarMobile, isSidebarMobile } = props;
+  const { session, status, handleClickSidebarMobile, isSidebarMobile, setIsSidebarMobile } = props;
+
   const theme = useTheme();
   const router = useRouter();
   const menuWrapper = useRef();
+  const [value, setValue] = useState("/");
+  useEffect(() => {
+    if (router.pathname === "/") {
+      setValue("/");
+    } else if (router.pathname.startsWith("/source-code")) {
+      setValue("/source-code");
+    } else if (router.pathname.startsWith("/blog")) {
+      setValue("/blog");
+    } else if (router.pathname.startsWith("/admin")) {
+      setValue("/admin");
+    } else {
+      setValue(router.pathname);
+    }
+  }, [router.pathname]);
+  const handleClickAway = () => {
+    setIsSidebarMobile(false);
+  };
   const handleClickOutSide = (e) => {
     if (!menuWrapper.current.contains(e.target)) {
       handleClickSidebarMobile();
@@ -26,191 +44,288 @@ const SidebarMobile = (props) => {
   const handleClickOpenSignupMiddle = () => {
     handleClickSidebarMobile();
   };
+  const menuOption = [
+    {
+      key: "/",
+      title: "Home",
+      type: 0,
+      icon: <HomeIcon />,
+    },
+    {
+      key: "/source-code",
+      title: "Source",
+      type: 0,
+      icon: <SourceIcon />,
+    },
+    {
+      key: "/blog",
+      title: "Blog",
+      type: 0,
+      icon: <BookIcon />,
+    },
+    {
+      key: "/login",
+      title: "Login",
+      type: 1,
+      icon: <LoginIcon />,
+    },
+    {
+      key: "/signup",
+      title: "Signup",
+      type: 1,
+      icon: <InputIcon />,
+    },
+    {
+      key: "/logout",
+      title: "Logout",
+      type: 2,
+      icon: <LogoutIcon />,
+    },
+    {
+      key: "/admin",
+      title: "Admin",
+      type: 3,
+      icon: <AdminPanelSettingsIcon />,
+    },
+  ];
 
   return (
     <>
-      <Box
-        onClick={(e) => handleClickOutSide(e)}
-        sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          backgroundColor: "rgba(0,0,0,.5)",
-          zIndex: 1001,
-        }}
-      >
-        <Slide direction="right" in={isSidebarMobile} mountOnEnter unmountOnExit>
-          <Box
-            ref={menuWrapper}
-            sx={{
-              position: "absolute",
-              backgroundColor: "sidebarMobile.background.default",
-              height: "100vh",
-              width: "300px",
-              padding: "20px",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <Link href="/">
-                <Button
-                  onClick={handleClickSidebarMobile}
+      {isSidebarMobile && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            backgroundColor: "rgba(0,0,0,.5)",
+            zIndex: 1001,
+          }}
+        >
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <Slide direction="right" in={isSidebarMobile} mountOnEnter unmountOnExit>
+              <Box
+                ref={menuWrapper}
+                sx={{
+                  position: "absolute",
+                  backgroundColor: (theme) => theme.palette.sidebarMobile.background.default,
+                  height: "100vh",
+                  width: "300px",
+                  padding: "20px",
+                }}
+              >
+                <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                    fontSize: "2.5rem",
-                    fontWeight: "bold",
-                    padding: "5px",
-                    textTransform: "capitalize",
-                    fontWeight: 500,
-                  }}
-                  component="div"
-                  className={router.pathname === "/" ? `active_${theme.palette.mode}` : "thinhs"}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <FaHome style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      fontSize: "2rem",
-                    }}
-                  >
-                    Home
-                  </div>
-                </Button>
-              </Link>
-              {status !== "authenticated" && (
-                <>
-                  <Link href="/login">
-                    <Button
-                      onClick={handleClickOpenLoginMiddle}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-start",
-                        gap: "5px",
-                        fontSize: "2.5rem",
-                        fontWeight: "bold",
-                        padding: "5px",
-                        textTransform: "capitalize",
-                        fontWeight: 500,
-                      }}
-                      component="div"
-                    >
-                      <AiOutlineLogin style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
-                      <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
-                        Login
-                      </Typography>
-                    </Button>
-                  </Link>
-                  <Link href="/signup">
-                    <Button
-                      onClick={handleClickOpenSignupMiddle}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-start",
-                        gap: "5px",
-                        fontSize: "2.5rem",
-                        fontWeight: "bold",
-                        padding: "5px",
-                        textTransform: "capitalize",
-                        fontWeight: 500,
-                      }}
-                      component="div"
-                    >
-                      <AiOutlineLogin style={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
-                      <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
-                        Sign up
-                      </Typography>
-                    </Button>
-                  </Link>
-                </>
-              )}
+                    flexDirection: "column",
 
-              <Link href="/source-code">
-                <Button
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                    fontSize: "2.5rem",
-                    fontWeight: "bold",
-                    padding: "5px",
-                    textTransform: "capitalize",
-                    fontWeight: 500,
+                    color: (theme) => theme.palette.text.first,
                   }}
-                  component="div"
                 >
-                  <SourceIcon sx={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
-                  <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
-                    Source
-                  </Typography>
-                </Button>
-              </Link>
-              <Link href="/blog">
-                <Button
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                    fontSize: "2.5rem",
-                    fontWeight: "bold",
-                    padding: "5px",
-                    textTransform: "capitalize",
-                    fontWeight: 500,
-                  }}
-                  component="div"
-                >
-                  <SourceIcon sx={{ fontSize: "2rem", fontWeight: "inherit", width: "30px" }} />
-                  <Typography sx={{ fontSize: "2rem", fontWeight: "inherit" }} component="span">
-                    Blog
-                  </Typography>
-                </Button>
-              </Link>
-              {session && session.user.role === "admin" && (
-                <Link href="/admin">
-                  <Button
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                      gap: "5px",
-                      fontSize: "2.5rem",
-                      fontWeight: "bold",
-                      padding: "5px",
-                      textTransform: "capitalize",
-                      fontWeight: 500,
-                    }}
-                    component="div"
-                  >
-                    <AdminPanelSettingsIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
-                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
-                      Admin
-                    </Typography>
-                  </Button>
-                </Link>
-              )}
-            </Box>
-          </Box>
-        </Slide>
-      </Box>
+                  {menuOption.map((item, i) => {
+                    if (item.type === 0) {
+                      return (
+                        <Link href={item.key}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-start",
+                              gap: "5px",
+                              fontSize: "2.5rem",
+                              fontWeight: "bold",
+                              padding: "5px",
+                              textTransform: "capitalize",
+
+                              backgroundColor:
+                                value === item.key
+                                  ? (theme) => theme.palette.sidebarMobile.item.backgroundColorActive
+                                  : null,
+                              padding: "10px",
+                              borderRadius: "5px",
+                              cursor: "pointer",
+
+                              "&:hover": {
+                                backgroundColor: (theme) => theme.palette.sidebarMobile.item.backgroundColorHover,
+                              },
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                fontSize: "1.5rem",
+                                marginRight: "5px",
+                              }}
+                            >
+                              {item.icon}
+                            </Box>
+
+                            <Typography
+                              sx={{
+                                display: "flex",
+                                fontSize: "2rem",
+                              }}
+                            >
+                              {item.title}
+                            </Typography>
+                          </Box>
+                        </Link>
+                      );
+                    } else if (item.type === 1) {
+                      if (status === "unauthenticated") {
+                        return (
+                          <Link href={item.key}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-start",
+                                gap: "5px",
+                                fontSize: "2.5rem",
+                                fontWeight: "bold",
+                                padding: "5px",
+                                textTransform: "capitalize",
+
+                                backgroundColor:
+                                  value === item.key
+                                    ? (theme) => theme.palette.sidebarMobile.item.backgroundColorActive
+                                    : null,
+                                padding: "10px",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+
+                                "&:hover": {
+                                  backgroundColor: (theme) => theme.palette.sidebarMobile.item.backgroundColorHover,
+                                },
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  fontSize: "1.5rem",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                {item.icon}
+                              </Box>
+
+                              <Typography
+                                sx={{
+                                  display: "flex",
+                                  fontSize: "2rem",
+                                }}
+                              >
+                                {item.title}
+                              </Typography>
+                            </Box>
+                          </Link>
+                        );
+                      }
+                    } else if (item.type === 2) {
+                      if (status === "authenticated") {
+                        return (
+                          <Link href={item.key}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-start",
+                                gap: "5px",
+                                fontSize: "2.5rem",
+                                fontWeight: "bold",
+                                padding: "5px",
+                                textTransform: "capitalize",
+
+                                backgroundColor:
+                                  value === item.key
+                                    ? (theme) => theme.palette.sidebarMobile.item.backgroundColorActive
+                                    : null,
+                                padding: "10px",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+
+                                "&:hover": {
+                                  backgroundColor: (theme) => theme.palette.sidebarMobile.item.backgroundColorHover,
+                                },
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  fontSize: "1.5rem",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                {item.icon}
+                              </Box>
+
+                              <Typography
+                                sx={{
+                                  display: "flex",
+                                  fontSize: "2rem",
+                                }}
+                              >
+                                {item.title}
+                              </Typography>
+                            </Box>
+                          </Link>
+                        );
+                      }
+                    } else if (item.type === 3) {
+                      if (status === "authenticated" && session.user.role === "admin") {
+                        return (
+                          <Link href={item.key}>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "flex-start",
+                                gap: "5px",
+                                fontSize: "2.5rem",
+                                fontWeight: "bold",
+                                padding: "5px",
+                                textTransform: "capitalize",
+
+                                backgroundColor:
+                                  value === item.key
+                                    ? (theme) => theme.palette.sidebarMobile.item.backgroundColorActive
+                                    : null,
+                                padding: "10px",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+
+                                "&:hover": {
+                                  backgroundColor: (theme) => theme.palette.sidebarMobile.item.backgroundColorHover,
+                                },
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  fontSize: "1.5rem",
+                                  marginRight: "5px",
+                                }}
+                              >
+                                {item.icon}
+                              </Box>
+
+                              <Typography
+                                sx={{
+                                  display: "flex",
+                                  fontSize: "2rem",
+                                }}
+                              >
+                                {item.title}
+                              </Typography>
+                            </Box>
+                          </Link>
+                        );
+                      }
+                    }
+                  })}
+                </Box>
+              </Box>
+            </Slide>
+          </ClickAwayListener>
+        </Box>
+      )}
     </>
   );
 };

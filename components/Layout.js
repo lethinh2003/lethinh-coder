@@ -29,7 +29,7 @@ const Layout = (props) => {
     localStorage.setItem("darkMode", !getStatusDarkmode);
     dispatch(getDarkMode(!getStatusDarkmode));
   };
-  const handleClickSidebarMobile = () => {
+  const handleClickSidebarMobile = (value) => {
     setIsSidebarMobile(!isSidebarMobile);
   };
 
@@ -41,14 +41,14 @@ const Layout = (props) => {
         handleClickSwitch={handleClickSwitch}
       />
       <Navbar />
-      {isSidebarMobile && (
-        <SidebarMobile
-          session={session}
-          status={status}
-          handleClickSidebarMobile={handleClickSidebarMobile}
-          isSidebarMobile={isSidebarMobile}
-        />
-      )}
+
+      <SidebarMobile
+        session={session}
+        status={status}
+        handleClickSidebarMobile={handleClickSidebarMobile}
+        isSidebarMobile={isSidebarMobile}
+        setIsSidebarMobile={setIsSidebarMobile}
+      />
 
       <Box
         sx={{

@@ -31,86 +31,55 @@ const Comments = ({ user, socket }) => {
   const { data: session, status } = useSession();
 
   const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [dataComment, setDataComment] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
   const [isError, setIsError] = useState(false);
   const [messageError, setMessageError] = useState("");
   const refreshError = useRef();
-  // const callDataApi = async () => {
-  //   const results = await axios.get(
-  //     `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
-  //   );
-  //   return results.data;
-  // };
-  // const getListQuery = useQuery("get-repcomments-user", callDataApi, {
-  //   cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-  //   refetchOnWindowFocus: false,
-  // });
-  // const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  const callDataApi = async (user) => {
+    if (!user) {
+      return null;
+    }
+    const results = await axios.get(
+      `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
+    );
+    return results.data;
+  };
+  const getListQuery = useQuery(["get-repcomments-detail-user", user], () => callDataApi(user), {
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+  });
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
 
-  // useEffect(() => {
-  //   if (error && error.response) {
-  //     setMessageError(error.response.data.message);
-  //     setIsError(true);
-  //     refreshError.current = setTimeout(() => {
-  //       setIsError(false);
-  //       setMessageError("");
-  //     }, 5000);
-  //   }
-  // }, [isErrorQuery]);
-  // useEffect(() => {
-  //   if (data) {
-  //     if (data.results === limitResults) {
-  //       setCurrentPage((currentPage) => currentPage + 1);
-  //       setHasMore(true);
-  //     } else {
-  //       setHasMore(false);
-  //     }
-  //     setDataComment(data.data);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+    if (error && error.response) {
+      setMessageError(error.response.data.message);
+      setIsError(true);
+      refreshError.current = setTimeout(() => {
+        setIsError(false);
+        setMessageError("");
+      }, 5000);
+    }
+  }, [isErrorQuery]);
+  useEffect(() => {
+    if (data) {
+      if (data.results === limitResults) {
+        setCurrentPage((currentPage) => currentPage + 1);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+      setDataComment(data.data);
+    }
+  }, [data]);
 
   useEffect(() => {
     return () => {
       clearTimeout(refreshError.current);
     };
   }, []);
-
-  useEffect(() => {
-    const fetchAPI = async () => {
-      try {
-        setIsError(false);
-        setIsLoading(true);
-        const results = await axios.get(
-          `${hostServer}/api/v1/reply-comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
-        );
-        if (results.data.results === limitResults) {
-          setCurrentPage((currentPage) => currentPage + 1);
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
-        const dataNotify = results.data.data;
-
-        setDataComment(dataNotify);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.response) {
-          setMessageError(err.response.data.message);
-          setIsError(true);
-          refreshError.current = setTimeout(() => {
-            setIsError(false);
-            setMessageError("");
-          }, 5000);
-        }
-      }
-    };
-
-    fetchAPI();
-  }, [user]);
 
   const reFetch = async () => {
     try {
@@ -140,40 +109,12 @@ const Comments = ({ user, socket }) => {
       }
     }
   };
-  const handleClickDelete = async (id, codeId) => {
-    try {
-      setIsError(false);
-      await axios.post(`${hostServer}/api/v1/reply-comments/delete`, {
-        commentId: id,
-      });
-      socket.emit("get-all-comments", codeId);
 
-      const newArray = [...dataComment];
-      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataComment(newArrayRemoveItem);
-    } catch (err) {
-      if (err.response) {
-        setMessageError(err.response.data.message);
-        setIsError(true);
-        refreshError.current = setTimeout(() => {
-          setIsError(false);
-          setMessageError("");
-        }, 5000);
-      }
-    }
-  };
   const ActivitiesTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "2.5rem",
     fontWeight: "bold",
   });
-  const handleClickLinkComment = (item) => {
-    if (item && item.comment[0].code[0]) {
-      router.push(`/source-code/${item.comment[0].code[0].slug}`);
-    } else if (item && item.comment[0].blog[0]) {
-      router.push(`/blog/${item.comment[0].blog[0].slug}`);
-    }
-  };
 
   return (
     <>

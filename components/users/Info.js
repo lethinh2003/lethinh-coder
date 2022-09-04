@@ -223,14 +223,13 @@ const Info = ({ user, isLoading, account, socket }) => {
             display: "flex",
             flexDirection: "column",
             fontFamily: "Noto Sans",
-            gap: "5px",
           }}
         >
           {isLoading && (
             <>
-              <Skeleton variant="text" width={100} />
-              <Skeleton variant="text" width={150} />
-              <Skeleton variant="text" width={150} />
+              <Skeleton variant="text" width={100} height={20} />
+              <Skeleton variant="text" width={150} height={10} />
+              <Skeleton variant="text" width={150} height={10} />
             </>
           )}
           {!isLoading && dataUser && (
@@ -259,7 +258,7 @@ const Info = ({ user, isLoading, account, socket }) => {
                   fontWeight: "500",
                 }}
               >
-                Tham gia: {convertTime(dataUser.createdAt)}
+                Joined {convertTime(dataUser.createdAt)}
               </Typography>
             </>
           )}

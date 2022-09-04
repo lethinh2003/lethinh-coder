@@ -13,6 +13,8 @@ import ThemeLayout from "../components/ThemeLayout";
 import { ToastContainer } from "react-toastify";
 import SocketProvider from "../context";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { usePreserveScroll } from "../utils/usePreserveScroll.ts";
+
 const TopProgressBar = dynamic(
   () => {
     return import("../components/TopProgressBar");
@@ -22,6 +24,7 @@ const TopProgressBar = dynamic(
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  usePreserveScroll();
   return (
     <>
       <SessionProvider session={session} refetchOnWindowFocus={false}>

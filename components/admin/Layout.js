@@ -12,6 +12,7 @@ import Footer from "../homePage/Footer";
 import Navbar from "./Navbar";
 import Sidebar from "../homePage/Sidebar";
 import SidebarMobile from "./SidebarMobile";
+import CookieConsent from "react-cookie-consent";
 
 const Layout = (props) => {
   const { data: session, status } = useSession();

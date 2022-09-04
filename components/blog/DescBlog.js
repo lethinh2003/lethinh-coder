@@ -1,11 +1,11 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Link from "next/link";
 import { memo, useEffect } from "react";
 import convertTime from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
 import ShareButton from "../ShareSocial/ShareButton";
-import Link from "next/link";
 const DescBlog = (props) => {
   const { blogData } = props;
   const TagButton = styled(Box)({
@@ -119,6 +119,7 @@ const DescBlog = (props) => {
               <div className="content-html" dangerouslySetInnerHTML={{ __html: blogData.content }} />
             </Typography>
             <Reaction blogData={blogData} />
+
             <ShareButton blogData={blogData} />
           </Box>
         )}

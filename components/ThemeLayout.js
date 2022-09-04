@@ -109,6 +109,29 @@ const getDesignTokens = (mode) => ({
             preCode: "#000000",
           }),
     },
+    sidebarMobile: {
+      ...(mode === "dark"
+        ? {
+            background: {
+              default: "#0e1217",
+            },
+            item: {
+              backgroundColor: "",
+              backgroundColorActive: "#20262d",
+              backgroundColorHover: "#20262d",
+            },
+          }
+        : {
+            background: {
+              default: "#ffffff",
+            },
+            item: {
+              backgroundColor: "",
+              backgroundColorActive: "#eaebec",
+              backgroundColorHover: "#eaebec",
+            },
+          }),
+    },
     navItem: {
       ...(mode === "dark"
         ? {
@@ -208,17 +231,7 @@ const getDesignTokens = (mode) => ({
             }),
       },
     },
-    sidebarMobile: {
-      background: {
-        ...(mode === "light"
-          ? {
-              default: "#ffffff",
-            }
-          : {
-              default: "#201f1f",
-            }),
-      },
-    },
+
     button: {
       codeFree: "#f5e128",
       codeNotFree: "#21a6c1",
@@ -226,10 +239,12 @@ const getDesignTokens = (mode) => ({
     text: {
       ...(mode === "light"
         ? {
+            first: "#25396f",
             primary: grey[900],
             secondary: grey[800],
           }
         : {
+            first: "#ffffff",
             primary: "#fff",
             secondary: grey[500],
           }),
