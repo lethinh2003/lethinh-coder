@@ -1,13 +1,12 @@
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { Avatar, Badge, Box, IconButton, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import convertTime from "../../utils/convertTime";
-import { memo } from "react";
 import { styled } from "@mui/material/styles";
+import axios from "axios";
 import { useSession } from "next-auth/react";
-import { toast } from "react-toastify";
 import Link from "next/link";
+import { memo, useEffect, useState } from "react";
+import TimeAgo from "react-timeago";
+import { toast } from "react-toastify";
 import ItemRepComment from "./ItemRepComment";
 const ItemComment = (props) => {
   const { item, socket, blogData, handleClickReplyComment, handleDeleteComment } = props;
@@ -242,7 +241,7 @@ const ItemComment = (props) => {
                 fontSize: "1.2rem",
               }}
             >
-              {convertTime(item.createdAt)}
+              <TimeAgo date={item.createdAt} />
             </Typography>
             {status === "authenticated" && (
               <Typography
