@@ -1,10 +1,10 @@
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import convertTime from "../../utils/convertTime";
 
 const ItemCode = ({ item }) => {
@@ -101,7 +101,7 @@ const ItemCode = ({ item }) => {
             >
               💰{" "}
               {item.costs > 0 && (
-                <NumberFormat
+                <NumericFormat
                   value={item.costs}
                   displayType={"text"}
                   thousandSeparator={"."}
