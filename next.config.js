@@ -1,6 +1,5 @@
 module.exports = {
   reactStrictMode: true,
-
   optimizeFonts: false,
   images: {
     domains: ["i.imgur.com", "anonyviet.com"],
