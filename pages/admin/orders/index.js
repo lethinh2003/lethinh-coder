@@ -1,26 +1,10 @@
-import Layout from "../../../components/admin/Layout";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Skeleton,
-} from "@mui/material";
-import { HiTemplate } from "react-icons/hi";
-import { AiOutlineCheck, AiFillFileZip, AiOutlineUser } from "react-icons/ai";
-import { MdPendingActions } from "react-icons/md";
-import NumberFormat from "react-number-format";
-import { useEffect, useState } from "react";
+import { Box, Button, Card, IconButton, Skeleton, Typography } from "@mui/material";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { AiFillFileZip, AiOutlineCheck, AiOutlineUser } from "react-icons/ai";
+import { HiTemplate } from "react-icons/hi";
+import { MdPendingActions } from "react-icons/md";
+import Layout from "../../../components/admin/Layout";
 const Tools = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -154,7 +138,7 @@ const Tools = () => {
                     </Typography>
                   </Typography>
                   <Typography component="div" sx={{ fontFamily: "Noto Sans", fontSize: "40px", fontWeight: "bold" }}>
-                    <NumberFormat
+                    <NumericFormat
                       value={item.value}
                       displayType={"text"}
                       thousandSeparator={"."}

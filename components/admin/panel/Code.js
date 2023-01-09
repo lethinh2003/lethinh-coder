@@ -6,7 +6,7 @@ import axios from "axios";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import convertToTime from "../../../utils/convertTime";
@@ -76,7 +76,7 @@ const Code = () => {
       headerName: "Giá",
       width: 200,
       renderCell: (params) => (
-        <NumberFormat
+        <NumericFormat
           value={params.value}
           displayType={"text"}
           thousandSeparator={"."}
