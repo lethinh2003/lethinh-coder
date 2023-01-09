@@ -116,7 +116,7 @@ const CodesOfLabel = ({ label }) => {
         }}
       >
         <BlogTitle component="h1" ref={AllBlog}>
-          All Source Code : {label}
+          All Source Code: {label}
         </BlogTitle>
         <Box
           sx={{

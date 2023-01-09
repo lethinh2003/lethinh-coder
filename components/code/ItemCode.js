@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
 import { NumericFormat } from "react-number-format";
-import convertTime from "../../utils/convertTime";
+import ReactTimeago from "react-timeago";
 
 const ItemCode = ({ item }) => {
   const CardCode = styled(Card)(({ theme }) => ({
@@ -27,7 +27,6 @@ const ItemCode = ({ item }) => {
     padding: "20px 0",
   });
   const CardContentCodeTitle = styled(Typography)({
-    fontFamily: "Noto Sans",
     fontSize: "2rem",
     fontWeight: "bold",
     textTransform: "capitalize",
@@ -36,13 +35,15 @@ const ItemCode = ({ item }) => {
       opacity: 0.8,
     },
   });
+  const CardContentCodeDesc = styled(Typography)({
+    fontSize: "1.5rem",
+  });
 
   const TagButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "1.2rem",
+    fontSize: "1.3rem",
     borderRadius: "20px",
     textTransform: "lowercase",
-    fontFamily: "Noto Sans",
     color: "#4b5563",
     fontWeight: "bold",
     backgroundColor: "#e5e6e9",
@@ -84,19 +85,19 @@ const ItemCode = ({ item }) => {
               justifyContent: "space-between",
               flexWrap: "wrap",
               gap: "10px",
+              color: "text.secondary",
             }}
           >
             <Typography
               sx={{
-                fontSize: { xs: "1.4rem", md: "1.6rem" },
+                fontSize: "1.3rem",
               }}
             >
-              📆 {convertTime(item.createdAt)}
+              📆 <ReactTimeago date={item.createdAt} />
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: "1.4rem", md: "1.6rem" },
-                fontWeight: "bold",
+                fontSize: "1.3rem",
               }}
             >
               💰{" "}
@@ -118,7 +119,13 @@ const ItemCode = ({ item }) => {
             </CardContentCodeTitle>
           </Link>
 
-          <Typography sx={{ color: "#848c9b" }}>{item.desc}</Typography>
+          <CardContentCodeDesc
+            sx={{
+              color: "text.secondary",
+            }}
+          >
+            {item.desc}
+          </CardContentCodeDesc>
         </CardContentCode>
 
         <Box

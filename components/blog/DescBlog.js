@@ -2,15 +2,16 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import { memo, useEffect } from "react";
-import convertTime from "../../utils/convertTime";
+import TimeAgo from "react-timeago";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
 import ShareButton from "../ShareSocial/ShareButton";
+
 const DescBlog = (props) => {
   const { blogData } = props;
   const TagButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "1.2rem",
+    fontSize: "1.3rem",
     borderRadius: "20px",
     textTransform: "lowercase",
     fontFamily: "Noto Sans",
@@ -23,7 +24,7 @@ const DescBlog = (props) => {
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   useEffect(() => {
@@ -51,7 +52,6 @@ const DescBlog = (props) => {
           width: { xs: "100%", lg: "calc(100% - 260px)" },
         }}
       >
-        <TitleContent className="title">Desciption blog</TitleContent>
         {blogData && (
           <Box
             sx={{
@@ -74,23 +74,23 @@ const DescBlog = (props) => {
             </Typography>
             <Typography
               sx={{
-                fontWeight: "500",
+                color: "text.secondary",
               }}
             >
-              📆 Thời gian: {convertTime(blogData.createdAt)}
+              📆 Thời gian: <TimeAgo date={blogData.createdAt} />
             </Typography>
             {blogData.updatedAt && (
               <Typography
                 sx={{
-                  fontWeight: "500",
+                  color: "text.secondary",
                 }}
               >
-                📆 Cập nhật: {convertTime(blogData.updatedAt)}{" "}
+                📆 Cập nhật: <TimeAgo date={blogData.updatedAt} />
               </Typography>
             )}
             <Typography
               sx={{
-                fontWeight: "500",
+                color: "text.secondary",
               }}
             >
               🕐 {getReadingTime(blogData.content)} phút đọc

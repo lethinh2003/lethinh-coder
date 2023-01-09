@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 
-import Head from "next/head";
+import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import DescBlog from "../../components/blog/DescBlog";
@@ -43,25 +43,28 @@ const DetailSourceCode = (props) => {
     <>
       {blogData && (
         <>
-          <Head>
-            <title>{`${blogData.title} - LT Blog`}</title>
-            <meta name="description" content={blogData.desc} />
-
-            <meta name="keywords" content={`${blogData.keywords.join(", ")}`} />
-            <meta property="og:locale" content="vi_VN" />
-            <meta property="og:type" content="article" />
-            <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-            <meta property="og:title" content={`${blogData.title} - LT Blog`} />
-            <meta property="og:description" content={blogData.desc} />
-            <meta property="og:image" content={blogData.images[0]} />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta property="twitter:title" content={`${blogData.title} - LT Blog`} />
-            <meta property="twitter:description" content={blogData.desc} />
-            <meta property="twitter:creator" content={"Thinh Le"} />
-            <meta property="twitter:image" content={blogData.images[0]} />
-          </Head>
+          <NextSeo
+            title={`${blogData.title} - LT Blog`}
+            description={`${blogData.desc} - LT Blog`}
+            openGraph={{
+              type: "article",
+              locale: "vi_VN",
+              url: `${process.env.NEXTAUTH_URL}/blog/${blogData.slug}`,
+              images: [
+                {
+                  url: blogData.images[0],
+                  width: 700,
+                  height: 700,
+                  alt: `${blogData.desc} - LT Blog`,
+                },
+              ],
+            }}
+            twitter={{
+              handle: "Thinh Le",
+              site: `${process.env.NEXTAUTH_URL}/blog/${blogData.slug}`,
+              cardType: "summary_large_image",
+            }}
+          />
 
           <Layout>
             <Box

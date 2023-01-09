@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { memo } from "react";
 import { styled } from "@mui/material/styles";
+import { memo, useEffect, useState } from "react";
 
 const TableOfContent = (props) => {
   const { dataPost } = props;
@@ -21,11 +20,9 @@ const TableOfContent = (props) => {
     const eventScroll = () => {
       const c = document.documentElement.scrollTop || document.body.scrollTop;
       if (listContents.length > 0) {
-        if (c < listContents[0].offsetTop - listContents[0].offsetHeight) {
-          setIsContentPos("");
-        } else {
+        {
           listContents.map((item) => {
-            if (c >= item.offsetTop - item.offsetHeight) {
+            if (c >= item.offsetTop - item.offsetHeight - 18.675) {
               setIsContentPos(item.innerText);
             }
           });
@@ -39,11 +36,11 @@ const TableOfContent = (props) => {
   }, [listContents]);
 
   const handleClickContent = (item) => {
-    // window.scrollTo(0, item.offsetTop - item.offsetHeight * 2);
-    item.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    window.scrollTo(0, item.offsetTop - item.offsetHeight);
+    // item.scrollIntoView({
+    //   behavior: "smooth",
+    //   block: "start",
+    // });
   };
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
@@ -77,7 +74,7 @@ const TableOfContent = (props) => {
           }}
           className="title"
         >
-          Table of Contents
+          Contents
         </TitleContent>
         <Box
           className="tableofcontents"

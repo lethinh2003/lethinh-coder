@@ -1,12 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useState } from "react";
-import { AiOutlineCalendar } from "react-icons/ai";
-import convertTime from "../../utils/convertTime";
-import Email from "../auth/Email";
-import { memo, useEffect } from "react";
 import { styled } from "@mui/material/styles";
+import { memo, useEffect, useState } from "react";
+import ReactTimeago from "react-timeago";
+import Email from "../auth/Email";
 import ShareButton from "../ShareSocial/ShareButton";
-
 const DescCode = (props) => {
   const { sourceCode, status } = props;
   const [isEmailModal, setIsEmailModal] = useState(false);
@@ -17,7 +14,7 @@ const DescCode = (props) => {
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   useEffect(() => {
@@ -44,8 +41,6 @@ const DescCode = (props) => {
           flex: 1,
         }}
       >
-        <TitleContent className="title">Desciption code</TitleContent>
-
         <Box
           sx={{
             width: "100%",
@@ -70,10 +65,10 @@ const DescCode = (props) => {
           {sourceCode.updatedAt && (
             <Typography
               sx={{
-                fontWeight: "500",
+                color: "text.secondary",
               }}
             >
-              📅 Cập nhật: {convertTime(sourceCode.updatedAt)}{" "}
+              📅 Cập nhật: <ReactTimeago date={sourceCode.updatedAt} />
             </Typography>
           )}
           <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>

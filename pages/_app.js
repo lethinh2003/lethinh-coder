@@ -1,4 +1,5 @@
 import { SessionProvider } from "next-auth/react";
+import { DefaultSeo } from "next-seo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import "nprogress/nprogress.css";
@@ -13,7 +14,6 @@ import SocketProvider from "../context";
 import { store } from "../redux/reducers/store";
 import "../styles/globals.css";
 import "../styles/layout.scss";
-
 const TopProgressBar = dynamic(
   () => {
     return import("../components/TopProgressBar");
@@ -31,31 +31,51 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <Head>
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             <link rel="icon" type="image/x-icon" href="https://i.imgur.com/U0BdIic.png" />
-            <meta name="author" content="Thinh Le" />
-            <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-
-            {/* <title>LT Blog - Le Thinh Blog</title>
-
-          <meta name="description" content="LT Blog - Le Thinh Blog" />
-          <meta
-            name="keywords"
-            content="Thinhle, Le Thinh, lethinh2003, huynhobe, blog, laptrinhvien, it, cntt, source code free, source, code, game freefire, code game freefire, vong quay freefire, javascript"
-          />
-          <meta property="og:title" content="LT Blog - Le Thinh Blog" />
-
-          <meta property="og:description" content="" />
-          <meta property="og:type" content="website" /> */}
-
-            <meta property="og:image:width" content="1280" />
-            <meta property="og:image:height" content="720" />
           </Head>
           <Provider store={store}>
             <SocketProvider>
               <ThemeLayout>
                 <TopProgressBar />
+                <DefaultSeo
+                  title="LT Blog - Le Thinh Blog"
+                  description="Le Thinh Blog - Blog for dev"
+                  additionalMetaTags={[
+                    {
+                      property: "keywords",
+                      content:
+                        "Thinhle, Le Thinh Blog, lethinh blog, lethinh coder, Le Thinh, lethinh2003, huynhobe, blog, laptrinhvien, it, cntt, source code free, source, code, game freefire, code game freefire, vong quay freefire, javascript",
+                    },
+                    {
+                      property: "author",
+                      content: "Thinh Le",
+                    },
+                  ]}
+                  openGraph={{
+                    type: "website",
+                    locale: "vi_VN",
+                    url: process.env.NEXTAUTH_URL,
+                    siteName: "LT Blog - Le Thinh Blog",
+                    images: [
+                      {
+                        url: "https://i.imgur.com/ipoUilM.png",
+                        width: 700,
+                        height: 700,
+                        alt: "LT Blog - Le Thinh Blog",
+                      },
+                    ],
+                  }}
+                  facebook={{
+                    appId: process.env.FACEBOOK_APPID,
+                  }}
+                  twitter={{
+                    handle: "Thinh Le",
+                    site: process.env.NEXTAUTH_URL,
+                    cardType: "summary_large_image",
+                  }}
+                />
                 <Component {...pageProps} />
                 <ToastContainer
-                  position="bottom-left"
+                  position="top-center"
                   autoClose={5000}
                   hideProgressBar={false}
                   newestOnTop={false}

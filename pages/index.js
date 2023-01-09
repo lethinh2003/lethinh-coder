@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ContributeEmail from "../components/homePage/ContributeEmail";
@@ -32,24 +31,6 @@ const Home = (props) => {
 
   return (
     <>
-      <Head>
-        <title> {systemData.meta_title}</title>
-        <meta name="description" content={systemData.meta_desc} />
-        <meta name="keywords" content={systemData.meta_keywords} />
-        <meta name="author" content={systemData.meta_author} />
-        <meta property="og:locale" content="vi_VN" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={systemData.meta_thumbnail} />
-        <meta property="og:title" content={systemData.meta_title} />
-        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-        <meta property="og:description" content={systemData.meta_desc} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={systemData.meta_title} />
-        <meta property="twitter:description" content={systemData.meta_desc} />
-        <meta property="twitter:creator" content={systemData.meta_author} />
-        <meta property="twitter:image" content={systemData.meta_thumbnail} />
-      </Head>
-
       <Layout>
         <Introduce />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>

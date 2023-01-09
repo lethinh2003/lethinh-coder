@@ -2,13 +2,14 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { memo, useState } from "react";
+import { memo } from "react";
 const ItemReaction = ({ item, handleClickReation, dataBlog }) => {
   const ReactionButton = styled(Box)({
     boxShadow: "none",
     fontSize: "1.4rem",
     borderRadius: "30px",
     minWidth: "70px",
+    border: "1px solid ",
 
     color: "#0b9ad1",
     fontWeight: "bold",

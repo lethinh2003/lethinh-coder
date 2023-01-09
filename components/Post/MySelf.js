@@ -1,11 +1,11 @@
-import { Box, IconButton, Typography, Card, CardContent, CardMedia } from "@mui/material";
+import { Box, Card, CardContent, CardMedia, IconButton, Typography } from "@mui/material";
 
-import { SiZalo } from "react-icons/si";
-import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import { styled } from "@mui/material/styles";
-import { memo } from "react";
 import Image from "next/image";
+import { memo } from "react";
+import { SiZalo } from "react-icons/si";
 import { useSelector } from "react-redux";
 
 const MySelf = (props) => {
@@ -62,7 +62,7 @@ const MySelf = (props) => {
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   return (

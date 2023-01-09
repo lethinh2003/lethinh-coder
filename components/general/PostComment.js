@@ -83,7 +83,7 @@ const PostComment = (props) => {
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   return (

@@ -3,15 +3,14 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
-import Head from "next/head";
+import { NextSeo } from "next-seo";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "react-query";
 import { useSelector } from "react-redux";
 import FilterCode from "../../components/code/FilterCode";
 import ItemCode from "../../components/code/ItemCode";
 import Layout from "../../components/Layout";
-
-import { useInfiniteQuery } from "react-query";
 
 const SourceCode = () => {
   const filterValues = useSelector((state) => state.filterValueSourceCode);
@@ -85,32 +84,28 @@ const SourceCode = () => {
   });
   return (
     <>
-      <Head>
-        <title>{`Danh sách source code miễn phí và có phí - LT Blog`}</title>
-        <meta
-          name="description"
-          content="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
-        />
-        <meta property="og:locale" content="vi_VN" />
-        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-        <meta property="og:title" content={`Danh sách source code miễn phí và có phí - LT Blog`} />
-        <meta
-          property="og:description"
-          content="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://i.imgur.com/Zvzfhl7.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={`Danh sách source code miễn phí và có phí - LT Blog`} />
-        <meta
-          property="twitter:description"
-          content="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
-        />
-        <meta property="twitter:creator" content={"Thinh Le"} />
-        <meta property="twitter:image" content={"https://i.imgur.com/Zvzfhl7.png"} />
-      </Head>
+      <NextSeo
+        title="Danh sách source code - LT Blog"
+        description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi - Lethinh Blog"
+        openGraph={{
+          type: "website",
+          locale: "vi_VN",
+          url: `${process.env.NEXTAUTH_URL}/source-code`,
+          images: [
+            {
+              url: "https://i.imgur.com/t1ySawT.png",
+              width: 700,
+              height: 700,
+              alt: "Danh sách source code - LT Blog",
+            },
+          ],
+        }}
+        twitter={{
+          handle: "Thinh Le",
+          site: `${process.env.NEXTAUTH_URL}/source-code`,
+          cardType: "summary_large_image",
+        }}
+      />
       <Layout>
         <Box
           sx={{
@@ -131,7 +126,7 @@ const SourceCode = () => {
 
             <Typography color="text.primary">Source code</Typography>
           </Breadcrumbs>
-          <TitleContent className="title" sx={{ fontFamily: "Bebas Neue", fontSize: "4rem", fontWeight: "bold" }}>
+          <TitleContent className="title" sx={{ fontFamily: "Bebas Neue", fontSize: "2.5rem", fontWeight: "bold" }}>
             All Source Code
           </TitleContent>
 
@@ -240,11 +235,11 @@ const SourceCode = () => {
                 backgroundColor: "#374151",
                 padding: "15px",
                 borderRadius: "10px",
-                fontSize: "2rem",
+
                 color: "#ffffff",
               }}
             >
-              Đã hết danh sách 👏🏼
+              <Typography>Đã hết danh sách 👏🏼</Typography>
             </Box>
           )}
         </Box>

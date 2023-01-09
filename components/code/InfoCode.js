@@ -5,13 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
 import { NumericFormat } from "react-number-format";
-import convertTime from "../../utils/convertTime";
+import ReactTimeago from "react-timeago";
 const InfoCode = (props) => {
   const { sourceCode } = props;
   const TitleContent = styled(Typography)({
     fontFamily: "Bebas Neue",
     position: "relative",
-    fontSize: "3rem",
+    fontSize: "2.5rem",
     fontWeight: "bold",
   });
   const CodeButton = styled(Button)({
@@ -36,7 +36,7 @@ const InfoCode = (props) => {
   });
   const TagButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "1.2rem",
+    fontSize: "1.3rem",
     borderRadius: "20px",
     textTransform: "lowercase",
     fontFamily: "Noto Sans",
@@ -69,7 +69,6 @@ const InfoCode = (props) => {
             </Link>
             <Typography color="text.primary">{sourceCode.title}</Typography>
           </Breadcrumbs>
-          <TitleContent className="title">Trang thông tin code</TitleContent>
 
           <Box
             sx={{
@@ -148,7 +147,7 @@ const InfoCode = (props) => {
                   fontWeight: "500",
                 }}
               >
-                📅 Thời gian: {convertTime(sourceCode.createdAt)}{" "}
+                📅 Thời gian: <ReactTimeago date={sourceCode.createdAt} />
               </Typography>
               {sourceCode.labels.length > 0 && (
                 <Typography

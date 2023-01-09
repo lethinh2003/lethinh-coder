@@ -1,6 +1,5 @@
-import { grey } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
 import { getDarkMode } from "../redux/actions/getDarkMode";
@@ -84,7 +83,7 @@ const getDesignTokens = (mode) => ({
     },
   },
   typography: {
-    fontSize: 25,
+    fontSize: 21,
     fontFamily: ["Noto Sans", "League Spartan", "Bebas Neue", "IBM Plex Sans", "Poppins", "sans-serif"].join(","),
   },
   palette: {
@@ -96,6 +95,17 @@ const getDesignTokens = (mode) => ({
           }
         : {
             main: "#080808",
+          }),
+    },
+    secondary: {
+      ...(mode === "dark"
+        ? {
+            main: "#f9f7f0",
+            contrastText: "#a8b3cf",
+          }
+        : {
+            main: "#080808",
+            contrastText: "#525866",
           }),
     },
     background: {
@@ -240,13 +250,13 @@ const getDesignTokens = (mode) => ({
       ...(mode === "light"
         ? {
             first: "#25396f",
-            primary: grey[900],
-            secondary: grey[800],
+            primary: "#0e1217",
+            secondary: "#525866",
           }
         : {
             first: "#ffffff",
             primary: "#fff",
-            secondary: grey[500],
+            secondary: "#a8b3cf",
           }),
     },
   },
@@ -254,8 +264,6 @@ const getDesignTokens = (mode) => ({
 
 const ThemeLayout = (props) => {
   const getStatusDarkmode = useSelector((state) => state.darkMode.on);
-
-  console.log(getStatusDarkmode);
   const dispatch = useDispatch();
   useEffect(() => {
     const test = JSON.parse(localStorage.getItem("darkMode")) || false;

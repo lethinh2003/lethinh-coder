@@ -152,11 +152,11 @@ const AllBlogs = (props) => {
             backgroundColor: "#374151",
             padding: "15px",
             borderRadius: "10px",
-            fontSize: "2rem",
+
             color: "#ffffff",
           }}
         >
-          Đã hết danh sách 👏🏼
+          <Typography>Đã hết danh sách 👏🏼</Typography>
         </Box>
       )}
     </>

@@ -1,10 +1,10 @@
 import { Box, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import convertTime from "../../utils/convertTime";
+import ReactTimeago from "react-timeago";
 import getReadingTime from "../../utils/getReadingTime";
-import Image from "next/image";
 const NewBlogs = (props) => {
   const [newBlog, setNewBlog] = useState(props.newBlog);
 
@@ -99,24 +99,20 @@ const NewBlogs = (props) => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
               <Typography
                 sx={{
-                  fontSize: { xs: "1.4rem", md: "1.6rem" },
+                  fontSize: "1.3rem",
+                  color: "text.secondary",
                 }}
               >
-                📆 {convertTime(newBlog[0].createdAt)}
+                📆 <ReactTimeago date={newBlog[0].createdAt} />
               </Typography>
               <Link href={`blog/${newBlog[0].slug}`}>
-                <ChildTitleNewBlog
-                  sx={{
-                    fontSize: { xs: "1.6rem", md: "1.8rem" },
-                  }}
-                >
-                  {newBlog[0].title}
-                </ChildTitleNewBlog>
+                <ChildTitleNewBlog>{newBlog[0].title}</ChildTitleNewBlog>
               </Link>
               <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                 <Typography
                   sx={{
-                    fontSize: { xs: "1.4rem", md: "1.6rem" },
+                    fontSize: "1.3rem",
+                    color: "text.secondary",
                   }}
                 >
                   🕐 {getReadingTime(newBlog[0].content)} phút đọc
@@ -149,24 +145,20 @@ const NewBlogs = (props) => {
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                   <Typography
                     sx={{
-                      fontSize: { xs: "1.4rem", md: "1.6rem" },
+                      fontSize: "1.3rem",
+                      color: "text.secondary",
                     }}
                   >
-                    📆 {convertTime(item.createdAt)}
+                    📆 <ReactTimeago date={item.createdAt} />
                   </Typography>
                   <Link href={`blog/${item.slug}`}>
-                    <ChildTitleNewBlog
-                      sx={{
-                        fontSize: { xs: "1.6rem", md: "1.8rem" },
-                      }}
-                    >
-                      {item.title}
-                    </ChildTitleNewBlog>
+                    <ChildTitleNewBlog>{item.title}</ChildTitleNewBlog>
                   </Link>
                   <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <Typography
                       sx={{
-                        fontSize: { xs: "1.4rem", md: "1.6rem" },
+                        fontSize: "1.3rem",
+                        color: "text.secondary",
                       }}
                     >
                       🕐 {getReadingTime(item.content)} phút đọc

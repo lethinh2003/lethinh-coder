@@ -1,15 +1,14 @@
 import { useTheme } from "@emotion/react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Avatar, Box, Button, IconButton, Switch, Typography } from "@mui/material";
+import { Box, Button, IconButton, Switch, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getSystem } from "../../redux/actions/getSystem";
 import AvatarProfile from "./AvatarProfile";
 import Notify from "./Notify";
-import { useDispatch, useSelector } from "react-redux";
-import Image from "next/image";
-import { getSystem } from "../../redux/actions/getSystem";
 const Sidebar = (props) => {
   const { status, handleClickSidebarMobile, handleClickSwitch } = props;
   const theme = useTheme();
@@ -164,7 +163,14 @@ const Sidebar = (props) => {
           <Link href="/">
             <Box
               sx={{
-                display: { xs: "none", md: "block", width: "50px", height: "50px", position: "relative" },
+                display: {
+                  xs: "none",
+                  md: "block",
+                  width: "50px",
+                  height: "50px",
+                  position: "relative",
+                  cursor: "pointer",
+                },
               }}
             >
               <Image

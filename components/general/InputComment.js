@@ -134,6 +134,7 @@ const InputComment = (props) => {
         )}
         <Box
           sx={{
+            background: theme.palette.mode === "dark" ? grey[900] : grey[50],
             display: "flex",
             flexDirection: "column",
             border: `1px solid ${theme.palette.card.borderColor.default}`,
@@ -155,7 +156,7 @@ const InputComment = (props) => {
             }
             style={{
               height: "100px",
-              fontSize: "2rem",
+              fontSize: "1.5rem",
               background: theme.palette.mode === "dark" ? grey[900] : grey[50],
               color: theme.palette.mode === "dark" ? grey[300] : grey[900],
               border: isComment && comment.length < 5 ? "1px solid red" : "unset",

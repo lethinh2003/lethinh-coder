@@ -1,11 +1,11 @@
-import { Box, CardMedia, Typography, Button } from "@mui/material";
+import { Box, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import convertTime from "../../utils/convertTime";
-import getReadingTime from "../../utils/getReadingTime";
 import { memo } from "react";
-import { motion } from "framer-motion";
+import ReactTimeago from "react-timeago";
+import getReadingTime from "../../utils/getReadingTime";
 
 const ItemBlog = ({ item }) => {
   const BoxChild2NewBlog = styled(Box)(({ theme }) => ({
@@ -33,8 +33,7 @@ const ItemBlog = ({ item }) => {
   });
   const ChildDescNewBlog = styled(Typography)({
     fontFamily: "Noto Sans",
-    fontSize: "2rem",
-    color: "#848c9b",
+    fontSize: "1.5rem",
   });
 
   const Child2ImageNewBlog = styled(CardMedia)({
@@ -44,7 +43,7 @@ const ItemBlog = ({ item }) => {
   });
   const TagButton = styled(Box)({
     boxShadow: "none",
-    fontSize: "1.2rem",
+    fontSize: "1.3rem",
     borderRadius: "20px",
     textTransform: "lowercase",
     fontFamily: "Noto Sans",
@@ -88,35 +87,30 @@ const ItemBlog = ({ item }) => {
               alignItems: "center",
               justifyContent: "space-between",
               flexWrap: "wrap",
+              color: "text.secondary",
             }}
           >
             <Typography
               sx={{
-                fontSize: { xs: "1.4rem", md: "1.6rem" },
+                fontSize: "1.3rem",
               }}
             >
-              📆 {convertTime(item.createdAt)}
+              📆 <ReactTimeago date={item.createdAt} />
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: "1.4rem", md: "1.6rem" },
+                fontSize: "1.3rem",
               }}
             >
               🕐 {getReadingTime(item.content)} phút đọc
             </Typography>
           </Box>
           <Link href={`/blog/${item.slug}`}>
-            <ChildTitleNewBlog
-              sx={{
-                fontSize: { xs: "1.6rem", md: "1.8rem" },
-              }}
-            >
-              {item.title}
-            </ChildTitleNewBlog>
+            <ChildTitleNewBlog>{item.title}</ChildTitleNewBlog>
           </Link>
           <ChildDescNewBlog
             sx={{
-              fontSize: { xs: "1.6rem", md: "1.8rem" },
+              color: "text.secondary",
             }}
           >
             {item.desc}

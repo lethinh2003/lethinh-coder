@@ -1,8 +1,8 @@
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Fab from "@mui/material/Fab";
+import { styled } from "@mui/material/styles";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Zoom from "@mui/material/Zoom";
-import { styled } from "@mui/material/styles";
 
 const BackToTop = () => {
   const trigger = useScrollTrigger({
@@ -19,7 +19,7 @@ const BackToTop = () => {
   const ArrowButton = styled(KeyboardArrowUpIcon)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
 
-    fontSize: "8rem",
+    fontSize: "4rem",
     fontWeight: "bold",
 
     path: {
@@ -33,9 +33,9 @@ const BackToTop = () => {
     overflow: "hidden",
     bottom: "0",
     right: "0",
-    width: 80,
-    height: 80,
-    borderRadius: "15px",
+    width: 40,
+    height: 40,
+    borderRadius: "5px",
 
     "&:hover": {
       backgroundColor: "#0cc5e3",

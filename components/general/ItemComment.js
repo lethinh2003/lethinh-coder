@@ -3,6 +3,7 @@ import { Avatar, Badge, Box, IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { memo, useEffect, useState } from "react";
 import TimeAgo from "react-timeago";
 import { toast } from "react-toastify";
@@ -27,11 +28,11 @@ const ItemComment = (props) => {
     gap: "5px",
     borderRadius: "10px",
     padding: !isChild ? "10px" : null,
-    border: !isChild ? `1px solid ${theme.palette.card.borderColor.default}` : null,
-    backgroundColor: theme.palette.card.bgColor.default,
+    // border: !isChild ? `1px solid ${theme.palette.card.borderColor.default}` : null,
+    // backgroundColor: theme.palette.card.bgColor.default,
 
     "&:hover": {
-      border: !isChild ? `1px solid ${theme.palette.card.borderColor.hover}` : null,
+      // border: !isChild ? `1px solid ${theme.palette.card.borderColor.hover}` : null,
     },
     "&::after": {
       top: "60px",
@@ -146,17 +147,19 @@ const ItemComment = (props) => {
           }}
         >
           <Box>
-            <Avatar
-              sx={{
-                backgroundColor: (theme) => theme.palette.avatar.default,
-                borderRadius: "10px",
-                cursor: "pointer",
-              }}
-              alt={item.user[0].name}
-              src={item.user[0].avatar}
-            >
-              {item.user[0].name.charAt(0)}
-            </Avatar>
+            <Link href={`/users/${item.user[0].account}`}>
+              <Avatar
+                sx={{
+                  backgroundColor: (theme) => theme.palette.avatar.default,
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                }}
+                alt={item.user[0].name}
+                src={item.user[0].avatar}
+              >
+                {item.user[0].name.charAt(0)}
+              </Avatar>
+            </Link>
           </Box>
           <Box
             sx={{
@@ -177,12 +180,12 @@ const ItemComment = (props) => {
               <Typography key={i}>{itemm}</Typography>
             ))}
             <Box
-              color="text.secondary"
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "5px",
                 paddingTop: "5px",
+                color: "text.secondary",
               }}
             >
               <Typography
