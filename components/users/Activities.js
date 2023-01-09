@@ -1,11 +1,6 @@
-import { Box, Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useRef, useState } from "react";
-import Comments from "./Comments";
-import RepComments from "./RepComments";
+import { Box } from "@mui/material";
 import Head from "next/head";
+import Comments from "./Comments";
 const Activities = ({ user, socket }) => {
   return (
     <>
@@ -19,7 +14,6 @@ const Activities = ({ user, socket }) => {
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <Comments user={user} socket={socket} />
-          <RepComments user={user} socket={socket} />
         </Box>
       </Box>
     </>

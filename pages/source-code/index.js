@@ -2,14 +2,75 @@ import { Box, Button, Skeleton, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
+import { motion } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import FilterCode from "../../components/code/FilterCode";
 import ItemCode from "../../components/code/ItemCode";
 import Layout from "../../components/Layout";
-import { motion } from "framer-motion";
+
+import { useInfiniteQuery } from "react-query";
+
 const SourceCode = () => {
+  const filterValues = useSelector((state) => state.filterValueSourceCode);
+  const [cost, setCost] = useState(filterValues ? filterValues.costs : "costs");
+  const [date, setDate] = useState(filterValues ? filterValues.date : "-createdAt");
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const AllSourceCodeRef = useRef();
+  useEffect(() => {
+    setCost(filterValues ? filterValues.costs : "costs");
+    setDate(filterValues ? filterValues.date : "-createdAt");
+    console.log(filterValues, cost, date);
+  }, [filterValues]);
+
+  const callDataApi = async (sortQuery, pageParam) => {
+    const results = await axios.get(
+      `${process.env.ENDPOINT_SERVER}/api/v1/source-codes?sort=${sortQuery}&page=${pageParam}&results=${itemsPerPage}`
+    );
+    return results.data;
+  };
+
+  const {
+    data: dataQuery,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery(
+    ["get-all-source-codes", cost, date],
+    ({ pageParam = 1 }) => {
+      const arraySort = [];
+      if (cost) {
+        arraySort.push(cost);
+      }
+      if (date) {
+        arraySort.push(date);
+      }
+      const newArraySort = arraySort.join(",");
+      return callDataApi(newArraySort, pageParam);
+    },
+    {
+      cacheTime: Infinity,
+      refetchOnWindowFocus: false,
+      getNextPageParam: (_lastPage, pages) => {
+        if (pages[pages.length - 1].results === itemsPerPage) {
+          return pages.length + 1;
+        }
+        return undefined;
+      },
+    }
+  );
+
+  const ChildBoxLoading = styled(Box)({
+    display: "flex",
+    gap: "10px",
+    flexDirection: "column",
+  });
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "2.5rem",
@@ -21,100 +82,6 @@ const SourceCode = () => {
     position: "relative",
     fontSize: "3rem",
     fontWeight: "bold",
-  });
-  const [isEndLoadingMore, setIsEndLoadingMore] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [cost, setCost] = useState("costs");
-  const [date, setDate] = useState("-createdAt");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadMore, setIsLoadMore] = useState(false);
-  const [sourceCode, setSourceCode] = useState([]);
-  const [pageCount, setPageCount] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
-  const AllSourceCodeRef = useRef();
-  let countPage = useRef(1);
-
-  useEffect(() => {
-    const getSourceCode = async () => {
-      try {
-        setIsLoading(true);
-        const arraySort = [];
-        if (cost) {
-          arraySort.push(cost);
-        }
-        if (date) {
-          arraySort.push(date);
-        }
-        const newArraySort = arraySort.join(",");
-
-        const results = await axios.get(
-          `${process.env.ENDPOINT_SERVER}/api/v1/source-codes?sort=${newArraySort}&page=${countPage.current}&results=${itemsPerPage}`
-        );
-        if (results.data.results === itemsPerPage) {
-          setIsLoadMore(true);
-          // setPageCount((prev) => prev + 1);
-          countPage.current = countPage.current + 1;
-        } else {
-          setIsLoadMore(false);
-        }
-        if (results.data.results === 0) {
-          setIsEndLoadingMore(true);
-        } else {
-          setIsEndLoadingMore(false);
-        }
-        setSourceCode(results.data.data);
-        setIsLoading(false);
-      } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-      }
-    };
-    getSourceCode();
-  }, []);
-  const handleClickLoadMore = async () => {
-    try {
-      setIsLoadingMore(true);
-
-      setIsLoadMore(false);
-      const arraySort = [];
-      if (cost) {
-        arraySort.push(cost);
-      }
-      if (date) {
-        arraySort.push(date);
-      }
-      const newArraySort = arraySort.join(",");
-
-      const results = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/source-codes?sort=${newArraySort}&page=${countPage.current}&results=${itemsPerPage}`
-      );
-
-      if (results.data.results === itemsPerPage) {
-        setIsLoadMore(true);
-        // setPageCount((prev) => prev + 1);
-        countPage.current = countPage.current + 1;
-      } else {
-        setIsLoadMore(false);
-      }
-      if (results.data.results === 0) {
-        setIsEndLoadingMore(true);
-      } else {
-        setIsEndLoadingMore(false);
-      }
-      setIsLoadingMore(false);
-
-      setSourceCode((prev) => [...prev, ...results.data.data]);
-    } catch (err) {
-      console.log(err);
-      setIsLoadingMore(false);
-      setIsLoadMore(false);
-    }
-  };
-
-  const BoxChild2NewBlog = styled(Box)({
-    display: "flex",
-    gap: "10px",
-    flexDirection: "column",
   });
   return (
     <>
@@ -173,13 +140,8 @@ const SourceCode = () => {
             setCost={setCost}
             date={date}
             setDate={setDate}
+            isFetching={isFetching}
             isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            setSourceCode={setSourceCode}
-            countPage={countPage}
-            setIsLoadMore={setIsLoadMore}
-            itemsPerPage={itemsPerPage}
-            setIsEndLoadingMore={setIsEndLoadingMore}
           />
 
           <CodeTitle
@@ -219,7 +181,7 @@ const SourceCode = () => {
             >
               {isLoading &&
                 Array.from({ length: itemsPerPage }).map((item, i) => (
-                  <BoxChild2NewBlog key={i}>
+                  <ChildBoxLoading key={i}>
                     <Skeleton
                       sx={{
                         minWidth: { xs: "150px", md: "250px" },
@@ -233,17 +195,19 @@ const SourceCode = () => {
                       <Skeleton height={20} width={100} />
                       <Skeleton height={50} width={200} />
                     </Box>
-                  </BoxChild2NewBlog>
+                  </ChildBoxLoading>
                 ))}
               {!isLoading &&
-                sourceCode &&
-                sourceCode.length > 0 &&
-                sourceCode.map((item, i) => {
-                  return <ItemCode key={i} item={item} />;
-                })}
-              {isLoadingMore &&
+                dataQuery?.pages.map((group, i) => (
+                  <React.Fragment key={i}>
+                    {group.data.map((item) => {
+                      return <ItemCode key={item._id} item={item} />;
+                    })}
+                  </React.Fragment>
+                ))}
+              {isFetchingNextPage &&
                 Array.from({ length: itemsPerPage }).map((item, i) => (
-                  <BoxChild2NewBlog key={i}>
+                  <ChildBoxLoading key={i}>
                     <Skeleton
                       sx={{
                         minWidth: { xs: "150px", md: "250px" },
@@ -257,17 +221,17 @@ const SourceCode = () => {
                       <Skeleton height={20} width={100} />
                       <Skeleton height={50} width={200} />
                     </Box>
-                  </BoxChild2NewBlog>
+                  </ChildBoxLoading>
                 ))}
             </Box>
           </Box>
 
-          {isLoadMore && (
-            <Button variant="contained" onClick={() => handleClickLoadMore()}>
+          {hasNextPage && !isFetchingNextPage && (
+            <Button variant="contained" onClick={() => fetchNextPage()}>
               Load more
             </Button>
           )}
-          {isEndLoadingMore && (
+          {!hasNextPage && (
             <Box
               as={motion.div}
               initial={{ scale: 1 }}

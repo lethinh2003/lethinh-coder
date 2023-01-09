@@ -1,13 +1,13 @@
 import { Box, Breadcrumbs, Typography } from "@mui/material";
 import Head from "next/head";
-import NewBlogs from "../../components/blog/NewBlogs";
 import AllBlogs from "../../components/blog/AllBlogs";
+import NewBlogs from "../../components/blog/NewBlogs";
 
+import Link from "next/link";
 import Layout from "../../components/Layout";
 import dbConnect from "../../database/dbConnect";
 import Blog from "../../models/Blog";
 import System from "../../models/System";
-import Link from "next/link";
 const BlogComponent = (props) => {
   let { newBlog } = props;
   newBlog = JSON.parse(newBlog);

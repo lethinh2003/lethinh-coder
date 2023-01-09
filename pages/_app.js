@@ -1,19 +1,18 @@
 import { SessionProvider } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Head from "next/head";
+import "nprogress/nprogress.css";
 import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ThemeLayout from "../components/ThemeLayout";
+import SocketProvider from "../context";
 import { store } from "../redux/reducers/store";
 import "../styles/globals.css";
 import "../styles/layout.scss";
-import "nprogress/nprogress.css";
-import "react-toastify/dist/ReactToastify.css";
-import dynamic from "next/dynamic";
-import ThemeLayout from "../components/ThemeLayout";
-import { ToastContainer } from "react-toastify";
-import SocketProvider from "../context";
-import { QueryClientProvider, QueryClient } from "react-query";
-import { usePreserveScroll } from "../utils/usePreserveScroll.ts";
 
 const TopProgressBar = dynamic(
   () => {
@@ -24,11 +23,11 @@ const TopProgressBar = dynamic(
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  usePreserveScroll();
   return (
     <>
       <SessionProvider session={session} refetchOnWindowFocus={false}>
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
           <Head>
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             <link rel="icon" type="image/x-icon" href="https://i.imgur.com/U0BdIic.png" />

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AiFillFileZip, AiOutlineCheck, AiOutlineUser } from "react-icons/ai";
 import { HiTemplate } from "react-icons/hi";
 import { MdPendingActions } from "react-icons/md";
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import { useQuery } from "react-query";
 
 import { toast } from "react-toastify";
@@ -149,7 +149,7 @@ const Overview = ({ status }) => {
                 </Typography>
               </Typography>
               <Typography component="div" sx={{ fontFamily: "Noto Sans", fontSize: "40px", fontWeight: "bold" }}>
-                <NumberFormat value={item.value} displayType={"text"} thousandSeparator={"."} decimalSeparator={","} />
+                <NumericFormat value={item.value} displayType={"text"} thousandSeparator={"."} decimalSeparator={","} />
               </Typography>
 
               <Button variant="outlined" sx={{ fontFamily: "Noto Sans", fontSize: "20px", fontWeight: "bold" }}>

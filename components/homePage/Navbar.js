@@ -1,15 +1,12 @@
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import AttachmentIcon from "@mui/icons-material/Attachment";
-import HomeIcon from "@mui/icons-material/Home";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
-import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { FaBlog } from "react-icons/fa";
+import { useState } from "react";
 import { AiFillHome } from "react-icons/ai";
+import { FaBlog } from "react-icons/fa";
 import { MdSource } from "react-icons/md";
 const Navbar = (props) => {
   const { data: session, status } = useSession();

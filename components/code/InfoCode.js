@@ -1,15 +1,11 @@
-import { Box, Typography, CardContent, CardMedia, Button } from "@mui/material";
-import convertTime from "../../utils/convertTime";
+import { Box, Button, CardContent, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "next/link";
 import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
-import { AiFillFileZip, AiOutlineCalendar, AiOutlineEye, AiFillTags } from "react-icons/ai";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { BsCloudDownload } from "react-icons/bs";
-import { memo } from "react";
-import NumberFormat from "react-number-format";
 import Image from "next/image";
+import Link from "next/link";
+import { memo } from "react";
+import { NumericFormat } from "react-number-format";
+import convertTime from "../../utils/convertTime";
 const InfoCode = (props) => {
   const { sourceCode } = props;
   const TitleContent = styled(Typography)({
@@ -132,7 +128,7 @@ const InfoCode = (props) => {
                 }}
               >
                 💰 Phí tải:{" "}
-                <NumberFormat
+                <NumericFormat
                   value={sourceCode.costs}
                   displayType={"text"}
                   thousandSeparator={"."}

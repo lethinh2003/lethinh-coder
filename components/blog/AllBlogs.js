@@ -1,108 +1,53 @@
-import { Box, Button, CardMedia, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import ItemBlog from "./ItemBlog";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "react-query";
+import { toast } from "react-toastify";
+import ItemBlog from "./ItemBlog";
 
 const AllBlogs = (props) => {
-  // const [isLoading, setIsLoading] = useState(true);
-  const [isEndLoadingMore, setIsEndLoadingMore] = useState(false);
-
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isLoadMore, setIsLoadMore] = useState(false);
-  const [blogData, setBlogData] = useState([]);
-  const [currentItems, setCurrentItems] = useState(null);
-  const [pageCount, setPageCount] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const AllBlog = useRef();
-  const callDataApi = async () => {
+  const callDataApi = async ({ pageParam = 1 }) => {
     const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
+      `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageParam}&results=${itemsPerPage}`
     );
     return results.data;
   };
-  const getListQuery = useQuery("get-all-blogs", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery("get-all-blogs", callDataApi, {
+    cacheTime: Infinity,
     refetchOnWindowFocus: false,
+    getNextPageParam: (_lastPage, pages) => {
+      if (pages[pages.length - 1].results === itemsPerPage) {
+        return pages.length + 1;
+      }
+      return undefined;
+    },
   });
-  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
   useEffect(() => {
     if (error && error.response) {
       toast.error(error.response.data.message);
     }
   }, [isErrorQuery]);
-  useEffect(() => {
-    if (data) {
-      if (data.results === itemsPerPage) {
-        setIsLoadMore(true);
-        setPageCount((prev) => prev + 1);
-      } else {
-        setIsLoadMore(false);
-      }
-      if (data.results === 0) {
-        setIsEndLoadingMore(true);
-      } else {
-        setIsEndLoadingMore(false);
-      }
-      setBlogData(data.data);
-    }
-  }, [data]);
 
-  const handleClickLoadMore = async () => {
-    try {
-      setIsLoadingMore(true);
-      setIsLoadMore(false);
-      const results = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/blogs?page=${pageCount}&results=${itemsPerPage}`
-      );
-      if (results.data.results === itemsPerPage) {
-        setIsLoadMore(true);
-        setPageCount((prev) => prev + 1);
-      } else {
-        setIsLoadMore(false);
-      }
-      if (results.data.results === 0) {
-        setIsEndLoadingMore(true);
-      } else {
-        setIsEndLoadingMore(false);
-      }
-      setIsLoadingMore(false);
-
-      setBlogData((prev) => [...prev, ...results.data.data]);
-    } catch (err) {
-      setIsLoadingMore(false);
-      console.log(err);
-      setIsLoadMore(false);
-    }
-  };
-  const BoxChild2NewBlog = styled(Box)({
+  const ChildBoxLoading = styled(Box)({
     display: "flex",
     gap: "10px",
     flexDirection: "column",
   });
-  const ChildTitleNewBlog = styled(Typography)({
-    fontFamily: "Noto Sans",
-    fontSize: "20px",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    cursor: "pointer",
 
-    "&:hover": {
-      opacity: 0.8,
-    },
-  });
-  const ChildImageNewBlog = styled(CardMedia)({
-    width: "100%",
-    height: "100%",
-  });
-  const Child2ImageNewBlog = styled(CardMedia)({
-    minWidth: "250px",
-    height: "150px",
-    borderRadius: "10px",
-  });
   const BlogTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "2.5rem",
@@ -147,7 +92,7 @@ const AllBlogs = (props) => {
           >
             {isLoading &&
               Array.from({ length: itemsPerPage }).map((item, i) => (
-                <BoxChild2NewBlog key={i}>
+                <ChildBoxLoading key={i}>
                   <Skeleton
                     sx={{
                       minWidth: { xs: "150px", md: "250px" },
@@ -161,17 +106,19 @@ const AllBlogs = (props) => {
                     <Skeleton height={20} width={100} />
                     <Skeleton height={50} width={200} />
                   </Box>
-                </BoxChild2NewBlog>
+                </ChildBoxLoading>
               ))}
             {!isLoading &&
-              blogData &&
-              blogData.length > 0 &&
-              blogData.map((item, i) => {
-                return <ItemBlog key={i} item={item} />;
-              })}
-            {isLoadingMore &&
-              Array.from({ length: itemsPerPage }).map((item, i) => (
-                <BoxChild2NewBlog key={i}>
+              data?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                  {group.data.map((item) => (
+                    <ItemBlog key={item._id} item={item} />
+                  ))}
+                </React.Fragment>
+              ))}
+            {isFetchingNextPage &&
+              Array.from({ length: itemsPerPage }).map((_item, i) => (
+                <ChildBoxLoading key={i}>
                   <Skeleton
                     sx={{
                       minWidth: { xs: "150px", md: "250px" },
@@ -185,17 +132,18 @@ const AllBlogs = (props) => {
                     <Skeleton height={20} width={100} />
                     <Skeleton height={50} width={200} />
                   </Box>
-                </BoxChild2NewBlog>
+                </ChildBoxLoading>
               ))}
           </Box>
         </Box>
       </Box>
-      {isLoadMore && (
-        <Button variant="contained" onClick={() => handleClickLoadMore()}>
+      {hasNextPage && !isFetchingNextPage && (
+        <Button variant="contained" onClick={() => fetchNextPage()}>
           Load more
         </Button>
       )}
-      {isEndLoadingMore && (
+
+      {!hasNextPage && (
         <Box
           as={motion.div}
           initial={{ scale: 1 }}

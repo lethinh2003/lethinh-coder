@@ -1,14 +1,14 @@
-import { Avatar, Backdrop, Box, Fade, Modal, Skeleton, Typography } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { Avatar, Backdrop, Box, Fade, IconButton, Modal, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import axiosCustom from "../../configs/axios";
+import { getUser } from "../../redux/actions/getUser";
 import convertTime from "../../utils/convertTime";
 import LoadingBox from "../homePage/LoadingBox";
-import { getUser } from "../../redux/actions/getUser";
 const Info = ({ user, isLoading, account, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -138,10 +138,10 @@ const Info = ({ user, isLoading, account, socket }) => {
     <>
       <Box
         sx={{
-          minHeight: "340px",
+          minHeight: "200px",
           width: "100%",
 
-          padding: { xs: "40px 10px", md: "40px 20px" },
+          padding: { xs: "0px 10px", md: "0px 20px" },
           gap: "20px",
           display: "flex",
           alignItems: "center",
@@ -201,7 +201,11 @@ const Info = ({ user, isLoading, account, socket }) => {
               backgroundColor: (theme) => theme.palette.dialog.bgColor.default,
               borderRadius: "20px",
               padding: "10px",
-              height: "150px",
+
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "5px",
             }}
           >
             <AvatarPersonal
@@ -209,12 +213,14 @@ const Info = ({ user, isLoading, account, socket }) => {
                 borderRadius: "10px",
                 backgroundColor: (theme) => theme.palette.avatar.default,
               }}
-              onClick={handleOpen}
               alt={dataUser.name}
               src={dataUser.avatar}
             >
               {dataUser.name.charAt(0)}
             </AvatarPersonal>
+            <IconButton onClick={handleOpen}>
+              <EditIcon />
+            </IconButton>
           </Box>
         )}
         <Box

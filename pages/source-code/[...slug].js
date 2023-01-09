@@ -5,14 +5,12 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import CommentsCode from "../../components/code/CommentsCode";
 import DescCode from "../../components/code/DescCode";
-import ImagesCode from "../../components/code/ImagesCode";
 import InfoCode from "../../components/code/InfoCode";
-import MySelf from "../../components/Post/MySelf";
-import RelationCode from "../../components/code/RelationCode";
+import PostComment from "../../components/general/PostComment";
+import RelationPosts from "../../components/general/RelationPosts";
 import Layout from "../../components/Layout";
+import MySelf from "../../components/Post/MySelf";
 import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
 import dbConnect from "../../database/dbConnect";
@@ -140,9 +138,9 @@ const DetailSourceCode = (props) => {
                   {/* <ImagesCode sourceCode={sourceCode} /> */}
                 </Box>
               </Box>
-              <CommentsCode status={status} session={session} sourceCode={sourceCode} router={router} />
+              <PostComment status={status} session={session} postData={sourceCode} typePost={"code"} />
               <MySelf />
-              <RelationCode data={sourceCode} />
+              <RelationPosts data={sourceCode} typePost="code" />
               <Tag data={sourceCode} />
             </Box>
           </Layout>

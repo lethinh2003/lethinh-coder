@@ -12,11 +12,10 @@ import {
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useQuery } from "react-query";
 import SocketContext from "../../context/socket";
 import NotifyContent from "./NotifyContent";
-import { useQuery } from "react-query";
 
 const DataNotify = () => {
   const socket = useContext(SocketContext);
@@ -36,10 +35,10 @@ const DataNotify = () => {
     return results.data;
   };
   const getListQuery = useQuery("get-notifies-current-user", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+    cacheTime: Infinity,
     refetchOnWindowFocus: false,
   });
-  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  const { data, isLoading, isFetching, isError: isErrorQuery, error, refetch } = getListQuery;
   useEffect(() => {
     if (error && error.response) {
       setMessageError(error.response.data.message);
@@ -57,59 +56,9 @@ const DataNotify = () => {
     }
   }, [data]);
 
-  useEffect(() => {
-    const fetchAPI = async () => {
-      try {
-        setIsLoading(true);
-        setDataNoti([]);
-        setIsError(false);
-        const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-
-        const dataNotify = results.data.data;
-        setDataNoti(dataNotify);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.response) {
-          setMessageError(err.response.data.message);
-          setIsError(true);
-          refreshError.current = setTimeout(() => {
-            setIsError(false);
-            setMessageError("");
-          }, 5000);
-        }
-      }
-    };
-
-    // fetchAPI();
-  }, []);
-
   const handleClickNotify = () => {
     setIsClickNotify(!isClickNotify);
   };
-
-  // const handleClickDelete = async (id) => {
-  //   setIsError(false);
-  //   try {
-  //     setIsLoadingDelete(true)
-  //     await axios.post(`${hostServer}/api/v1/notifies/delete`, {
-  //       notifyId: id,
-  //     });
-  //     const newArray = [...dataNoti];
-  //     const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-  //     setDataNoti(newArrayRemoveItem);
-  //     setIsLoadingDelete(false)
-  //   } catch (err) {
-  //     if (err.response) {
-  //       setMessageError(err.response.data.message);
-  //       setIsError(true);
-  //       refreshError.current = setTimeout(() => {
-  //         setIsError(false);
-  //         setMessageError("");
-  //       }, 5000);
-  //     }
-  //   }
-  // };
 
   return (
     <>
@@ -165,15 +114,22 @@ const DataNotify = () => {
           </Typography>
         )}
         {!isLoading &&
-          dataNoti.length > 0 &&
-          dataNoti.map((item, i) => {
+          data?.data.map((item, i) => {
             let newContent = item.content;
             const content = item.content;
             if (content.includes("{name}")) {
               newContent = newContent.replace("{name}", item.account_send[0].name);
             }
 
-            return <NotifyContent key={i} item={item} handleClickNotify={handleClickNotify} newContent={newContent} />;
+            return (
+              <NotifyContent
+                key={i}
+                refetch={refetch}
+                item={item}
+                handleClickNotify={handleClickNotify}
+                newContent={newContent}
+              />
+            );
           })}
         {dataNoti.length >= 10 && (
           <Typography

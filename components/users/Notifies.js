@@ -1,165 +1,54 @@
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Dialog,
-  DialogTitle,
-  Fade,
-  IconButton,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Skeleton,
-  Typography,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, ListItem, ListItemAvatar, ListItemText, Skeleton, Typography } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import Head from "next/head";
+import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
+import { useInfiniteQuery } from "react-query";
 import NotifyContent from "../../components/notify/NotifyContent";
-import { useQuery } from "react-query";
-import Head from "next/head";
 const Notifies = ({ user, socket }) => {
   const hostServer = process.env.ENDPOINT_SERVER;
   const { data: session, status } = useSession();
-
-  const router = useRouter();
-  const [isClickNotify, setIsClickNotify] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-  const [dataNoti, setDataNoti] = useState([]);
-  const [numberNotify, setNumberNotify] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
-  const [isError, setIsError] = useState(false);
-  const [messageError, setMessageError] = useState("");
-  const refreshError = useRef();
-  const refreshSocket = useRef();
-  useEffect(() => {
-    socketInitializer();
-    return () => {
-      clearTimeout(refreshError.current);
-    };
-  }, []);
-  const callDataApi = async () => {
-    const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
+  const [dataNotifyLength, setDataNotifyLength] = useState(0);
+  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 10);
+  const callDataApi = async (pageParam) => {
+    const results = await axios.get(`${hostServer}/api/v1/notifies?page=${pageParam}&results=${limitResults}`);
     socket.emit("read-notify", user._id);
     return results.data;
   };
-  const getListQuery = useQuery("get-notifies-user", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
+
+  const {
+    data: dataQuery,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    fetchNextPage,
+  } = useInfiniteQuery(["get-notifies-user"], ({ pageParam = 1 }) => callDataApi(pageParam), {
+    cacheTime: Infinity,
     refetchOnWindowFocus: false,
+    getNextPageParam: (_lastPage, pages) => {
+      if (pages[pages.length - 1].results === limitResults) {
+        return pages.length + 1;
+      }
+      return undefined;
+    },
   });
-  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
   useEffect(() => {
-    if (error && error.response) {
-      setMessageError(error.response.data.message);
-      setIsError(true);
-      refreshError.current = setTimeout(() => {
-        setIsError(false);
-        setMessageError("");
-      }, 5000);
+    if (dataQuery) {
+      const dataLength = dataQuery.pages.reduce(
+        (a, b) => {
+          return { results: a.results + b.results };
+        },
+        { results: 0 }
+      );
+      setDataNotifyLength(dataLength.results);
     }
-  }, [isErrorQuery]);
-
-  useEffect(() => {
-    if (data) {
-      if (data.results === limitResults) {
-        setCurrentPage((currentPage) => currentPage + 1);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
-      setDataNoti(data.data);
-    }
-  }, [data]);
-
-  const socketInitializer = () => {
-    socket.emit("join-notify", session.user.id);
-    socket.emit("get-notify", session.user.id);
-  };
-  useEffect(() => {
-    const fetchAPI = async () => {
-      try {
-        setIsError(false);
-        setIsLoading(true);
-        const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-        socket.emit("read-notify", user._id);
-
-        if (results.data.results === limitResults) {
-          setCurrentPage((currentPage) => currentPage + 1);
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
-        const dataNotify = results.data.data;
-        setDataNoti(dataNotify);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.response) {
-          setMessageError(err.response.data.message);
-          setIsError(true);
-          refreshError.current = setTimeout(() => {
-            setIsError(false);
-            setMessageError("");
-          }, 5000);
-        }
-      }
-    };
-
-    // fetchAPI();
-  }, []);
-
-  const reFetch = async () => {
-    try {
-      setIsError(false);
-      const results = await axios.get(`${hostServer}/api/v1/notifies?page=${currentPage}&results=${limitResults}`);
-      if (results.data.results === limitResults) {
-        setCurrentPage((currentPage) => currentPage + 1);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
-
-      const dataNotify = results.data.data;
-      const newData = [...dataNoti, ...dataNotify];
-
-      setDataNoti(newData);
-    } catch (err) {
-      if (err.response) {
-        setMessageError(err.response.data.message);
-        setIsError(true);
-        refreshError.current = setTimeout(() => {
-          setIsError(false);
-          setMessageError("");
-        }, 5000);
-      }
-    }
-  };
-  const handleClickDelete = async (id) => {
-    try {
-      setIsError(false);
-      await axios.post(`${hostServer}/api/v1/notifies/delete`, {
-        notifyId: id,
-      });
-      const newArray = [...dataNoti];
-      const newArrayRemoveItem = newArray.filter((item) => item._id !== id);
-      setDataNoti(newArrayRemoveItem);
-    } catch (err) {
-      if (err.response) {
-        setMessageError(err.response.data.message);
-        setIsError(true);
-        refreshError.current = setTimeout(() => {
-          setIsError(false);
-          setMessageError("");
-        }, 5000);
-      }
-    }
-  };
+  }, [dataQuery]);
 
   return (
     <>
@@ -171,10 +60,21 @@ const Notifies = ({ user, socket }) => {
           paddingTop: "16px",
         }}
       >
+        {isErrorQuery && (
+          <Typography
+            sx={{
+              color: "#ea5e5e",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Error: {error && error.response ? `${error.response.data.message}` : "Something went wrong"}
+          </Typography>
+        )}
         <InfiniteScroll
-          dataLength={dataNoti.length}
-          next={reFetch}
-          hasMore={hasMore}
+          dataLength={dataNotifyLength}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
           loader={
             <Box
               sx={{
@@ -189,15 +89,23 @@ const Notifies = ({ user, socket }) => {
           endMessage={
             <Box
               sx={{
-                marginTop: "10px",
-                backgroundColor: "#374151",
-                padding: "15px",
-                borderRadius: "10px",
-                fontSize: "1.5rem",
-                color: "#ffffff",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
               }}
             >
-              Đã hết danh sách 👏🏼
+              <Box
+                sx={{
+                  marginTop: "10px",
+                  backgroundColor: "#374151",
+                  padding: "15px",
+                  borderRadius: "10px",
+                  fontSize: "1.5rem",
+                  color: "#ffffff",
+                }}
+              >
+                Đã hết danh sách 👏🏼
+              </Box>
             </Box>
           }
         >
@@ -220,22 +128,8 @@ const Notifies = ({ user, socket }) => {
                   </ListItemText>
                 </ListItem>
               ))}
-            {isError && (
-              <Fade in={isError}>
-                <Alert
-                  sx={{
-                    width: "100%",
-                    borderRadius: "20px",
-                    border: "1px solid #914b31",
-                  }}
-                  severity="error"
-                >
-                  <AlertTitle>Error</AlertTitle>
-                  {messageError} — <strong>try again!</strong>
-                </Alert>
-              </Fade>
-            )}
-            {!isLoading && dataNoti.length === 0 && !isError && (
+
+            {!isLoading && dataQuery?.pages[0].results === 0 && (
               <Typography
                 sx={{
                   width: "100%",
@@ -246,16 +140,18 @@ const Notifies = ({ user, socket }) => {
               </Typography>
             )}
             {!isLoading &&
-              dataNoti.length > 0 &&
-              dataNoti.map((item, i) => {
-                let newContent = item.content;
-                const content = item.content;
-                if (content.includes("{name}")) {
-                  newContent = newContent.replace("{name}", item.account_send[0].name);
-                }
-
-                return <NotifyContent key={i} item={item} newContent={newContent} />;
-              })}
+              dataQuery?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                  {group.data.map((item) => {
+                    let newContent = item.content;
+                    const content = item.content;
+                    if (content.includes("{name}")) {
+                      newContent = newContent.replace("{name}", item.account_send[0].name);
+                    }
+                    return <NotifyContent refetch={refetch} key={item._id} newContent={newContent} item={item} />;
+                  })}
+                </React.Fragment>
+              ))}
           </Box>
         </InfiniteScroll>
       </Box>

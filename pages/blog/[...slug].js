@@ -1,21 +1,21 @@
 import { Box } from "@mui/material";
-import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef } from "react";
-import CommentsBlog from "../../components/blog/CommentsBlog";
+import { useEffect, useRef, useState } from "react";
 import DescBlog from "../../components/blog/DescBlog";
 import InfoBlog from "../../components/blog/InfoBlog";
-import MySelf from "../../components/Post/MySelf";
+import PostComment from "../../components/general/PostComment";
+import RelationPosts from "../../components/general/RelationPosts";
 import Layout from "../../components/Layout";
+import MySelf from "../../components/Post/MySelf";
 import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
 import dbConnect from "../../database/dbConnect";
 import Blog from "../../models/Blog";
 import System from "../../models/System";
-import RelationBlogs from "../../components/blog/RelationBlogs";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   const timeRefLoading = useRef(null);
@@ -112,9 +112,9 @@ const DetailSourceCode = (props) => {
                   <TableOfContent dataPost={blogData} />
                 </Box>
               </Box>
-              <CommentsBlog status={status} session={session} blogData={blogData} router={router} />
+              <PostComment status={status} session={session} postData={blogData} typePost={"blog"} />
               <MySelf />
-              <RelationBlogs data={blogData} />
+              <RelationPosts data={blogData} typePost={"blog"} />
               <Tag data={blogData} />
             </Box>
           </Layout>

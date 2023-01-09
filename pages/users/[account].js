@@ -1,25 +1,23 @@
-import { Box } from "@mui/material";
+import { Box, Breadcrumbs, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import axios from "axios";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { useQuery } from "react-query";
 import Layout from "../../components/Layout";
 import Info from "../../components/users/Info";
 import Menu from "../../components/users/Menu";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { useContext } from "react";
 import SocketContext from "../../context/socket";
-import { useQuery } from "react-query";
 
 const AccountDetail = () => {
   const socket = useContext(SocketContext);
   const router = useRouter();
   const { account } = router.query;
-
-  const [user, setUser] = useState(null);
   const callDataApi = async (account) => {
     if (!account) {
-      return null;
+      return undefined;
     }
     const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/users?account=${account}`);
     return results.data;
@@ -27,20 +25,14 @@ const AccountDetail = () => {
   const getListQuery = useQuery(["get-detail-user", account], () => callDataApi(account), {
     cacheTime: Infinity,
     refetchOnWindowFocus: false,
-    staleTime: 0,
   });
   const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
-  useEffect(() => {
-    if (error && error.response) {
-      console.log(error);
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
-  useEffect(() => {
-    if (data) {
-      setUser(data.data);
-    }
-  }, [data]);
+
+  const BoxTitle = styled(Typography)({
+    fontFamily: "Noto sans",
+    fontSize: "2.5rem",
+    fontWeight: "bold",
+  });
 
   return (
     <>
@@ -49,22 +41,49 @@ const AccountDetail = () => {
       </Head>
 
       <Layout>
-        <>
-          <Box
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+            bgcolor: "background.default",
+            justifyContent: "center",
+            color: "text.primary",
+            gap: "10px",
+            padding: "40px 0px",
+          }}
+        >
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link style={{ color: "inherit" }} href="/">
+              Home
+            </Link>
+
+            <Typography color="text.primary">Profile</Typography>
+          </Breadcrumbs>
+
+          <BoxTitle
+            component="h1"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
-              bgcolor: "background.default",
-              justifyContent: "center",
-              color: "text.primary",
-              gap: "10px",
+              padding: { xs: "0px 10px", md: "0px 20px" },
+              alignSelf: "flex-start",
             }}
           >
-            <Info user={user} isLoading={isLoading} account={account} />
-            <Menu user={user} socket={socket} />
-          </Box>
-        </>
+            Trang cá nhân
+          </BoxTitle>
+          {isErrorQuery && (
+            <Typography
+              sx={{
+                color: "#ea5e5e",
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Error: {error && error.response ? `${error.response.data.message}` : "Something went wrong"}
+            </Typography>
+          )}
+          <Info user={data?.data} isLoading={isLoading} account={account} />
+          <Menu user={data?.data} socket={socket} />
+        </Box>
       </Layout>
     </>
   );

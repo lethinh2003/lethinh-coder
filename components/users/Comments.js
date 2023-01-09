@@ -1,112 +1,63 @@
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Fade,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Skeleton,
-  Typography,
-} from "@mui/material";
+import { Box, ListItem, ListItemAvatar, ListItemText, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ThreeDots } from "react-loading-icons";
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import CommentContent from "./CommentContent";
 const Comments = ({ user, socket }) => {
-  const router = useRouter();
-
   const hostServer = process.env.ENDPOINT_SERVER;
-  const { data: session, status } = useSession();
 
-  const [hasMore, setHasMore] = useState(false);
-  //const [isLoading, setIsLoading] = useState(false);
-  const [dataComment, setDataComment] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 100);
-  const [isError, setIsError] = useState(false);
-  const [messageError, setMessageError] = useState("");
-  const refreshError = useRef();
+  const [dataCommentLength, setDataCommentLength] = useState(0);
 
-  const callDataApi = async (user) => {
-    if (!user) {
+  const [limitResults, setLimitResults] = useState(process.env.LIMIT_RESULTS * 1 || 10);
+
+  const callDataApi = async (userID, pageParam) => {
+    if (!userID) {
       return null;
     }
     const results = await axios.get(
-      `${hostServer}/api/v1/comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
+      `${hostServer}/api/v1/comments?accountID=${userID}&page=${pageParam}&results=${limitResults}`
     );
     return results.data;
   };
 
-  const getListQuery = useQuery(["get-comments-detail-user", user], () => callDataApi(user), {
-    cacheTime: Infinity,
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-  });
-  const { data, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
-
-  useEffect(() => {
-    if (error && error.response) {
-      setMessageError(error.response.data.message);
-      setIsError(true);
-      refreshError.current = setTimeout(() => {
-        setIsError(false);
-        setMessageError("");
-      }, 5000);
+  const {
+    data: dataQuery,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    fetchNextPage,
+  } = useInfiniteQuery(
+    ["get-comments-detail-user", user.account],
+    ({ pageParam = 1 }) => callDataApi(user._id, pageParam),
+    {
+      cacheTime: Infinity,
+      refetchOnWindowFocus: false,
+      getNextPageParam: (_lastPage, pages) => {
+        if (pages[pages.length - 1].results === limitResults) {
+          return pages.length + 1;
+        }
+        return undefined;
+      },
     }
-  }, [isErrorQuery]);
+  );
   useEffect(() => {
-    if (data) {
-      if (data.results === limitResults) {
-        setCurrentPage((currentPage) => currentPage + 1);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
-      setDataComment(data.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(refreshError.current);
-    };
-  }, []);
-
-  const getCommentsByPage = async () => {
-    try {
-      setIsError(false);
-      const results = await axios.get(
-        `${hostServer}/api/v1/comments?accountID=${user._id}&page=${currentPage}&results=${limitResults}`
+    if (dataQuery) {
+      const dataLength = dataQuery.pages.reduce(
+        (a, b) => {
+          return { results: a.results + b.results };
+        },
+        { results: 0 }
       );
-      if (results.data.results === limitResults) {
-        setCurrentPage(currentPage + 1);
-        setHasMore(true);
-      } else {
-        setHasMore(false);
-      }
-
-      const dataNotify = results.data.data;
-      const newData = [...dataComment, ...dataNotify];
-
-      setDataComment(newData);
-    } catch (err) {
-      if (err.response) {
-        setMessageError(err.response.data.message);
-        setIsError(true);
-        refreshError.current = setTimeout(() => {
-          setIsError(false);
-          setMessageError("");
-        }, 5000);
-      }
+      setDataCommentLength(dataLength.results);
     }
-  };
-
+  }, [dataQuery]);
   const ActivitiesTitle = styled(Typography)({
     fontFamily: "Noto sans",
     fontSize: "2.5rem",
@@ -122,10 +73,21 @@ const Comments = ({ user, socket }) => {
           paddingTop: "16px",
         }}
       >
+        {isErrorQuery && (
+          <Typography
+            sx={{
+              color: "#ea5e5e",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            Error: {error && error.response ? `${error.response.data.message}` : "Something went wrong"}
+          </Typography>
+        )}
         <InfiniteScroll
-          dataLength={dataComment.length}
-          next={getCommentsByPage}
-          hasMore={hasMore}
+          dataLength={dataCommentLength}
+          next={fetchNextPage}
+          hasMore={hasNextPage}
           loader={
             <Box
               sx={{
@@ -137,18 +99,29 @@ const Comments = ({ user, socket }) => {
             </Box>
           }
           height={400}
+          style={{
+            marginBottom: "10px",
+          }}
           endMessage={
             <Box
               sx={{
-                marginTop: "10px",
-                backgroundColor: "#374151",
-                padding: "15px",
-                borderRadius: "10px",
-                fontSize: "1.5rem",
-                color: "#ffffff",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
               }}
             >
-              Đã hết danh sách 👏🏼
+              <Box
+                sx={{
+                  marginTop: "10px",
+                  backgroundColor: "#374151",
+                  padding: "15px",
+                  borderRadius: "10px",
+                  fontSize: "1.5rem",
+                  color: "#ffffff",
+                }}
+              >
+                Đã hết danh sách 👏🏼
+              </Box>
             </Box>
           }
         >
@@ -171,22 +144,8 @@ const Comments = ({ user, socket }) => {
                   </ListItemText>
                 </ListItem>
               ))}
-            {isError && (
-              <Fade in={isError}>
-                <Alert
-                  sx={{
-                    width: "100%",
-                    borderRadius: "20px",
-                    border: "1px solid #914b31",
-                  }}
-                  severity="error"
-                >
-                  <AlertTitle>Error</AlertTitle>
-                  {messageError} — <strong>try again!</strong>
-                </Alert>
-              </Fade>
-            )}
-            {!isLoading && dataComment.length === 0 && !isError && (
+
+            {!isLoading && dataQuery?.pages[0].results === 0 && (
               <Typography
                 sx={{
                   width: "100%",
@@ -197,13 +156,22 @@ const Comments = ({ user, socket }) => {
               </Typography>
             )}
             {!isLoading &&
-              dataComment.length > 0 &&
-              dataComment.map((item, i) => {
-                let newContent = item.content;
-                const content = item.content;
-
-                return <CommentContent key={i} newContent={newContent} item={item} socket={socket} user={user} />;
-              })}
+              dataQuery?.pages.map((group, i) => (
+                <React.Fragment key={i}>
+                  {group.data.map((item) => {
+                    return (
+                      <CommentContent
+                        refetch={refetch}
+                        key={item._id}
+                        newContent={item.content}
+                        item={item}
+                        socket={socket}
+                        user={user}
+                      />
+                    );
+                  })}
+                </React.Fragment>
+              ))}
           </Box>
         </InfiniteScroll>
       </Box>
