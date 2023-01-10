@@ -124,13 +124,7 @@ const Footer = () => {
           alignItems: "center",
         }}
       >
-        <Typography>Lethinh Blog © {new Date().getFullYear()}</Typography>
-        <Typography>
-          Github:{" "}
-          <a href="https://github.com/lethinh2003" target={"_blank"}>
-            lethinh2003
-          </a>
-        </Typography>
+        <Typography>LeThinh's Blog © {new Date().getFullYear()}</Typography>
       </Box>
     </>
   );

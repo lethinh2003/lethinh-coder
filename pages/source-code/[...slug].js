@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
@@ -19,12 +18,8 @@ import System from "../../models/System";
 const DetailSourceCode = (props) => {
   const { data: session, status } = useSession();
   const timeRefLoading = useRef(null);
-
   let { sourceBySlug, newSource, systemData } = props;
   const [sourceCode, setSourceCode] = useState(JSON.parse(sourceBySlug));
-  const [sourceCodeRelationship, setSourceCodeRelationship] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -38,16 +33,6 @@ const DetailSourceCode = (props) => {
     if (slug !== sourceCode.slug) {
       setSourceCode(data);
     }
-    const fetchAPI = async () => {
-      try {
-        const keywordRelationship = data.labels[Math.floor(Math.random() * data.labels.length)];
-        const resultsRelation = await axios.get(`/api/source-code/relation-code?keyword=${keywordRelationship}`);
-        setSourceCodeRelationship(resultsRelation.data.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    // fetchAPI();
   }, [router.query.slug]);
 
   return (
@@ -55,8 +40,8 @@ const DetailSourceCode = (props) => {
       {sourceCode && (
         <>
           <NextSeo
-            title={`${sourceCode.title} - LT Blog`}
-            description={`${sourceCode.desc} - LT Blog`}
+            title={`${sourceCode.title} - LeThinh Blog`}
+            description={`${sourceCode.desc} - LeThinh Blog`}
             openGraph={{
               type: "article",
               locale: "vi_VN",
@@ -66,7 +51,7 @@ const DetailSourceCode = (props) => {
                   url: sourceCode.images[0],
                   width: 700,
                   height: 700,
-                  alt: `${sourceCode.desc} - LT Blog`,
+                  alt: `${sourceCode.desc} - LeThinh Blog`,
                 },
               ],
             }}
@@ -134,9 +119,7 @@ const DetailSourceCode = (props) => {
                     alignItems: "center",
                     padding: { xs: "10px", md: "20px" },
                   }}
-                >
-                  {/* <ImagesCode sourceCode={sourceCode} /> */}
-                </Box>
+                ></Box>
               </Box>
               <PostComment status={status} session={session} postData={sourceCode} typePost={"code"} />
               <MySelf />

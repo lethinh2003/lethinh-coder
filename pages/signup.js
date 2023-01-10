@@ -1,50 +1,32 @@
-import axios from "axios";
-import Link from "next/link";
-import {
-  Button,
-  Box,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  IconButton,
-  Typography,
-  FormControl,
-  InputLabel,
-  Avatar,
-  Card,
-  CardActions,
-  CardContent,
-  TextField,
-  CardMedia,
-  Input,
-  Backdrop,
-  CircularProgress,
-  Alert,
-  AlertTitle,
-  Fade,
-  Snackbar,
-  InputAdornment,
-  OutlinedInput,
-} from "@mui/material";
-
-import ShowCodes from "../components/homePage/ShowCodes";
-import Head from "next/head";
-import Layout from "../components/Layout";
-import { FcGoogle } from "react-icons/fc";
-import { BsCheckSquare } from "react-icons/bs";
-import Introduce from "../components/homePage/Introduce";
-import { styled } from "@mui/material/styles";
-import { useForm, Controller } from "react-hook-form";
-import { signIn, useSession, getSession } from "next-auth/react";
-import { useEffect, useState, useRef } from "react";
-import { Bars } from "react-loading-icons";
-import { useRouter } from "next/router";
-import LoadingBox from "../components/homePage/LoadingBox";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  Fade,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import axios from "axios";
+import { getSession, signIn, useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
+import * as Yup from "yup";
+import LoadingBox from "../components/homePage/LoadingBox";
+import Layout from "../components/Layout";
 
 const Signup = () => {
   const { data: session, status } = useSession();
@@ -186,23 +168,28 @@ const Signup = () => {
 
   return (
     <>
-      <Head>
-        <title> Đăng ký tài khoản - LT Blog</title>
-        <meta name="description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="og:locale" content="vi_VN" />
-        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-        <meta property="og:title" content={`Đăng ký tài khoản - LT Blog`} />
-        <meta property="og:description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://i.imgur.com/0rWGRIi.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={`Đăng ký tài khoản - LT Blog`} />
-        <meta property="twitter:description" content="Đăng ký tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="twitter:creator" content={"Thinh Le"} />
-        <meta property="twitter:image" content={"https://i.imgur.com/0rWGRIi.png"} />
-      </Head>
+      <NextSeo
+        title="Đăng ký tài khoản - LeThinh Blog"
+        description="Đăng ký tài khoản thành viên vào website LeThinhg Blog"
+        openGraph={{
+          type: "website",
+          locale: "vi_VN",
+          url: `${process.env.NEXTAUTH_URL}/signup`,
+          images: [
+            {
+              url: "https://i.imgur.com/0rWGRIi.png",
+              width: 700,
+              height: 700,
+              alt: "Đăng ký tài khoản - LeThinh Blog",
+            },
+          ],
+        }}
+        twitter={{
+          handle: "Thinh Le",
+          site: `${process.env.NEXTAUTH_URL}/signup`,
+          cardType: "summary_large_image",
+        }}
+      />
       {status !== "authenticated" && (
         <>
           <Layout>

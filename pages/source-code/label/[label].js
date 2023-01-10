@@ -14,7 +14,7 @@ const BlogComponent = (props) => {
   return (
     <>
       <NextSeo
-        title={`Danh sách source code thuộc ${label}  - LT Blog`}
+        title={`Danh sách source code thuộc ${label}  - LeThinh Blog`}
         description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi - Lethinh Blog"
         openGraph={{
           type: "website",
@@ -25,7 +25,7 @@ const BlogComponent = (props) => {
               url: "https://i.imgur.com/t1ySawT.png",
               width: 700,
               height: 700,
-              alt: `Danh sách source code thuộc ${label}  - LT Blog`,
+              alt: `Danh sách source code thuộc ${label}  - LeThinh Blog`,
             },
           ],
         }}

@@ -44,8 +44,8 @@ const DetailSourceCode = (props) => {
       {blogData && (
         <>
           <NextSeo
-            title={`${blogData.title} - LT Blog`}
-            description={`${blogData.desc} - LT Blog`}
+            title={`${blogData.title} - LeThinh Blog`}
+            description={`${blogData.desc} - LeThinh Blog`}
             openGraph={{
               type: "article",
               locale: "vi_VN",
@@ -55,7 +55,7 @@ const DetailSourceCode = (props) => {
                   url: blogData.images[0],
                   width: 700,
                   height: 700,
-                  alt: `${blogData.desc} - LT Blog`,
+                  alt: `${blogData.desc} - LeThinh Blog`,
                 },
               ],
             }}

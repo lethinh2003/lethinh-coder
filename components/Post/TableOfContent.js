@@ -60,7 +60,7 @@ const TableOfContent = (props) => {
           justifyContent: "center",
           color: "text.primary",
           gap: "10px",
-          padding: "40px 0",
+          paddingTop: "40px",
           position: "-webkit-sticky",
           position: "sticky",
           top: 5,

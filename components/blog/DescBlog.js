@@ -1,12 +1,12 @@
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Image from "next/image";
 import Link from "next/link";
 import { memo, useEffect } from "react";
 import TimeAgo from "react-timeago";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
 import ShareButton from "../ShareSocial/ShareButton";
-
 const DescBlog = (props) => {
   const { blogData } = props;
   const TagButton = styled(Box)({
@@ -48,7 +48,7 @@ const DescBlog = (props) => {
           justifyContent: "center",
           color: "text.primary",
           gap: "10px",
-          padding: "40px 0",
+
           width: { xs: "100%", lg: "calc(100% - 260px)" },
         }}
       >
@@ -68,7 +68,7 @@ const DescBlog = (props) => {
           >
             <Typography
               component={"h1"}
-              sx={{ fontFamily: "Noto Sans", fontSize: { xs: "2rem", lg: "3.5rem" }, fontWeight: "bold" }}
+              sx={{ fontFamily: "Noto Sans", fontSize: { xs: "3.5rem" }, fontWeight: "bold" }}
             >
               {blogData.title}
             </Typography>
@@ -114,6 +114,38 @@ const DescBlog = (props) => {
                   </TagButton>
                 </Link>
               ))}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                gap: "20px",
+                width: "100%",
+                padding: "20px",
+              }}
+            >
+              <Box
+                sx={{
+                  height: { xs: "300px" },
+
+                  width: "100%",
+                  maxWidth: "600px",
+                  borderRadius: "10px",
+                  objectFit: "cover",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <Image
+                  src={blogData.images[0]}
+                  layout="fill"
+                  objectFit="contain"
+                  alt={blogData.title}
+                  placeholder="blur"
+                  blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                />
+              </Box>
             </Box>
             <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
               <div className="content-html" dangerouslySetInnerHTML={{ __html: blogData.content }} />

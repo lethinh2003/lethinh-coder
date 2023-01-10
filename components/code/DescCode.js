@@ -36,7 +36,7 @@ const DescCode = (props) => {
           justifyContent: "center",
           color: "text.primary",
           gap: "10px",
-          padding: "40px 0",
+
           width: { xs: "100%", lg: "calc(100% - 260px)" },
           flex: 1,
         }}
@@ -56,10 +56,7 @@ const DescCode = (props) => {
           }}
         >
           <Email isEmailModal={isEmailModal} setIsEmailModal={setIsEmailModal} sourceCode={sourceCode} />
-          <Typography
-            component={"h1"}
-            sx={{ fontFamily: "Noto Sans", fontSize: { xs: "2rem", lg: "3.5rem" }, fontWeight: "bold" }}
-          >
+          <Typography component={"h1"} sx={{ fontFamily: "Noto Sans", fontSize: { xs: "3.5rem" }, fontWeight: "bold" }}>
             {sourceCode.title}
           </Typography>
           {sourceCode.updatedAt && (

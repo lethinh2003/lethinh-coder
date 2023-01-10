@@ -33,7 +33,6 @@ const FilterCode = (props) => {
     setDate(event.target.value);
   };
   const handleClickFilter = () => {
-    // queryClient.invalidateQueries(["get-all-source-codes", cost, date]);
     dispatch(setFilterValueSourceCode({ costs: cost, date }));
   };
 

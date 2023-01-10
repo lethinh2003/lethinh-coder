@@ -9,9 +9,7 @@ const CodesOfLabel = ({ label }) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isLoadMore, setIsLoadMore] = useState(false);
   const [souceCode, setSouceCode] = useState([]);
-  const [currentItems, setCurrentItems] = useState(null);
-  const [pageCount, setPageCount] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(process.env.LIMIT_RESULTS * 1 || 10);
   const AllBlog = useRef();
   const currentPage = useRef(1);
   useEffect(() => {

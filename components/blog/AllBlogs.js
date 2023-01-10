@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import ItemBlog from "./ItemBlog";
 
 const AllBlogs = (props) => {
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(process.env.LIMIT_RESULTS * 1 || 10);
   const AllBlog = useRef();
   const callDataApi = async ({ pageParam = 1 }) => {
     const results = await axios.get(

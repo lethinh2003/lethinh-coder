@@ -6,7 +6,6 @@ import {
   AlertTitle,
   Box,
   Button,
-  CardMedia,
   Fade,
   FormControl,
   IconButton,
@@ -16,19 +15,18 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { signIn, useSession, getSession } from "next-auth/react";
-import Head from "next/head";
+import { getSession, signIn, useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import LoadingBox from "../components/homePage/LoadingBox";
 import Layout from "../components/Layout";
-import { getUser } from "../redux/actions/getUser";
-import { useDispatch } from "react-redux";
-import Image from "next/image";
 const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -162,23 +160,28 @@ const Login = () => {
   });
   return (
     <>
-      <Head>
-        <title> Đăng nhập tài khoản - LT Blog</title>
-        <meta name="description" content="Đăng nhập tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="og:locale" content="vi_VN" />
-        <meta property="fb:app_id" content={process.env.FACEBOOK_APPID} />
-        <meta property="og:title" content={`Đăng nhập tài khoản - LT Blog`} />
-        <meta property="og:description" content="Đăng nhập tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://i.imgur.com/LW82HKR.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={`Đăng nhập tài khoản - LT Blog`} />
-        <meta property="twitter:description" content="Đăng nhập tài khoản thành viên vào website LeThinhg Blog" />
-        <meta property="twitter:creator" content={"Thinh Le"} />
-        <meta property="twitter:image" content={"https://i.imgur.com/LW82HKR.png"} />
-      </Head>
+      <NextSeo
+        title="Đăng nhập tài khoản - LeThinh Blog"
+        description="Đăng nhập tài khoản thành viên vào website LeThinhg Blog"
+        openGraph={{
+          type: "website",
+          locale: "vi_VN",
+          url: `${process.env.NEXTAUTH_URL}/login`,
+          images: [
+            {
+              url: "https://i.imgur.com/LW82HKR.png",
+              width: 700,
+              height: 700,
+              alt: "Đăng nhập tài khoản - LeThinh Blog",
+            },
+          ],
+        }}
+        twitter={{
+          handle: "Thinh Le",
+          site: `${process.env.NEXTAUTH_URL}/login`,
+          cardType: "summary_large_image",
+        }}
+      />
       {status !== "authenticated" && (
         <>
           <Layout>

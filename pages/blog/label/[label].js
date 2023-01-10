@@ -14,7 +14,7 @@ const BlogComponent = (props) => {
   return (
     <>
       <NextSeo
-        title={`Blog lập trình viên về ${label} - LT Blog`}
+        title={`Blog lập trình viên về ${label} - LeThinh Blog`}
         description="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog"
         openGraph={{
           type: "website",
@@ -25,7 +25,7 @@ const BlogComponent = (props) => {
               url: "https://i.imgur.com/ipoUilM.png",
               width: 700,
               height: 700,
-              alt: `Blog lập trình viên về ${label} - LT Blog`,
+              alt: `Blog lập trình viên về ${label} - LeThinh Blog`,
             },
           ],
         }}

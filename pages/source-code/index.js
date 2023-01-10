@@ -16,7 +16,7 @@ const SourceCode = () => {
   const filterValues = useSelector((state) => state.filterValueSourceCode);
   const [cost, setCost] = useState(filterValues ? filterValues.costs : "costs");
   const [date, setDate] = useState(filterValues ? filterValues.date : "-createdAt");
-  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [itemsPerPage, setItemsPerPage] = useState(process.env.LIMIT_RESULTS * 1 || 10);
   const AllSourceCodeRef = useRef();
   useEffect(() => {
     setCost(filterValues ? filterValues.costs : "costs");
@@ -85,7 +85,7 @@ const SourceCode = () => {
   return (
     <>
       <NextSeo
-        title="Danh sách source code - LT Blog"
+        title="Danh sách source code - LeThinh Blog"
         description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi - Lethinh Blog"
         openGraph={{
           type: "website",
@@ -96,7 +96,7 @@ const SourceCode = () => {
               url: "https://i.imgur.com/t1ySawT.png",
               width: 700,
               height: 700,
-              alt: "Danh sách source code - LT Blog",
+              alt: "Danh sách source code - LeThinh Blog",
             },
           ],
         }}

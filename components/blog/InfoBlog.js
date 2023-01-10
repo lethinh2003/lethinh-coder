@@ -1,9 +1,7 @@
-import { Box, Button, CardMedia, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import { styled } from "@mui/material/styles";
 import Link from "next/link";
 import { memo } from "react";
-import Image from "next/image";
 const InfoBlog = (props) => {
   const { blogData } = props;
   return (
@@ -29,38 +27,6 @@ const InfoBlog = (props) => {
             </Link>
             <Typography color="text.primary">{blogData.title}</Typography>
           </Breadcrumbs>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "20px",
-              width: "100%",
-              padding: "20px",
-            }}
-          >
-            <Box
-              sx={{
-                height: { xs: "200px", md: "300px", lg: "500px" },
-
-                width: "100%",
-                borderRadius: "10px",
-                objectFit: "cover",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              <Image
-                src={blogData.images[0]}
-                layout="fill"
-                objectFit="cover"
-                alt={blogData.title}
-                placeholder="blur"
-                blurDataURL="https://i.imgur.com/HYNKD6V.png"
-              />
-            </Box>
-          </Box>
         </Box>
       )}
     </>

@@ -11,7 +11,7 @@ const BlogsOfLabel = ({ label }) => {
   const [blogData, setBlogData] = useState([]);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(process.env.LIMIT_RESULTS * 1 || 10);
   const AllBlog = useRef();
   const currentPage = useRef(1);
   useEffect(() => {
@@ -180,30 +180,6 @@ const BlogsOfLabel = ({ label }) => {
                 </BoxChild2NewBlog>
               ))}
           </Box>
-          {/* {isLoading &&
-          Array.from({ length: 5 }).map((item, i) => (
-            <BoxChild2NewBlog key={i}>
-              <Skeleton
-                sx={{
-                  minWidth: { xs: "150px", md: "250px" },
-                  height: { xs: "100px", md: "150px" },
-                  borderRadius: "10px",
-                }}
-                variant="rectangular"
-              />
-
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                <Skeleton height={20} width={100} />
-                <Skeleton height={50} width={200} />
-              </Box>
-            </BoxChild2NewBlog>
-          ))}
-        {!isLoading &&
-          blogData &&
-          blogData.length > 0 &&
-          blogData.map((item, i) => {
-            return <ItemBlog key={i} item={item} />;
-          })} */}
         </Box>
       </Box>
       {isLoadMore && (

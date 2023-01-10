@@ -1,6 +1,5 @@
-import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { memo } from "react";
 
@@ -32,7 +31,7 @@ const Introduce = (props) => {
     color: "#fff",
   });
   const IntroduceDesc = styled(Typography)({
-    fontSize: "2rem",
+    fontSize: "1.5rem",
     fontFamily: "Noto Sans",
     color: "#fff",
   });
@@ -57,7 +56,7 @@ const Introduce = (props) => {
             justifyContent: "space-between",
             color: "text.primary",
             gap: "10px",
-            padding: "10px 20px",
+            padding: { xs: "10px", md: "10px 20px" },
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
           }}
@@ -78,22 +77,12 @@ const Introduce = (props) => {
               <CardContent>
                 <IntroduceTitle
                   sx={{
-                    fontSize: { xs: "2.5rem", md: "3rem" },
+                    fontSize: { xs: "1.5rem", md: "2rem" },
                   }}
-                  // as={motion.div}
-                  // initial={{ opacity: 0, scale: 1 }}
-                  // animate={{ opacity: 1, scale: 1.04, y: [-100, 0] }}
                 >
                   Tải xuống mã nguồn miễn phí
                 </IntroduceTitle>
-                <IntroduceDesc
-                  variant="span"
-                  // as={motion.div}
-                  // initial={{ opacity: 0 }}
-                  // animate={{ opacity: 1, scale: 1.04, y: [100, 0] }}
-                >
-                  Hệ thống chia sẻ mã nguồn miễn phí, chất lượng
-                </IntroduceDesc>
+                <IntroduceDesc variant="span">Hệ thống chia sẻ mã nguồn miễn phí, chất lượng</IntroduceDesc>
               </CardContent>
               <CardActions
                 sx={{
@@ -145,15 +134,7 @@ const Introduce = (props) => {
             >
               <Box>
                 <CardContent>
-                  <IntroduceDesc
-                    variant="span"
-                    // as={motion.div}
-                    // initial={{ opacity: 0 }}
-                    // animate={{ opacity: 1, scale: 1.04, x: [100, 0] }}
-                    // transition={{ ease: "easeOut", duration: 1 }}
-                  >
-                    Các bài blog đa dạng, hấp dẫn
-                  </IntroduceDesc>
+                  <IntroduceDesc variant="span">Các bài blog đa dạng, hấp dẫn</IntroduceDesc>
                 </CardContent>
                 <CardActions
                   sx={{
@@ -192,15 +173,7 @@ const Introduce = (props) => {
             >
               <Box>
                 <CardContent>
-                  <IntroduceDesc
-                    variant="span"
-                    // as={motion.div}
-                    // initial={{ opacity: 0 }}
-                    // animate={{ opacity: 1, scale: 1.04, y: [50, 0] }}
-                    // transition={{ ease: "easeOut", duration: 1 }}
-                  >
-                    Chia sẻ các thủ thuật máy tính
-                  </IntroduceDesc>
+                  <IntroduceDesc variant="span">Chia sẻ các thủ thuật máy tính</IntroduceDesc>
                 </CardContent>
                 <CardActions
                   sx={{
@@ -226,6 +199,90 @@ const Introduce = (props) => {
                 alt="Lethinh blog"
               />
             </Card>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            gap: "10px",
+            padding: { xs: "10px", md: "10px 20px" },
+          }}
+        >
+          <Avatar
+            alt="Le Van Thinh - LeThinh Blog"
+            sx={{ width: 128, height: 128 }}
+            src={"https://i.imgur.com/i5MCT4h.jpg"}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "5px",
+              color: "text.secondary",
+            }}
+          >
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "2rem",
+              }}
+            >
+              Hello👋, I'm Le Van Thinh
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+              }}
+            >
+              I currently study at HoChiMinh University of Education (HCMUE) with Information Technology majors 👨‍💻.
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+              }}
+            >
+              I 💕 Website Technology, especially ReactJS, NextJS, bra bra...
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+              }}
+            >
+              Welcome to my blog where I share about source code, my daily life hehe.
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+              }}
+            >
+              If you like any blog or any source code, let's share it for somebody 🤲.
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "2rem",
+              }}
+            >
+              Follow me 😎:{" "}
+              <a
+                href="https://www.facebook.com/thinhvle2210"
+                target={"_blank"}
+                style={{
+                  color: "#f06668",
+                }}
+              >
+                Facebook
+              </a>
+              ,{" "}
+              <a
+                target={"_blank"}
+                href="https://github.com/lethinh2003"
+                style={{
+                  color: "#f06668",
+                }}
+              >
+                Github
+              </a>
+            </Typography>
           </Box>
         </Box>
       </Box>
