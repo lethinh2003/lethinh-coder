@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import { DefaultSeo } from "next-seo";
 import dynamic from "next/dynamic";
@@ -14,6 +15,7 @@ import SocketProvider from "../context";
 import { store } from "../redux/reducers/store";
 import "../styles/globals.css";
 import "../styles/layout.scss";
+
 const TopProgressBar = dynamic(
   () => {
     return import("../components/TopProgressBar");
@@ -85,6 +87,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
                   draggable
                   pauseOnHover={false}
                 />
+                <Analytics />
               </ThemeLayout>
             </SocketProvider>
           </Provider>
