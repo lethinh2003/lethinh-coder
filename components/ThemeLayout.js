@@ -2,6 +2,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
+import useAuth from "../hooks/useAuth";
 import { getDarkMode } from "../redux/actions/getDarkMode";
 import BackToTop from "./homePage/BackToTop";
 
@@ -263,6 +264,7 @@ const getDesignTokens = (mode) => ({
 });
 
 const ThemeLayout = (props) => {
+  const isAuthenticated = useAuth(true);
   const getStatusDarkmode = useSelector((state) => state.darkMode.on);
   const dispatch = useDispatch();
   useEffect(() => {

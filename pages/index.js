@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Layout from "../components/Layout";
 import ContributeEmail from "../components/homePage/ContributeEmail";
 import Introduce from "../components/homePage/Introduce";
 import ShowBlogs from "../components/homePage/ShowBlogs";
 import ShowCodes from "../components/homePage/ShowCodes";
-import Layout from "../components/Layout";
 import dbConnect from "../database/dbConnect";
 import Blog from "../models/Blog";
 import Code from "../models/Code";
 import System from "../models/System";
-
 const Home = (props) => {
   const dataSystem = useSelector((state) => state.system.data);
   const [mostDownloadsCode, setMostDownloadsCode] = useState([]);

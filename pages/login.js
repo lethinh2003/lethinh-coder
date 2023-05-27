@@ -25,8 +25,8 @@ import { Controller, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
-import LoadingBox from "../components/homePage/LoadingBox";
 import Layout from "../components/Layout";
+import LoadingBox from "../components/homePage/LoadingBox";
 const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -162,7 +162,7 @@ const Login = () => {
     <>
       <NextSeo
         title="Đăng nhập tài khoản - LeThinh Blog"
-        description="Đăng nhập tài khoản thành viên vào website LeThinhg Blog"
+        description="Đăng nhập tài khoản thành viên vào website LeThinh Blog"
         openGraph={{
           type: "website",
           locale: "vi_VN",

@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-import { hashPassword } from "../utils/hashPassword";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   account: {
@@ -40,6 +39,9 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   avatar: {
+    type: String,
+  },
+  refreshToken: {
     type: String,
   },
 

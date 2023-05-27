@@ -24,6 +24,7 @@ const catchError = (err, res) => {
   } else {
     return res.status(400).json({
       status: "error",
+      errorName: err.name,
       message: "Something went wrong",
     });
   }

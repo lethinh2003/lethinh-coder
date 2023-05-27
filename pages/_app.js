@@ -4,18 +4,19 @@ import { DefaultSeo } from "next-seo";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import "nprogress/nprogress.css";
+import { useState } from "react";
 import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import RefreshTokenHandler from "../components/RefreshTokenHandler";
 import ThemeLayout from "../components/ThemeLayout";
 import SocketProvider from "../context";
 import { store } from "../redux/reducers/store";
 import "../styles/globals.css";
 import "../styles/layout.scss";
-
 const TopProgressBar = dynamic(
   () => {
     return import("../components/TopProgressBar");
@@ -25,9 +26,11 @@ const TopProgressBar = dynamic(
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const [interval, setInterval] = useState(0);
+
   return (
     <>
-      <SessionProvider session={session} refetchOnWindowFocus={false}>
+      <SessionProvider session={session} refetchOnWindowFocus={false} refetchInterval={interval}>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <Head>
@@ -92,6 +95,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
             </SocketProvider>
           </Provider>
         </QueryClientProvider>
+        <RefreshTokenHandler setInterval={setInterval} />
       </SessionProvider>
     </>
   );
