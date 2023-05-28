@@ -41,6 +41,16 @@ const handle = async (req, res) => {
       );
       const expireAccessToken = Math.round(Date.now() + parseInt(process.env.JWT_ACCESSTOKEN_EXPIRED));
 
+      // update Refresh Token
+      await User.findOneAndUpdate(
+        {
+          refreshToken,
+        },
+        {
+          refreshToken: generateRefreshToken,
+        }
+      );
+
       return res.status(200).json({
         status: "success",
         accessToken: generateAccessToken,
