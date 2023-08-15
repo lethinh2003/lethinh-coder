@@ -205,13 +205,17 @@ const Introduce = (props) => {
           sx={{
             display: "flex",
             gap: "10px",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
             padding: { xs: "10px", md: "10px 20px" },
           }}
         >
           <Avatar
             alt="Le Van Thinh - LeThinh Blog"
             sx={{ width: 128, height: 128 }}
-            src={"https://i.imgur.com/i5MCT4h.jpg"}
+            src={"https://i.imgur.com/tAB8VeI.jpg"}
           />
           <Box
             sx={{
@@ -227,7 +231,7 @@ const Introduce = (props) => {
                 fontSize: "2rem",
               }}
             >
-              Hello👋, I'm Le Van Thinh
+              Hello👋, I'm Thinh Le
             </Typography>
             <Typography
               sx={{
