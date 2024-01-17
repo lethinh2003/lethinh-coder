@@ -1,7 +1,7 @@
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
+import { Box, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import Link from "next/link";
-import { memo, useState } from "react";
+import { useState } from "react";
 
 import ItemBlog from "../blog/ItemBlog";
 const ShowBlogs = (props) => {
@@ -95,4 +95,4 @@ const ShowBlogs = (props) => {
     </>
   );
 };
-export default memo(ShowBlogs);
+export default ShowBlogs;

@@ -9,12 +9,6 @@ const userSchema = new mongoose.Schema({
     minlength: [6, "Account must lengths greater or equal 6"],
     required: [true, "Missing account"],
   },
-  name: {
-    type: String,
-    trim: true,
-    minlength: [2, "Name must lengths greater or equal 2"],
-    required: [true, "Missing name"],
-  },
   password: {
     type: String,
     trim: true,
@@ -32,19 +26,24 @@ const userSchema = new mongoose.Schema({
       },
     },
   },
-
-  role: {
+  name: {
     type: String,
-    enum: ["user", "admin"],
-    default: "user",
+    trim: true,
+    minlength: [2, "Name must lengths greater or equal 2"],
+    required: [true, "Missing name"],
   },
+
   avatar: {
     type: String,
   },
   refreshToken: {
     type: String,
   },
-
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   status: {
     type: Boolean,
     default: true,

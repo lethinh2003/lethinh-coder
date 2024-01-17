@@ -1,12 +1,11 @@
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
+import { Box, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import Link from "next/link";
-import { memo, useState } from "react";
+import { useState } from "react";
 
 import ItemCode from "../code/ItemCode";
 const ShowCodes = (props) => {
-  const source = props.sourceCode;
-  const [sourceCode, setSourceCode] = useState(typeof source === "string" ? JSON.parse(source) : source);
+  const [sourceCode, setSourceCode] = useState(JSON.parse(props.sourceCode));
 
   const CodeTitle = styled(Typography)({
     fontFamily: "Noto sans",
@@ -108,4 +107,4 @@ const ShowCodes = (props) => {
     </>
   );
 };
-export default memo(ShowCodes);
+export default ShowCodes;

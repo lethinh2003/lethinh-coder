@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
-import RepComment from "./RepComment";
-import Code from "./Code";
-import Blog from "./Blog";
 const commentSchema = new mongoose.Schema(
   {
+    parentComment: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     user: [
       {
         type: mongoose.Schema.ObjectId,
@@ -14,19 +16,26 @@ const commentSchema = new mongoose.Schema(
     reply: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: RepComment,
+        ref: "RepComment",
       },
     ],
+    childrenComment: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Comment",
+      },
+    ],
+
     code: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: Code,
+        ref: "Code",
       },
     ],
     blog: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: Blog,
+        ref: "Blog",
       },
     ],
     content: {

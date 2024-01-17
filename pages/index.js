@@ -1,32 +1,13 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import axios from "axios";
 import Layout from "../components/Layout";
-import ContributeEmail from "../components/homePage/ContributeEmail";
 import Introduce from "../components/homePage/Introduce";
 import ShowBlogs from "../components/homePage/ShowBlogs";
 import ShowCodes from "../components/homePage/ShowCodes";
+import SubscribeEmail from "../components/homePage/SubscribeEmail";
 import dbConnect from "../database/dbConnect";
-import Blog from "../models/Blog";
-import Code from "../models/Code";
 import System from "../models/System";
 const Home = (props) => {
-  const dataSystem = useSelector((state) => state.system.data);
-  const [mostDownloadsCode, setMostDownloadsCode] = useState([]);
-  const [mostViewsCode, setMostViewsCode] = useState([]);
-
-  let { newCode, newBlog, systemData } = props;
-  systemData = JSON.parse(systemData);
-
-  useEffect(() => {
-    if (newCode) {
-      const sortByViews = [...JSON.parse(newCode)];
-      const sortByDownloads = [...JSON.parse(newCode)];
-      sortByDownloads.sort((a, b) => b.downloads - a.downloads);
-      sortByViews.sort((a, b) => b.views - a.views);
-      setMostDownloadsCode(sortByDownloads);
-      setMostViewsCode(sortByViews);
-    }
-  }, []);
+  const { newCode, newBlog, systemData, mostDownloadCode, mostViewCode } = props;
 
   return (
     <>
@@ -34,9 +15,9 @@ const Home = (props) => {
         <Introduce />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
-        {mostDownloadsCode.length > 0 && <ShowCodes sourceCode={mostDownloadsCode} title={"Most Download"}></ShowCodes>}
-        {mostViewsCode.length > 0 && <ShowCodes sourceCode={mostViewsCode} title={"Most View"}></ShowCodes>}
-        <ContributeEmail />
+        <ShowCodes sourceCode={mostDownloadCode} title={"Most Download"}></ShowCodes>
+        <ShowCodes sourceCode={mostViewCode} title={"Most View"}></ShowCodes>
+        <SubscribeEmail />
       </Layout>
     </>
   );
@@ -45,34 +26,37 @@ const Home = (props) => {
 export default Home;
 export const getServerSideProps = async () => {
   await dbConnect();
+  const limitItems = 6;
+  const latestSort = "-_id";
+  const downloadSort = "-downloads";
+  const viewSort = "-views";
+  const getNewBlogs = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/blogs?sort=${latestSort}&results=${limitItems}`);
+  const getNewCodes = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${latestSort}&results=${limitItems}`);
+  const getMostDownloadCodes = axios.get(
+    `${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${downloadSort}&results=${limitItems}`
+  );
+  const getMostViewCodes = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${viewSort}&results=${limitItems}`);
+  const updateHomeView = System.findOneAndUpdate(
+    {},
+    { $inc: { home_views: 1 } },
+    {
+      new: true,
+    }
+  ).lean();
+  const [newBlog, newCode, mostDownloadCode, mostViewCode, systemData] = await Promise.all([
+    getNewBlogs,
+    getNewCodes,
+    getMostDownloadCodes,
+    getMostViewCodes,
+    updateHomeView,
+  ]);
 
-  let newCode = [];
-  let mostDownloadsCode = [];
-  let mostViewsCode = [];
-  let systemData = [];
-  let newBlog = [];
-  const test = await Promise.all([
-    Code.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
-    Blog.find({ status: true }).limit(6).select("-link -__v").sort("-_id"),
-    System.findOneAndUpdate(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
-  ])
-    .then((data) => {
-      newCode = data[0];
-
-      newBlog = data[1];
-      systemData = data[2];
-    })
-    .catch((err) => console.log(err));
   return {
     props: {
-      newCode: JSON.stringify(newCode),
-      newBlog: JSON.stringify(newBlog),
+      newCode: JSON.stringify(newCode.data.data),
+      newBlog: JSON.stringify(newBlog.data.data),
+      mostDownloadCode: JSON.stringify(mostDownloadCode.data.data),
+      mostViewCode: JSON.stringify(mostViewCode.data.data),
       systemData: JSON.stringify(systemData),
     },
   };
