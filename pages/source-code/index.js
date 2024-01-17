@@ -1,35 +1,47 @@
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
-import { useInfiniteQuery } from "react-query";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import Layout from "../../components/Layout";
 import FilterCode from "../../components/code/FilterCode";
 import ItemCode from "../../components/code/ItemCode";
-import Layout from "../../components/Layout";
+import useGetListCodes from "../../hooks/useGetListCodes";
+
+const LIMIT_RESULTS = process.env.LIMIT_RESULTS * 1 || 10;
+
+const ChildBoxLoading = styled(Box)({
+  display: "flex",
+  gap: "10px",
+  flexDirection: "column",
+});
+const CodeTitle = styled(Typography)({
+  fontFamily: "Noto sans",
+  fontSize: "2.5rem",
+  fontWeight: "bold",
+});
+
+const TitleContent = styled(Typography)({
+  fontFamily: "Bebas Neue",
+  position: "relative",
+  fontSize: "3rem",
+  fontWeight: "bold",
+});
 
 const SourceCode = () => {
-  const filterValues = useSelector((state) => state.filterValueSourceCode);
-  const [cost, setCost] = useState(filterValues ? filterValues.costs : "costs");
-  const [date, setDate] = useState(filterValues ? filterValues.date : "-createdAt");
-  const [itemsPerPage, setItemsPerPage] = useState(process.env.LIMIT_RESULTS * 1 || 10);
-  const AllSourceCodeRef = useRef();
-  useEffect(() => {
-    setCost(filterValues ? filterValues.costs : "costs");
-    setDate(filterValues ? filterValues.date : "-createdAt");
-    console.log(filterValues, cost, date);
-  }, [filterValues]);
+  const [filterValues, setFilterValues] = useState({
+    costs: "costs",
+    date: "-createdAt",
+  });
+  const [sortQuery, setSortQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const callDataApi = async (sortQuery, pageParam) => {
-    const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/source-codes?sort=${sortQuery}&page=${pageParam}&results=${itemsPerPage}`
-    );
-    return results.data;
-  };
+  useEffect(() => {
+    // Join sort param
+    setSortQuery(Object.values(filterValues).join(" "));
+  }, [filterValues]);
 
   const {
     data: dataQuery,
@@ -40,48 +52,11 @@ const SourceCode = () => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useInfiniteQuery(
-    ["get-all-source-codes", cost, date],
-    ({ pageParam = 1 }) => {
-      const arraySort = [];
-      if (cost) {
-        arraySort.push(cost);
-      }
-      if (date) {
-        arraySort.push(date);
-      }
-      const newArraySort = arraySort.join(",");
-      return callDataApi(newArraySort, pageParam);
-    },
-    {
-      cacheTime: Infinity,
-      refetchOnWindowFocus: false,
-      getNextPageParam: (_lastPage, pages) => {
-        if (pages[pages.length - 1].results === itemsPerPage) {
-          return pages.length + 1;
-        }
-        return undefined;
-      },
-    }
-  );
-
-  const ChildBoxLoading = styled(Box)({
-    display: "flex",
-    gap: "10px",
-    flexDirection: "column",
-  });
-  const CodeTitle = styled(Typography)({
-    fontFamily: "Noto sans",
-    fontSize: "2.5rem",
-    fontWeight: "bold",
+  } = useGetListCodes({
+    sortQuery,
+    searchQuery,
   });
 
-  const TitleContent = styled(Typography)({
-    fontFamily: "Bebas Neue",
-    position: "relative",
-    fontSize: "3rem",
-    fontWeight: "bold",
-  });
   return (
     <>
       <NextSeo
@@ -131,19 +106,16 @@ const SourceCode = () => {
           </TitleContent>
 
           <FilterCode
-            cost={cost}
-            setCost={setCost}
-            date={date}
-            setDate={setDate}
-            isFetching={isFetching}
-            isLoading={isLoading}
+            filterValues={filterValues}
+            setFilterValues={setFilterValues}
+            setSearchQuery={setSearchQuery}
+            searchQuery={searchQuery}
           />
 
           <CodeTitle
             sx={{
               padding: { xs: "0 10px", md: "0 20px" },
             }}
-            ref={AllSourceCodeRef}
           >
             Kết quả
           </CodeTitle>
@@ -175,7 +147,7 @@ const SourceCode = () => {
               }}
             >
               {isLoading &&
-                Array.from({ length: itemsPerPage }).map((item, i) => (
+                Array.from({ length: LIMIT_RESULTS }).map((item, i) => (
                   <ChildBoxLoading key={i}>
                     <Skeleton
                       sx={{
@@ -201,7 +173,7 @@ const SourceCode = () => {
                   </React.Fragment>
                 ))}
               {isFetchingNextPage &&
-                Array.from({ length: itemsPerPage }).map((item, i) => (
+                Array.from({ length: LIMIT_RESULTS }).map((item, i) => (
                   <ChildBoxLoading key={i}>
                     <Skeleton
                       sx={{

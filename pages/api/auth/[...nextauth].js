@@ -229,7 +229,7 @@ export default NextAuth({
         if (shouldRefreshTime > 60) {
           return Promise.resolve(token);
         }
-        token = refreshAccessToken(token);
+        token = await refreshAccessToken(token);
         return Promise.resolve(token);
       } catch (err) {
         console.log(err);
