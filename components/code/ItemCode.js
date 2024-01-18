@@ -5,52 +5,52 @@ import Image from "next/image";
 import Link from "next/link";
 import { memo } from "react";
 import { NumericFormat } from "react-number-format";
-import ReactTimeago from "react-timeago";
+import blurImage from "../../public/blur_image.png";
+import { convertTimeAgo } from "../../utils/convertTime";
+const CardCode = styled(Card)(({ theme }) => ({
+  padding: "15px",
+  borderRadius: "20px",
 
-const ItemCode = ({ item }) => {
-  const CardCode = styled(Card)(({ theme }) => ({
-    padding: "15px",
-    borderRadius: "20px",
+  overflow: "unset",
+  scrollSnapAlign: "center",
+  border: `1px solid ${theme.palette.card.borderColor.default}`,
+  backgroundColor: theme.palette.card.bgColor.default,
 
-    overflow: "unset",
-    scrollSnapAlign: "center",
-    border: `1px solid ${theme.palette.card.borderColor.default}`,
-    backgroundColor: theme.palette.card.bgColor.default,
+  "&:hover": {
+    border: `1px solid ${theme.palette.card.borderColor.hover}`,
+  },
+}));
+const CardContentCode = styled(CardContent)({
+  display: "flex",
+  flexDirection: "column",
+  padding: "20px 0",
+});
+const CardContentCodeTitle = styled(Typography)({
+  fontSize: "2rem",
+  fontWeight: "bold",
+  textTransform: "capitalize",
+  cursor: "pointer",
+  "&:hover": {
+    opacity: 0.8,
+  },
+});
+const CardContentCodeDesc = styled(Typography)({
+  fontSize: "1.5rem",
+});
 
-    "&:hover": {
-      border: `1px solid ${theme.palette.card.borderColor.hover}`,
-    },
-  }));
-  const CardContentCode = styled(CardContent)({
-    display: "flex",
-    flexDirection: "column",
-    padding: "20px 0",
-  });
-  const CardContentCodeTitle = styled(Typography)({
-    fontSize: "2rem",
-    fontWeight: "bold",
-    textTransform: "capitalize",
-    cursor: "pointer",
-    "&:hover": {
-      opacity: 0.8,
-    },
-  });
-  const CardContentCodeDesc = styled(Typography)({
-    fontSize: "1.5rem",
-  });
+const TagButton = styled(Box)({
+  boxShadow: "none",
+  fontSize: "1.3rem",
+  borderRadius: "20px",
+  textTransform: "lowercase",
+  color: "#4b5563",
+  fontWeight: "bold",
+  backgroundColor: "#e5e6e9",
+  padding: "5px 10px",
+  cursor: "pointer",
+});
 
-  const TagButton = styled(Box)({
-    boxShadow: "none",
-    fontSize: "1.3rem",
-    borderRadius: "20px",
-    textTransform: "lowercase",
-    color: "#4b5563",
-    fontWeight: "bold",
-    backgroundColor: "#e5e6e9",
-    padding: "5px 10px",
-    cursor: "pointer",
-  });
-
+const ItemCode = ({ images, title, createdAt, costs, slug, desc, labels }) => {
   return (
     <>
       <CardCode
@@ -69,12 +69,12 @@ const ItemCode = ({ item }) => {
           }}
         >
           <Image
-            src={item.images[0]}
+            src={images?.[0]}
             layout="fill"
             objectFit="cover"
-            alt={item.title}
+            alt={title}
             placeholder="blur"
-            blurDataURL="https://i.imgur.com/HYNKD6V.png"
+            blurDataURL={blurImage}
           />
         </Box>
         <CardContentCode>
@@ -93,7 +93,7 @@ const ItemCode = ({ item }) => {
                 fontSize: "1.3rem",
               }}
             >
-              📆 <ReactTimeago date={item.createdAt} />
+              📆 {convertTimeAgo(createdAt)}
             </Typography>
             <Typography
               sx={{
@@ -101,21 +101,21 @@ const ItemCode = ({ item }) => {
               }}
             >
               💰{" "}
-              {item.costs > 0 && (
+              {costs > 0 && (
                 <NumericFormat
-                  value={item.costs}
+                  value={costs}
                   displayType={"text"}
                   thousandSeparator={"."}
                   decimalSeparator={","}
                   suffix={" VNĐ"}
                 />
               )}
-              {item.costs === 0 && "Free"}
+              {costs === 0 && "Free"}
             </Typography>
           </Box>
-          <Link href={`/source-code/${item.slug}`}>
+          <Link href={`/source-code/${slug}`}>
             <CardContentCodeTitle component="div" className="code-title">
-              {item.title}
+              {title}
             </CardContentCodeTitle>
           </Link>
 
@@ -124,7 +124,7 @@ const ItemCode = ({ item }) => {
               color: "text.secondary",
             }}
           >
-            {item.desc}
+            {desc}
           </CardContentCodeDesc>
         </CardContentCode>
 
@@ -135,15 +135,15 @@ const ItemCode = ({ item }) => {
             flexWrap: "wrap",
           }}
         >
-          {item.labels.map((item, i) => (
-            <Link key={i} href={`/source-code/label/${item}`}>
+          {labels.map((label, i) => (
+            <Link key={i} href={`/source-code/label/${encodeURIComponent(label)}`}>
               <TagButton
                 sx={{
                   textTransform: "lowercase",
                 }}
                 variant="outlined"
               >
-                #{item.toLowerCase()}
+                #{label.toLowerCase()}
               </TagButton>
             </Link>
           ))}

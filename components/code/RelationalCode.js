@@ -1,17 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React from "react";
-import LIMIT_RESULTS from "../../configs/pagination";
-import useGetListCodes from "../../hooks/useGetListCodes";
+import useGetListRelationalCodes from "../../hooks/useGetListRelationalCodes";
 import DisplayListCode from "./DisplayListCode";
 
-const BlogTitle = styled(Typography)({
-  fontFamily: "Noto sans",
+const TitleContent = styled(Typography)({
+  fontFamily: "Bebas Neue",
+  position: "relative",
   fontSize: "2.5rem",
   fontWeight: "bold",
 });
-
-const CodesOfLabel = ({ label }) => {
+const LIMIT_RESULTS = 3;
+const RelationalCode = ({ labels, codeId }) => {
   const {
     data: dataQuery,
     isLoading,
@@ -21,13 +21,15 @@ const CodesOfLabel = ({ label }) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetListCodes({
-    labelQuery: label,
+  } = useGetListRelationalCodes({
+    fromCodeId: codeId,
+    labelQuery: labels.join(","),
     results: LIMIT_RESULTS,
   });
 
   return (
     <>
+      <TitleContent className="title">Relationship Codes</TitleContent>
       <Box
         sx={{
           width: "100%",
@@ -41,7 +43,6 @@ const CodesOfLabel = ({ label }) => {
           flexDirection: "column",
         }}
       >
-        <BlogTitle component="h1">{`All Source Code: ${label}`}</BlogTitle>
         <DisplayListCode
           hasNextPage={hasNextPage}
           isLoading={isLoading}
@@ -53,4 +54,4 @@ const CodesOfLabel = ({ label }) => {
     </>
   );
 };
-export default CodesOfLabel;
+export default RelationalCode;

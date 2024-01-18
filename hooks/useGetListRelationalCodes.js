@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useInfiniteQuery } from "react-query";
-import transfromData from "../utils/transformDataUseQueries";
+import { transfromDataRelationalContent } from "../utils/transformDataUseQueries";
 
 const LIMIT_RESULTS = process.env.LIMIT_RESULTS * 1 || 10;
 
@@ -26,18 +26,16 @@ const callDataApi = async (results, sortQuery, pageParam, searchQuery, labelQuer
   return res.data;
 };
 
-const useGetListCodes = ({ sortQuery = "", searchQuery = "", labelQuery = "", results = LIMIT_RESULTS }) => {
+const useGetListRelationalCodes = ({
+  fromCodeId,
+  sortQuery = "",
+  searchQuery = "",
+  labelQuery = "",
+  results = LIMIT_RESULTS,
+}) => {
   const { data, isLoading, isFetching, isError, error, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useInfiniteQuery(
-      [
-        "get-all-source-codes",
-        {
-          results,
-          sortQuery,
-          searchQuery,
-          labelQuery,
-        },
-      ],
+      ["get-relational-codes", { fromCodeId, results, sortQuery, searchQuery, labelQuery }],
       ({ pageParam = 1 }) => {
         return callDataApi(results, sortQuery, pageParam, searchQuery, labelQuery);
       },
@@ -50,7 +48,7 @@ const useGetListCodes = ({ sortQuery = "", searchQuery = "", labelQuery = "", re
           }
           return undefined;
         },
-        select: transfromData,
+        select: (data) => transfromDataRelationalContent(data, fromCodeId),
       }
     );
 
@@ -70,4 +68,4 @@ const useGetListCodes = ({ sortQuery = "", searchQuery = "", labelQuery = "", re
     fetchNextPage,
   };
 };
-export default useGetListCodes;
+export default useGetListRelationalCodes;

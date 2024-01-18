@@ -4,7 +4,6 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
-import { memo } from "react";
 import { SiZalo } from "react-icons/si";
 import { useSelector } from "react-redux";
 
@@ -138,4 +137,4 @@ const MySelf = (props) => {
     </>
   );
 };
-export default memo(MySelf);
+export default MySelf;

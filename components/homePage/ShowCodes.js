@@ -77,7 +77,18 @@ const ShowCodes = (props) => {
           <div className="box-code_mobile__wrapper">
             {sourceCode.length > 0 &&
               sourceCode.map((item, i) => {
-                return <ItemCode key={i} item={item} />;
+                return (
+                  <ItemCode
+                    key={i}
+                    images={item.images}
+                    title={item.title}
+                    createdAt={item.createdAt}
+                    costs={item.costs}
+                    slug={item.slug}
+                    desc={item.desc}
+                    labels={item.labels}
+                  />
+                );
               })}
           </div>
         </Box>
@@ -100,7 +111,18 @@ const ShowCodes = (props) => {
         >
           {sourceCode.length > 0 &&
             sourceCode.map((item, i) => {
-              return <ItemCode key={i} item={item} />;
+              return (
+                <ItemCode
+                  key={i}
+                  images={item.images}
+                  title={item.title}
+                  createdAt={item.createdAt}
+                  costs={item.costs}
+                  slug={item.slug}
+                  desc={item.desc}
+                  labels={item.labels}
+                />
+              );
             })}
         </Box>
       </Box>

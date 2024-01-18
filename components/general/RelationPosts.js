@@ -113,7 +113,18 @@ const RelationPosts = ({ data, typePost }) => {
             dataQuery?.pages.map((group, i) => (
               <React.Fragment key={i}>
                 {group.data.map((item) => {
-                  return <ItemCode key={item._id} item={item} />;
+                  return (
+                    <ItemCode
+                      key={item._id}
+                      images={item.images}
+                      title={item.title}
+                      createdAt={item.createdAt}
+                      costs={item.costs}
+                      slug={item.slug}
+                      desc={item.desc}
+                      labels={item.labels}
+                    />
+                  );
                 })}
               </React.Fragment>
             ))}

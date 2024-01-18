@@ -1,16 +1,9 @@
 import { Box, Breadcrumbs, Typography } from "@mui/material";
-import { useRouter } from "next/router";
-
 import { NextSeo } from "next-seo";
 import Link from "next/link";
-import CodesOfLabel from "../../../components/code/CodesOfLabel";
 import Layout from "../../../components/Layout";
-import dbConnect from "../../../database/dbConnect";
-import System from "../../../models/System";
-const BlogComponent = (props) => {
-  const router = useRouter();
-  const { label } = router.query;
-
+import CodesOfLabel from "../../../components/code/CodesOfLabel";
+const BlogComponent = ({ label }) => {
   return (
     <>
       <NextSeo
@@ -52,8 +45,11 @@ const BlogComponent = (props) => {
             <Link style={{ color: "inherit" }} href="/">
               Home
             </Link>
+            <Link style={{ color: "inherit" }} href="/source-code">
+              Source code
+            </Link>
 
-            <Typography color="text.primary">Source code</Typography>
+            <Typography color="text.primary">{label}</Typography>
           </Breadcrumbs>
           <CodesOfLabel label={label} />
         </Box>
@@ -62,21 +58,22 @@ const BlogComponent = (props) => {
   );
 };
 export default BlogComponent;
-export const getServerSideProps = async () => {
-  await dbConnect();
-  let newBlog = [];
-  const test = await Promise.all([
-    System.updateMany(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
-  ])
-    .then((data) => {})
-    .catch((err) => console.log(err));
+
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { label } = params;
+  if (!label) {
+    return {
+      redirect: {
+        destination: "/source-code",
+        permanent: false,
+      },
+    };
+  }
+
   return {
-    props: {},
+    props: {
+      label,
+    },
   };
-};
+}

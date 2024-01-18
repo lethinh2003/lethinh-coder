@@ -3,7 +3,7 @@ import Code from "../Code";
 class CodeRepository {
   static find = async ({ query = {}, limit, skip, select, sort, options }) => {
     const results = await Code.find(query, options).skip(skip).limit(limit).sort(sort).select(select).lean();
-    console.log(sort);
+
     return results;
   };
 

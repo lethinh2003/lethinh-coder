@@ -1,39 +1,21 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import axios from "axios";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import DescCode from "../../components/code/DescCode";
-import InfoCode from "../../components/code/InfoCode";
-import PostComment from "../../components/general/PostComment";
-import RelationPosts from "../../components/general/RelationPosts";
+import Link from "next/link";
 import Layout from "../../components/Layout";
 import MySelf from "../../components/Post/MySelf";
 import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
-import dbConnect from "../../database/dbConnect";
-import Code from "../../models/Code";
-import System from "../../models/System";
-const DetailSourceCode = (props) => {
+import DescCode from "../../components/code/DescCode";
+import InfoCode from "../../components/code/InfoCode";
+import RelationalCode from "../../components/code/RelationalCode";
+import PostComment from "../../components/general/PostComment";
+
+const DetailSourceCode = ({ sourceCode }) => {
   const { data: session, status } = useSession();
-  const timeRefLoading = useRef(null);
-  let { sourceBySlug, newSource, systemData } = props;
-  const [sourceCode, setSourceCode] = useState(JSON.parse(sourceBySlug));
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!sourceCode) {
-      return (window.location.href = "/err?code=404");
-
-      // return router.push("/");
-    }
-    const slug = router.query.slug.join("/");
-    const data = JSON.parse(sourceBySlug);
-    if (slug !== sourceCode.slug) {
-      setSourceCode(data);
-    }
-  }, [router.query.slug]);
 
   return (
     <>
@@ -95,6 +77,15 @@ const DetailSourceCode = (props) => {
                   gap: "10px",
                 }}
               >
+                <Breadcrumbs aria-label="breadcrumb">
+                  <Link style={{ color: "inherit" }} href="/">
+                    Home
+                  </Link>
+                  <Link style={{ color: "inherit" }} href="/source-code">
+                    Source code
+                  </Link>
+                  <Typography color="text.primary">{sourceCode.title}</Typography>
+                </Breadcrumbs>
                 <InfoCode sourceCode={sourceCode} />
                 <Box
                   className="thinhle"
@@ -102,28 +93,20 @@ const DetailSourceCode = (props) => {
                     display: "flex",
                     alignItems: "flex-start",
                     width: "100%",
-
                     bgcolor: "background.default",
                     justifyContent: "space-between",
                     color: "text.primary",
                     gap: "10px",
                   }}
                 >
-                  <DescCode sourceCode={sourceCode} status={status} />
+                  <DescCode sourceCode={sourceCode} />
                   <TableOfContent dataPost={sourceCode} status={status} />
                 </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    padding: { xs: "10px", md: "20px" },
-                  }}
-                ></Box>
               </Box>
               <PostComment status={status} session={session} postData={sourceCode} typePost={"code"} />
               <MySelf />
-              <RelationPosts data={sourceCode} typePost="code" />
+
+              <RelationalCode labels={sourceCode.labels} codeId={sourceCode._id} />
               <Tag data={sourceCode} />
             </Box>
           </Layout>
@@ -135,36 +118,19 @@ const DetailSourceCode = (props) => {
 export default DetailSourceCode;
 export const getServerSideProps = async (context) => {
   const { params } = context;
-  const test = params.slug.join("/");
-  await dbConnect();
-  let sourceBySlug = [];
-  let systemData = [];
-  await Promise.all([
-    Code.findOneAndUpdate(
-      { slug: { $in: test }, status: true },
-      {
-        $inc: { views: 1 },
-      },
-      {
-        new: true,
-      }
-    ).select("-link"),
-    System.findOneAndUpdate(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
-  ])
-    .then((data) => {
-      sourceBySlug = data[0];
-      systemData = data[1];
-    })
-    .catch((err) => console.log(err));
+  const slug = params.slug.join("/");
+
+  const getDetailedCode = await axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes/${slug}`);
+  const sourceBySlug = getDetailedCode.data?.data;
+
+  if (!sourceBySlug) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
-      sourceBySlug: JSON.stringify(sourceBySlug),
+      sourceCode: sourceBySlug,
     },
   };
 };
