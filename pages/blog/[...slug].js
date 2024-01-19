@@ -1,44 +1,18 @@
 import { Box } from "@mui/material";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
 
+import { Typography } from "@mui/material";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import axios from "axios";
 import { NextSeo } from "next-seo";
-import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import DescBlog from "../../components/blog/DescBlog";
-import InfoBlog from "../../components/blog/InfoBlog";
-import PostComment from "../../components/general/PostComment";
-import RelationPosts from "../../components/general/RelationPosts";
+import Link from "next/link";
 import Layout from "../../components/Layout";
 import MySelf from "../../components/Post/MySelf";
 import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
-import dbConnect from "../../database/dbConnect";
-import Blog from "../../models/Blog";
-import System from "../../models/System";
-const DetailSourceCode = (props) => {
-  const { data: session, status } = useSession();
-  const timeRefLoading = useRef(null);
-
-  let { sourceBySlug, systemData } = props;
-  const [blogData, setBlogData] = useState(JSON.parse(sourceBySlug));
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!blogData) {
-      return (window.location.href = "/err?code=404");
-      // return router.push("/");
-    }
-    const slug = router.query.slug.join("/");
-    const data = JSON.parse(sourceBySlug);
-    if (slug !== blogData.slug) {
-      setBlogData(data);
-    }
-  }, [router.query.slug]);
-
+import DescBlog from "../../components/blog/DescBlog";
+import RelationalBlog from "../../components/blog/RelationalBlog";
+const DetailSourceCode = ({ blogData }) => {
   return (
     <>
       {blogData && (
@@ -99,7 +73,28 @@ const DetailSourceCode = (props) => {
                   padding: " 0",
                 }}
               >
-                <InfoBlog blogData={blogData} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    width: "100%",
+                    padding: "20px",
+                  }}
+                >
+                  <Breadcrumbs aria-label="breadcrumb">
+                    <Link style={{ color: "inherit" }} href="/">
+                      Home
+                    </Link>
+                    <Link style={{ color: "inherit" }} href="/blog">
+                      Blog
+                    </Link>
+                    <Typography color="text.primary">{blogData.title}</Typography>
+                  </Breadcrumbs>
+                </Box>
+
                 <Box
                   sx={{
                     display: "flex",
@@ -115,9 +110,8 @@ const DetailSourceCode = (props) => {
                   <TableOfContent dataPost={blogData} />
                 </Box>
               </Box>
-              <PostComment status={status} session={session} postData={blogData} typePost={"blog"} />
               <MySelf />
-              <RelationPosts data={blogData} typePost={"blog"} />
+              <RelationalBlog labels={blogData.labels} blogId={blogData._id} />
               <Tag data={blogData} />
             </Box>
           </Layout>
@@ -129,36 +123,19 @@ const DetailSourceCode = (props) => {
 export default DetailSourceCode;
 export const getServerSideProps = async (context) => {
   const { params } = context;
-  const test = params.slug.join("/");
-  await dbConnect();
-  let sourceBySlug = [];
-  let systemData;
-  await Promise.all([
-    Blog.findOneAndUpdate(
-      { slug: { $in: test }, status: true },
-      {
-        $inc: { views: 1 },
-      },
-      {
-        new: true,
-      }
-    ),
-    System.findOneAndUpdate(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
-  ])
-    .then((data) => {
-      sourceBySlug = data[0];
-      systemData = data[1];
-    })
-    .catch((err) => console.log(err));
+  const slug = params.slug.join("/");
+
+  const getDetailedBlog = await axios.get(`${process.env.NEXTAUTH_URL}/api/v1/blogs/${slug}`);
+  const sourceBySlug = getDetailedBlog.data?.data;
+
+  if (!sourceBySlug) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
-      sourceBySlug: JSON.stringify(sourceBySlug),
+      blogData: sourceBySlug,
     },
   };
 };

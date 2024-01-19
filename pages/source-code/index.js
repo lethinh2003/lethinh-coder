@@ -3,17 +3,14 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import { styled } from "@mui/material/styles";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import DisplayListCode from "../../components/code/DisplayListCode";
 import FilterCode from "../../components/code/FilterCode";
+import DisplayListItem from "../../components/general/DisplayListItem";
 import useGetListCodes from "../../hooks/useGetListCodes";
+import handleQueryParams from "../../utils/handleQueryParams";
 
-const ChildBoxLoading = styled(Box)({
-  display: "flex",
-  gap: "10px",
-  flexDirection: "column",
-});
 const CodeTitle = styled(Typography)({
   fontFamily: "Noto sans",
   fontSize: "2.5rem",
@@ -27,18 +24,31 @@ const TitleContent = styled(Typography)({
   fontWeight: "bold",
 });
 
-const SourceCode = () => {
+const SourceCode = ({ query }) => {
+  const router = useRouter();
+  const { sort, q } = query;
+
   const [filterValues, setFilterValues] = useState({
-    costs: "costs",
-    date: "-createdAt",
+    costs: sort?.split(" ")?.[0] || "costs",
+    date: sort?.split(" ")?.[1] || "-createdAt",
   });
-  const [sortQuery, setSortQuery] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [sortQuery, setSortQuery] = useState(sort);
+  const [searchQuery, setSearchQuery] = useState(q);
 
   useEffect(() => {
     // Join sort param
     setSortQuery(Object.values(filterValues).join(" "));
   }, [filterValues]);
+  useEffect(() => {
+    const queryParams = {
+      sort: sortQuery,
+      q: searchQuery,
+    };
+    const queryParamsString = handleQueryParams(queryParams);
+    router.replace(`?${queryParamsString}`, null, {
+      shallow: true,
+    });
+  }, [sortQuery, searchQuery]);
 
   const {
     data: dataQuery,
@@ -129,7 +139,7 @@ const SourceCode = () => {
               flexDirection: "column",
             }}
           >
-            <DisplayListCode
+            <DisplayListItem
               hasNextPage={hasNextPage}
               isLoading={isLoading}
               isFetchingNextPage={isFetchingNextPage}
@@ -143,3 +153,15 @@ const SourceCode = () => {
   );
 };
 export default SourceCode;
+
+export async function getServerSideProps({ query }) {
+  const { sort } = query;
+  if (!sort) {
+    query.sort = "costs -createdAt";
+  }
+  return {
+    props: {
+      query,
+    },
+  };
+}

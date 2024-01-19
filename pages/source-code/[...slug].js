@@ -12,7 +12,6 @@ import Tag from "../../components/Post/Tag";
 import DescCode from "../../components/code/DescCode";
 import InfoCode from "../../components/code/InfoCode";
 import RelationalCode from "../../components/code/RelationalCode";
-import PostComment from "../../components/general/PostComment";
 
 const DetailSourceCode = ({ sourceCode }) => {
   const { data: session, status } = useSession();
@@ -103,9 +102,7 @@ const DetailSourceCode = ({ sourceCode }) => {
                   <TableOfContent dataPost={sourceCode} status={status} />
                 </Box>
               </Box>
-              <PostComment status={status} session={session} postData={sourceCode} typePost={"code"} />
               <MySelf />
-
               <RelationalCode labels={sourceCode.labels} codeId={sourceCode._id} />
               <Tag data={sourceCode} />
             </Box>

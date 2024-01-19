@@ -3,8 +3,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { convertTimeAgo } from "../../utils/convertTime";
-import ShareButton from "../ShareSocial/ShareButton";
 import CodeDownloadModal from "./CodeDownloadModal";
+import SocialSharingButton from "./SocialSharingButton";
 const DescCode = ({ sourceCode }) => {
   const { status } = useSession();
   const [isOpenDownloadModal, setIsOpenDownloadModal] = useState(false);
@@ -82,7 +82,8 @@ const DescCode = ({ sourceCode }) => {
               alignItems: "center",
             }}
           >
-            <ShareButton blogData={sourceCode} />
+            <SocialSharingButton slug={sourceCode.slug} />
+
             {status === "authenticated" && sourceCode.costs === 0 && (
               <Button variant="outlined" onClick={() => handleClickOpenDownloadModal()}>
                 Download Code

@@ -92,5 +92,7 @@ BlogSchema.pre("save", async function (next) {
   }
   next();
 });
+BlogSchema.index({ title: "text", desc: "text" });
+
 const Blog = mongoose.models.Blog || mongoose.model("Blog", BlogSchema);
 export default Blog;

@@ -2,7 +2,7 @@ import { Box, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import ReactTimeago from "react-timeago";
 import getReadingTime from "../../utils/getReadingTime";
 const NewBlogs = (props) => {
@@ -172,4 +172,4 @@ const NewBlogs = (props) => {
     </>
   );
 };
-export default NewBlogs;
+export default memo(NewBlogs);

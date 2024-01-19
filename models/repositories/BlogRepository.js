@@ -1,8 +1,8 @@
 import Blog from "../Blog";
 
 class BlogRepository {
-  static find = async ({ query = {}, limit, skip, select, sort }) => {
-    const results = await Blog.find(query).skip(skip).limit(limit).sort(sort).select(select).lean();
+  static find = async ({ query = {}, limit, skip, select, sort, options }) => {
+    const results = await Blog.find(query, options).skip(skip).limit(limit).sort(sort).select(select).lean();
 
     return results;
   };

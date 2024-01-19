@@ -1,17 +1,18 @@
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import LIMIT_RESULTS from "../../configs/pagination";
+import React from "react";
 import TYPE_DISPLAY_LIST from "../../configs/typeDisplayList";
-import useGetListBlogs from "../../hooks/useGetListBlogs";
+import useGetListRelationalBlogs from "../../hooks/useGetListRelationalBlogs";
 import DisplayListItem from "../general/DisplayListItem";
 
-const BlogTitle = styled(Typography)({
-  fontFamily: "Noto sans",
+const TitleContent = styled(Typography)({
+  fontFamily: "Bebas Neue",
+  position: "relative",
   fontSize: "2.5rem",
   fontWeight: "bold",
 });
-
-const BlogsOfLabel = ({ label }) => {
+const LIMIT_RESULTS = 3;
+const RelationalBlog = ({ labels, blogId }) => {
   const {
     data: dataQuery,
     isLoading,
@@ -21,12 +22,15 @@ const BlogsOfLabel = ({ label }) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useGetListBlogs({
-    labelQuery: label,
+  } = useGetListRelationalBlogs({
+    fromBlogId: blogId,
+    labelQuery: labels.join(","),
     results: LIMIT_RESULTS,
   });
+
   return (
     <>
+      <TitleContent className="title">Relationship Blogs</TitleContent>
       <Box
         sx={{
           width: "100%",
@@ -40,7 +44,6 @@ const BlogsOfLabel = ({ label }) => {
           flexDirection: "column",
         }}
       >
-        <BlogTitle component="h1">{`All Blog: ${label}`}</BlogTitle>
         <DisplayListItem
           type={TYPE_DISPLAY_LIST.BLOG}
           hasNextPage={hasNextPage}
@@ -53,4 +56,4 @@ const BlogsOfLabel = ({ label }) => {
     </>
   );
 };
-export default BlogsOfLabel;
+export default RelationalBlog;

@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import React from "react";
 import LIMIT_RESULTS from "../../configs/pagination";
 import useGetListCodes from "../../hooks/useGetListCodes";
-import DisplayListCode from "./DisplayListCode";
+import DisplayListItem from "../general/DisplayListItem";
 
 const BlogTitle = styled(Typography)({
   fontFamily: "Noto sans",
@@ -42,7 +42,7 @@ const CodesOfLabel = ({ label }) => {
         }}
       >
         <BlogTitle component="h1">{`All Source Code: ${label}`}</BlogTitle>
-        <DisplayListCode
+        <DisplayListItem
           hasNextPage={hasNextPage}
           isLoading={isLoading}
           isFetchingNextPage={isFetchingNextPage}

@@ -4,7 +4,6 @@ import initMiddleware from "../../../../lib/init-middleware";
 import BlogService from "../../../../services/server/BlogService";
 import { NotFoundError } from "../../../../utils/appError";
 import catchError from "../../../../utils/catchError";
-import { handleSortQueryMongoDB } from "../../../../utils/handleSortQueryMongoDB";
 import { OkResponse } from "../../../../utils/successResponse";
 const cors = initMiddleware(
   Cors({
@@ -18,53 +17,31 @@ const handle = async (req, res) => {
     await cors(req, res);
     await dbConnect();
     if (req.method === "GET") {
-      const { sort = "-createdAt", results = 10, page = 1, searchQuery = "", labelQuery = "" } = req.query;
-
-      let sortQuery = handleSortQueryMongoDB(sort);
-
+      const slug = req.query.slug.join("/");
       let query = {
         status: true,
+        slug: { $in: slug },
       };
       let options = {};
-      if (searchQuery) {
-        query = { ...query, $text: { $search: searchQuery } };
-        options = { ...options, score: { $meta: "textScore" } };
-        sortQuery = { ...sortQuery, score: { $meta: "textScore" } };
-      }
-      if (labelQuery) {
-        query = {
-          ...query,
-          labels: {
-            $in: labelQuery.split(","),
-          },
-        };
-      }
+
       const select = "-__v";
-      const { limitItems, pageItem, data } = await BlogService.findBlogs({
+      const data = await BlogService.findDetailedBlog({
         query,
-        sort: sortQuery,
-        itemsOfPage: results,
-        page,
         select,
         options,
       });
 
       return new OkResponse({
         data,
-
         metadata: {
           ...req.query,
-          results: data.length,
-          page: pageItem,
-          limit: limitItems,
-          sort,
+          slug,
         },
       }).send(res);
     } else {
       return new NotFoundError("Something went wrong").send(res);
     }
   } catch (err) {
-    console.log(err);
     return catchError(err, res);
   }
 };

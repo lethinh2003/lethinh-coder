@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { memo } from "react";
 import { NumericFormat } from "react-number-format";
 import blurImage from "../../public/blur_image.png";
 import { convertTimeAgo } from "../../utils/convertTime";
@@ -152,4 +151,4 @@ const ItemCode = ({ images, title, createdAt, costs, slug, desc, labels }) => {
     </>
   );
 };
-export default memo(ItemCode);
+export default ItemCode;

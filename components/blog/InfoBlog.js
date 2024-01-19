@@ -1,7 +1,4 @@
-import { Box, Typography } from "@mui/material";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "next/link";
-import { memo } from "react";
+import { Box } from "@mui/material";
 const InfoBlog = (props) => {
   const { blogData } = props;
   return (
@@ -17,19 +14,9 @@ const InfoBlog = (props) => {
             width: "100%",
             padding: "20px",
           }}
-        >
-          <Breadcrumbs aria-label="breadcrumb">
-            <Link style={{ color: "inherit" }} href="/">
-              Home
-            </Link>
-            <Link style={{ color: "inherit" }} href="/blog">
-              Blog
-            </Link>
-            <Typography color="text.primary">{blogData.title}</Typography>
-          </Breadcrumbs>
-        </Box>
+        ></Box>
       )}
     </>
   );
 };
-export default memo(InfoBlog);
+export default InfoBlog;

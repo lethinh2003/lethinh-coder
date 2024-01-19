@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { memo } from "react";
 
 const Tag = (props) => {
   const { data } = props;
@@ -35,4 +34,4 @@ const Tag = (props) => {
     </>
   );
 };
-export default memo(Tag);
+export default Tag;

@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React from "react";
 import useGetListRelationalCodes from "../../hooks/useGetListRelationalCodes";
-import DisplayListCode from "./DisplayListCode";
+import DisplayListItem from "../general/DisplayListItem";
 
 const TitleContent = styled(Typography)({
   fontFamily: "Bebas Neue",
@@ -43,7 +43,7 @@ const RelationalCode = ({ labels, codeId }) => {
           flexDirection: "column",
         }}
       >
-        <DisplayListCode
+        <DisplayListItem
           hasNextPage={hasNextPage}
           isLoading={isLoading}
           isFetchingNextPage={isFetchingNextPage}

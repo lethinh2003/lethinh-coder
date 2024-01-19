@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { memo, useState } from "react";
 import {
   FacebookIcon,
   FacebookShareButton,
@@ -13,10 +12,7 @@ import {
   TwitterShareButton,
 } from "react-share";
 
-const ShareButton = (props) => {
-  const { blogData } = props;
-  const [dataBlog, setDataBlog] = useState(blogData);
-
+const ShareButton = ({ url }) => {
   return (
     <>
       <Box
@@ -28,28 +24,23 @@ const ShareButton = (props) => {
           flexWrap: "wrap",
         }}
       >
-        {typeof window !== "undefined" && (
-          <>
-            <FacebookShareButton url={window.location.href}>
-              <FacebookIcon size={40} borderRadius={10} />
-            </FacebookShareButton>
-            <LinkedinShareButton url={window.location.href}>
-              <LinkedinIcon size={40} borderRadius={10} />
-            </LinkedinShareButton>
-            <TwitterShareButton url={window.location.href}>
-              <TwitterIcon size={40} borderRadius={10} />
-            </TwitterShareButton>
-            <RedditShareButton url={window.location.href}>
-              <RedditIcon size={40} borderRadius={10} />
-            </RedditShareButton>
-            <TelegramShareButton url={window.location.href}>
-              <TelegramIcon size={40} borderRadius={10} />
-            </TelegramShareButton>
-          </>
-        )}
-        {/* <ShareSocial url={window.location.href} socialTypes={["facebook", "twitter", "reddit", "linkedin"]} /> */}
+        <FacebookShareButton url={url}>
+          <FacebookIcon size={40} borderRadius={10} />
+        </FacebookShareButton>
+        <LinkedinShareButton url={url}>
+          <LinkedinIcon size={40} borderRadius={10} />
+        </LinkedinShareButton>
+        <TwitterShareButton url={url}>
+          <TwitterIcon size={40} borderRadius={10} />
+        </TwitterShareButton>
+        <RedditShareButton url={url}>
+          <RedditIcon size={40} borderRadius={10} />
+        </RedditShareButton>
+        <TelegramShareButton url={url}>
+          <TelegramIcon size={40} borderRadius={10} />
+        </TelegramShareButton>
       </Box>
     </>
   );
 };
-export default memo(ShareButton);
+export default ShareButton;

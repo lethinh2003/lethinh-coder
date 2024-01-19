@@ -2,31 +2,25 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
-import { memo, useEffect } from "react";
-import TimeAgo from "react-timeago";
+import { useEffect } from "react";
+import blurImage from "../../public/blur_image.png";
+import { convertTimeAgo } from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
-import ShareButton from "../ShareSocial/ShareButton";
-const DescBlog = (props) => {
-  const { blogData } = props;
-  const TagButton = styled(Box)({
-    boxShadow: "none",
-    fontSize: "1.3rem",
-    borderRadius: "20px",
-    textTransform: "lowercase",
-    fontFamily: "Noto Sans",
-    color: "#4b5563",
-    fontWeight: "bold",
-    backgroundColor: "#e5e6e9",
-    padding: "5px 10px",
-    cursor: "pointer",
-  });
-  const TitleContent = styled(Typography)({
-    fontFamily: "Bebas Neue",
-    position: "relative",
-    fontSize: "2.5rem",
-    fontWeight: "bold",
-  });
+import SocialSharingButton from "./SocialSharingButton";
+const TagButton = styled(Box)({
+  boxShadow: "none",
+  fontSize: "1.3rem",
+  borderRadius: "20px",
+  textTransform: "lowercase",
+  fontFamily: "Noto Sans",
+  color: "#4b5563",
+  fontWeight: "bold",
+  backgroundColor: "#e5e6e9",
+  padding: "5px 10px",
+  cursor: "pointer",
+});
+const DescBlog = ({ blogData }) => {
   useEffect(() => {
     const getImage = document.querySelectorAll(".image_resized");
     if (getImage.length > 0) {
@@ -77,7 +71,7 @@ const DescBlog = (props) => {
                 color: "text.secondary",
               }}
             >
-              📆 Thời gian: <TimeAgo date={blogData.createdAt} />
+              📆 Thời gian: {convertTimeAgo(blogData.createdAt)}
             </Typography>
             {blogData.updatedAt && (
               <Typography
@@ -85,7 +79,7 @@ const DescBlog = (props) => {
                   color: "text.secondary",
                 }}
               >
-                📆 Cập nhật: <TimeAgo date={blogData.updatedAt} />
+                📆 Cập nhật: {convertTimeAgo(blogData.updatedAt)}
               </Typography>
             )}
             <Typography
@@ -103,7 +97,7 @@ const DescBlog = (props) => {
               }}
             >
               {blogData.labels.map((item, i) => (
-                <Link key={i} href={`/blog/label/${item}`}>
+                <Link key={i} href={`/blog/label/${encodeURIComponent(item)}`}>
                   <TagButton
                     sx={{
                       textTransform: "lowercase",
@@ -138,12 +132,12 @@ const DescBlog = (props) => {
                 }}
               >
                 <Image
-                  src={blogData.images[0]}
+                  src={blogData?.images?.[0] || blurImage}
                   layout="fill"
                   objectFit="contain"
                   alt={blogData.title}
                   placeholder="blur"
-                  blurDataURL="https://i.imgur.com/HYNKD6V.png"
+                  blurDataURL={blurImage}
                 />
               </Box>
             </Box>
@@ -152,11 +146,11 @@ const DescBlog = (props) => {
             </Typography>
             <Reaction blogData={blogData} />
 
-            <ShareButton blogData={blogData} />
+            <SocialSharingButton slug={blogData.slug} />
           </Box>
         )}
       </Box>
     </>
   );
 };
-export default memo(DescBlog);
+export default DescBlog;

@@ -2,16 +2,11 @@ import { Box, Breadcrumbs, Typography } from "@mui/material";
 import AllBlogs from "../../components/blog/AllBlogs";
 import NewBlogs from "../../components/blog/NewBlogs";
 
+import axios from "axios";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Layout from "../../components/Layout";
-import dbConnect from "../../database/dbConnect";
-import Blog from "../../models/Blog";
-import System from "../../models/System";
-const BlogComponent = (props) => {
-  let { newBlog } = props;
-  newBlog = JSON.parse(newBlog);
-
+const BlogComponent = ({ newBlog, query }) => {
   return (
     <>
       <NextSeo
@@ -57,33 +52,32 @@ const BlogComponent = (props) => {
             <Typography color="text.primary">Blog</Typography>
           </Breadcrumbs>
           <NewBlogs newBlog={newBlog} />
-          <AllBlogs />
+          <AllBlogs query={query} />
         </Box>
       </Layout>
     </>
   );
 };
 export default BlogComponent;
-export const getServerSideProps = async () => {
-  await dbConnect();
-  let newBlog = [];
-  const test = await Promise.all([
-    Blog.find({ status: true }).limit(4).select("-link -__v").sort("-_id"),
-    System.updateMany(
-      {},
-      { $inc: { home_views: 1 } },
-      {
-        new: true,
-      }
-    ),
-  ])
-    .then((data) => {
-      newBlog = data[0];
-    })
-    .catch((err) => console.log(err));
+export const getServerSideProps = async ({ query }) => {
+  // Handle query
+  const { sort } = query;
+  if (!sort) {
+    query.sort = "-createdAt";
+  }
+
+  // Get new blog
+
+  const limitItems = 3;
+  const latestSort = "-_id";
+  const getNewBlogs = await axios.get(
+    `${process.env.NEXTAUTH_URL}/api/v1/blogs?sort=${latestSort}&results=${limitItems}`
+  );
+  const data = getNewBlogs.data.data;
   return {
     props: {
-      newBlog: JSON.stringify(newBlog),
+      newBlog: data,
+      query,
     },
   };
 };
