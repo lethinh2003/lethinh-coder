@@ -1,12 +1,9 @@
 import { Box } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createGlobalStyle } from "styled-components";
-import { getDarkMode } from "../redux/actions/getDarkMode";
+import { setDarkMode } from "../redux/actions/darkMode";
 import BackToTop from "./homePage/BackToTop";
 import Footer from "./homePage/Footer";
 import Navbar from "./homePage/Navbar";
@@ -23,11 +20,10 @@ const Layout = (props) => {
   }
   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
 
-  const getStatusDarkmode = useSelector((state) => state.darkMode.on);
+  const isDarkMode = useSelector((state) => state.darkMode.on);
   const dispatch = useDispatch();
   const handleClickSwitch = () => {
-    localStorage.setItem("darkMode", !getStatusDarkmode);
-    dispatch(getDarkMode(!getStatusDarkmode));
+    dispatch(setDarkMode(!isDarkMode));
   };
   const handleClickSidebarMobile = (value) => {
     setIsSidebarMobile(!isSidebarMobile);

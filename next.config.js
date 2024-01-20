@@ -3,6 +3,7 @@ module.exports = {
   optimizeFonts: false,
   experimental: {
     scrollRestoration: true,
+    outputStandalone: true,
   },
   images: {
     domains: ["i.imgur.com", "anonyviet.com"],

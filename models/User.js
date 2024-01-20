@@ -1,58 +1,59 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  account: {
-    type: String,
-    unique: true,
-    trim: true,
-    minlength: [6, "Account must lengths greater or equal 6"],
-    required: [true, "Missing account"],
-  },
-  password: {
-    type: String,
-    trim: true,
-    minlength: [6, "Password must lengths greater or equal 6"],
-    required: [true, "Missing password"],
-  },
-  confirmPassword: {
-    type: String,
-    trim: true,
-    minlength: [6, "Confirm password must lengths greater or equal 6"],
-    required: [true, "Missing confirm password"],
-    validate: {
-      validator: function (el) {
-        return this.password === el;
+const userSchema = new mongoose.Schema(
+  {
+    account: {
+      type: String,
+      unique: true,
+      trim: true,
+      minlength: [6, "Account must lengths greater or equal 6"],
+      required: [true, "Missing account"],
+    },
+    password: {
+      type: String,
+      trim: true,
+      minlength: [6, "Password must lengths greater or equal 6"],
+      required: [true, "Missing password"],
+    },
+    confirmPassword: {
+      type: String,
+      trim: true,
+      minlength: [6, "Confirm password must lengths greater or equal 6"],
+      required: [true, "Missing confirm password"],
+      validate: {
+        validator: function (el) {
+          return this.password === el;
+        },
       },
     },
-  },
-  name: {
-    type: String,
-    trim: true,
-    minlength: [2, "Name must lengths greater or equal 2"],
-    required: [true, "Missing name"],
-  },
+    name: {
+      type: String,
+      trim: true,
+      minlength: [2, "Name must lengths greater or equal 2"],
+      required: [true, "Missing name"],
+    },
 
-  avatar: {
-    type: String,
+    avatar: {
+      type: String,
+    },
+    refreshToken: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
   },
-  refreshToken: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  status: {
-    type: Boolean,
-    default: true,
-  },
-  createdAt: {
-    type: String,
-    default: () => new Date().toISOString(),
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 userSchema.pre("save", async function (next) {
   if (!this.name) {
     this.name = this.account;

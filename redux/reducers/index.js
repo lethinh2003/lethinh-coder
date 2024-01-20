@@ -1,13 +1,9 @@
 import { combineReducers } from "redux";
-import filterValueSourceCodeReducer from "./filterValueSourceCodeReducer";
-import getDarkModeReducer from "./getDarkModeReducer";
+import darkMode from "./darkMode";
 import getSystemReducer from "./getSystemReducer";
-import getUserReducer from "./getUserReducer";
 const reducers = combineReducers({
-  user: getUserReducer,
-  darkMode: getDarkModeReducer,
+  darkMode,
   system: getSystemReducer,
-  filterValueSourceCode: filterValueSourceCodeReducer,
 });
 
 export default (state, action) => reducers(state, action);

@@ -4,10 +4,8 @@ import Introduce from "../components/homePage/Introduce";
 import ShowBlogs from "../components/homePage/ShowBlogs";
 import ShowCodes from "../components/homePage/ShowCodes";
 import SubscribeEmail from "../components/homePage/SubscribeEmail";
-import dbConnect from "../database/dbConnect";
-import System from "../models/System";
 const Home = (props) => {
-  const { newCode, newBlog, systemData, mostDownloadCode, mostViewCode } = props;
+  const { newCode, newBlog, mostDownloadCode, mostViewCode } = props;
 
   return (
     <>
@@ -25,7 +23,6 @@ const Home = (props) => {
 
 export default Home;
 export const getServerSideProps = async () => {
-  await dbConnect();
   const limitItems = 6;
   const latestSort = "-_id";
   const downloadSort = "-downloads";
@@ -36,19 +33,12 @@ export const getServerSideProps = async () => {
     `${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${downloadSort}&results=${limitItems}`
   );
   const getMostViewCodes = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${viewSort}&results=${limitItems}`);
-  const updateHomeView = System.findOneAndUpdate(
-    {},
-    { $inc: { home_views: 1 } },
-    {
-      new: true,
-    }
-  ).lean();
-  const [newBlog, newCode, mostDownloadCode, mostViewCode, systemData] = await Promise.all([
+
+  const [newBlog, newCode, mostDownloadCode, mostViewCode] = await Promise.all([
     getNewBlogs,
     getNewCodes,
     getMostDownloadCodes,
     getMostViewCodes,
-    updateHomeView,
   ]);
 
   return {
@@ -57,7 +47,6 @@ export const getServerSideProps = async () => {
       newBlog: JSON.stringify(newBlog.data.data),
       mostDownloadCode: JSON.stringify(mostDownloadCode.data.data),
       mostViewCode: JSON.stringify(mostViewCode.data.data),
-      systemData: JSON.stringify(systemData),
     },
   };
 };

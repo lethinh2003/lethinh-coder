@@ -1,9 +1,8 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
-import useAuth from "../hooks/useAuth";
-import { getDarkMode } from "../redux/actions/getDarkMode";
+import { setDarkMode } from "../redux/actions/darkMode";
 import BackToTop from "./homePage/BackToTop";
 
 const GlobalStyle = createGlobalStyle`
@@ -264,14 +263,17 @@ const getDesignTokens = (mode) => ({
 });
 
 const ThemeLayout = (props) => {
-  const isAuthenticated = useAuth(true);
-  const getStatusDarkmode = useSelector((state) => state.darkMode.on);
+  const isDarkMode = useSelector((state) => state.darkMode.on);
   const dispatch = useDispatch();
+  const [theme, setTheme] = useState(createTheme(getDesignTokens(isDarkMode ? "dark" : "light")));
   useEffect(() => {
-    const test = JSON.parse(localStorage.getItem("darkMode")) || false;
-    dispatch(getDarkMode(test));
+    const getStatusDarkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+    dispatch(setDarkMode(getStatusDarkMode));
   }, []);
-  const theme = createTheme(getDesignTokens(getStatusDarkmode ? "dark" : "light"));
+
+  useEffect(() => {
+    setTheme(createTheme(getDesignTokens(isDarkMode ? "dark" : "light")));
+  }, [isDarkMode]);
 
   return (
     <>

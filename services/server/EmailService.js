@@ -60,5 +60,33 @@ class EmailService {
       message,
     });
   };
+  static sendEmailRegisterAccountWithGoogle = async ({ email, password }) => {
+    const dataSystem = await SystemRepository.findOne({});
+    const path = process.env.NEXTAUTH_URL;
+
+    const message = `
+
+            <div style=" width: 500px; padding: 10px;">
+       
+            <a href="${path}"><img src=${dataSystem.home_logo} style="width: 40px; height: 40px" alt="Home Logo"></a>
+            <span>Hi there,</span>
+              <p>Lời đầu tiên xin gửi lời cảm ơn đến bạn, vì đã ghé thăm trang web và đăng ký tham gia cùng với chúng tôi. 
+              Sau đây là thông tin tài khoản của bạn: </p>
+              <li >Tài khoản: ${email}</li>
+              <li >Mật khẩu: <b>${password}</b> </li>
+              <p style="font-weight:500">Thông tin liên hệ</p>
+              <li>Website:  <a href="${path}">${path} </a> </li>
+              <li>Zalo: <a href=${dataSystem.myself_zalo}>${dataSystem.myself_zalo_name}</a></li>
+              <li>Facebook: <a href=${dataSystem.myself_fb}>${dataSystem.myself_fb_name}</a></li>
+              <li>Email: ${dataSystem.myself_email}</li>
+              <p>Thư này được gửi tự động, vui lòng không reply lại bất cứ thông tin gì mang tính bảo mật cá nhân</p>
+         
+          </div>  `;
+    await sendEmail({
+      email,
+      subject: "[No Reply] Đăng ký tài khoản bằng Google thành công",
+      message,
+    });
+  };
 }
 export default EmailService;
