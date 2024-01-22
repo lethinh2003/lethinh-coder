@@ -53,14 +53,14 @@ const authOptions = NextAuth({
             return false;
           }
           await dbConnect();
-          const getUser = await UserService.loginWithGoogleAccount({
+          await UserService.loginWithGoogleAccount({
             email: profile.email,
             avatar: profile.picture,
             name: profile.name,
           });
-          profile.account = getUser;
           return true;
         } catch (err) {
+          console.log(err);
           return false;
         }
       }
@@ -69,10 +69,18 @@ const authOptions = NextAuth({
     async jwt({ token, user, account, profile, isNewUser }) {
       // Login with Google
       if (profile) {
-        token.account = profile.account.account;
-        token.role = profile.account.role;
-        token.id = profile.account._id;
-        token.avatar = profile.account.avatar;
+        await dbConnect();
+        const getUser = await UserService.findDetailedUser({
+          query: {
+            account: profile.email,
+          },
+          select: "account role avatar",
+        });
+
+        token.account = getUser.account;
+        token.role = getUser.role;
+        token.id = getUser._id;
+        token.avatar = getUser.avatar;
       }
       // Login with Account
       else if (user) {
