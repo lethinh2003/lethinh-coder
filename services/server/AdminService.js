@@ -132,10 +132,8 @@ class AdminService {
     return result;
   };
   static createNewBlog = async ({ title, content, images, status, desc, labels, keywords }) => {
-    const result = await CodeRepository.createOne({
+    const result = await BlogRepository.createOne({
       data: {
-        link: link,
-        costs,
         title: title,
         content: content,
         images: images,
@@ -149,8 +147,10 @@ class AdminService {
     return result;
   };
   static createNewCode = async ({ title, link, costs, content, images, status, desc, labels, keywords }) => {
-    const result = await BlogRepository.createOne({
+    const result = await CodeRepository.createOne({
       data: {
+        costs,
+        link: link,
         title: title,
         content: content,
         images: images,
