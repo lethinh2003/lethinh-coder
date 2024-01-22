@@ -7,8 +7,8 @@ class CodeRepository {
     return results;
   };
 
-  static findAll = async ({ query = {}, select = "", populate }) => {
-    const result = await Code.find(query).select(select).populate(populate).lean();
+  static findAll = async ({ query = {}, select = "", populate, sort }) => {
+    const result = await Code.find(query).select(select).populate(populate).sort(sort).lean();
     return result;
   };
 
@@ -30,8 +30,8 @@ class CodeRepository {
   };
 
   static createOne = async ({ data = {} }) => {
-    const result = await Code.create(data);
-    return result;
+    const { _doc } = await Code.create(data);
+    return _doc;
   };
 }
 

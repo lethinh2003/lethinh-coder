@@ -2,40 +2,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from "@mui/icons-material/Info";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import axios from "axios";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
+import useGetCodes from "../../../hooks/admin/useGetCodes";
 import convertToTime from "../../../utils/convertTime";
 import ModalDeleteCode from "./ModalDeleteCode";
 const Code = () => {
   const [historyCode, setHistoryCode] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  const [isModalInfo, setIsModalInfo] = useState(false);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  const [idDelete, setIDDelete] = useState(null);
   const [dataDelete, setDataDelete] = useState(null);
-  const callDataApi = async () => {
-    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/source-codes`);
 
-    return results.data;
-  };
-  const getListQuery = useQuery("get-admin-source-codes", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-    refetchOnWindowFocus: false,
-  });
-  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = useGetCodes();
+
   useEffect(() => {
-    if (error && error.response) {
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
-  useEffect(() => {
-    if (dataQuery && dataQuery.data.length > 0) {
-      const newData = dataQuery.data.map((item, i) => ({
+    if (dataQuery && dataQuery.length >= 0) {
+      const newData = dataQuery.map((item, i) => ({
         id: item._id,
         action: item._id,
         stt: i + 1,
@@ -50,14 +33,6 @@ const Code = () => {
       setHistoryCode(newData);
     }
   }, [dataQuery]);
-
-  useEffect(() => {
-    if (idDelete) {
-      const getCurrentList = [...historyCode];
-      const newList = getCurrentList.filter((item, i) => item.id !== idDelete);
-      setHistoryCode(newList);
-    }
-  }, [idDelete]);
 
   const handleClickDelete = (data) => {
     setDataDelete({
@@ -128,7 +103,6 @@ const Code = () => {
 
       {isModalDelete && (
         <ModalDeleteCode
-          setIDDelete={setIDDelete}
           isModal={isModalDelete}
           setIsModal={setIsModalDelete}
           dataDelete={dataDelete}

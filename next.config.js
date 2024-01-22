@@ -9,6 +9,9 @@ module.exports = {
     domains: ["i.imgur.com", "anonyviet.com"],
   },
   env: {
+    CLOUDINARY_KEY: process.env.CLOUDINARY_KEY,
+    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    CLOUDINARY_SECRET: process.env.CLOUDINARY_SECRET,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     LIMIT_RESULTS: process.env.LIMIT_RESULTS,

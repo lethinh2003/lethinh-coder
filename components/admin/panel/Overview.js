@@ -1,54 +1,14 @@
 import { Box, Button, Card, IconButton, Skeleton, Typography } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { AiFillFileZip, AiOutlineCheck, AiOutlineUser } from "react-icons/ai";
+import { BsJournalBookmarkFill } from "react-icons/bs";
 import { HiTemplate } from "react-icons/hi";
 import { MdPendingActions } from "react-icons/md";
 import { NumericFormat } from "react-number-format";
-import { useQuery } from "react-query";
 
-import { toast } from "react-toastify";
-const Overview = ({ status }) => {
-  const [data, setData] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  const callDataApi = async () => {
-    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/overview`);
+import useGetOverview from "../../../hooks/admin/useGetOverview";
+const Overview = () => {
+  const { data, isLoading, isFetching, isError: isErrorQuery, error } = useGetOverview();
 
-    return results.data;
-  };
-  const getListQuery = useQuery("get-admin-overview", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-    refetchOnWindowFocus: false,
-  });
-  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
-  useEffect(() => {
-    if (error && error.response) {
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
-  useEffect(() => {
-    if (dataQuery) {
-      setData(dataQuery.data);
-    }
-  }, [dataQuery]);
-  useEffect(() => {
-    const getOverview = async () => {
-      try {
-        setIsLoading(true);
-        const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/overview`);
-        setData(results.data.data);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        if (err.response) {
-          toast.error(err.response.data.message);
-        }
-      }
-    };
-    if (status === "authenticated") {
-      // getOverview();
-    }
-  }, [status]);
   const displayIcon = (type) => {
     if (type === "orders") {
       return <HiTemplate />;
@@ -60,6 +20,8 @@ const Overview = ({ status }) => {
       return <AiFillFileZip />;
     } else if (type === "users") {
       return <AiOutlineUser />;
+    } else if (type === "blogs") {
+      return <BsJournalBookmarkFill />;
     }
   };
   return (

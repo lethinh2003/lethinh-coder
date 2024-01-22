@@ -1,7 +1,12 @@
-import { withAuth } from "next-auth/middleware"
+import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
   callbacks: {
-    authorized: ({ token }) => token?.role === "admin",
+    authorized: ({ token }) => {
+      if (!token) {
+        return false;
+      }
+      return token?.role === "admin" || false;
+    },
   },
-})
+});

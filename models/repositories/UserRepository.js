@@ -7,8 +7,8 @@ class UserRepository {
     return results;
   };
 
-  static findAll = async ({ query = {}, select = "", populate }) => {
-    const result = await User.find(query).select(select).populate(populate).lean();
+  static findAll = async ({ query = {}, select = "", populate, sort }) => {
+    const result = await User.find(query).select(select).populate(populate).sort(sort).lean();
     return result;
   };
 

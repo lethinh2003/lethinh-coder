@@ -1,7 +1,6 @@
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -9,12 +8,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-const keyword_extractor = require("keyword-extractor");
+import { useState } from "react";
+import { useQueryClient } from "react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { KEY_GET_LIST_CODE } from "../../../configs/keyUseQuery";
+import CodeService from "../../../services/client/admin/CodeService";
 const Modal = (props) => {
-  const { isModal, setIsModal, dataDelete, setDataDelete, setIDDelete } = props;
+  const queryClient = useQueryClient();
+  const { isModal, setIsModal, dataDelete, setDataDelete } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [dataTitle, setDataTitle] = useState("");
 
@@ -30,12 +31,14 @@ const Modal = (props) => {
         toast.error("Vui lòng nhập đúng tên code");
       }
       setIsLoading(true);
-      const results = await axios.delete(
-        `${process.env.ENDPOINT_SERVER}/api/v1/admin/source-codes/detail/${dataDelete.id}`
-      );
+      const results = await CodeService.deleteCode({ codeId: dataDelete.id });
+      queryClient.invalidateQueries({
+        queryKey: KEY_GET_LIST_CODE,
+        refetchInactive: true,
+      });
       setIsLoading(false);
       toast.success(results.data.message);
-      setIDDelete(dataDelete.id);
+
       handleClose();
     } catch (err) {
       if (err.response) {

@@ -2,39 +2,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from "@mui/icons-material/Info";
 import { Box, Skeleton, Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
-import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
+import useGetBlogs from "../../../hooks/admin/useGetBlogs";
 import convertToTime from "../../../utils/convertTime";
 import ModalDeleteBlog from "./ModalDeleteBlog";
-const Code = () => {
+const Blog = () => {
   const [historyCode, setHistoryCode] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  const [isModalInfo, setIsModalInfo] = useState(false);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  const [idDelete, setIDDelete] = useState(null);
   const [dataDelete, setDataDelete] = useState(null);
 
-  const callDataApi = async () => {
-    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/blogs`);
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = useGetBlogs();
 
-    return results.data;
-  };
-  const getListQuery = useQuery("get-admin-blogs", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-    refetchOnWindowFocus: false,
-  });
-  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
   useEffect(() => {
-    if (error && error.response) {
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
-  useEffect(() => {
-    if (dataQuery && dataQuery.data.length > 0) {
-      const newData = dataQuery.data.map((item, i) => ({
+    if (dataQuery && dataQuery.length >= 0) {
+      const newData = dataQuery.map((item, i) => ({
         id: item._id,
         action: item._id,
         stt: i + 1,
@@ -47,13 +29,6 @@ const Code = () => {
       setHistoryCode(newData);
     }
   }, [dataQuery]);
-  useEffect(() => {
-    if (idDelete) {
-      const getCurrentList = [...historyCode];
-      const newList = getCurrentList.filter((item, i) => item.id !== idDelete);
-      setHistoryCode(newList);
-    }
-  }, [idDelete]);
 
   const handleClickDelete = (data) => {
     setDataDelete({
@@ -90,16 +65,11 @@ const Code = () => {
       ],
     },
   ];
-  const handleClickInfo = (id) => {
-    setId(id);
-    setIsModalInfo(true);
-  };
 
   return (
     <>
       {isModalDelete && (
         <ModalDeleteBlog
-          setIDDelete={setIDDelete}
           isModal={isModalDelete}
           setIsModal={setIsModalDelete}
           dataDelete={dataDelete}
@@ -117,7 +87,7 @@ const Code = () => {
         {isLoading && (
           <>
             {Array.from({ length: 5 }).map((item, i) => (
-              <Box sx={{ marginTop: "10px" }}>
+              <Box key={i} sx={{ marginTop: "10px" }}>
                 <Skeleton variant="rectangular" height={50} />
               </Box>
             ))}
@@ -128,4 +98,4 @@ const Code = () => {
     </>
   );
 };
-export default Code;
+export default Blog;

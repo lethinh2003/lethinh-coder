@@ -1,18 +1,15 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { Box, Typography } from "@mui/material";
 import axios from "axios";
+import Head from "next/head";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import Layout from "../../components/Layout";
-import { Typography, Box } from "@mui/material";
-import Head from "next/head";
-const UnsubscribeEmail = () => {
-  const router = useRouter();
-  const { token } = router.query;
+const UnsubscribeEmail = ({ token }) => {
   useEffect(() => {
     if (token) {
       const unsubscribeEmail = async () => {
         try {
-          const res = await axios.post(`${process.env.ENDPOINT_SERVER}/api/v1/subscribes/unsubscribe`, {
+          const res = await axios.post(`${process.env.NEXTAUTH_URL}/api/v1/email-subscribers/unsubscribe`, {
             token: token,
           });
           toast.success(res.data.message);
@@ -62,3 +59,19 @@ const UnsubscribeEmail = () => {
   );
 };
 export default UnsubscribeEmail;
+export async function getServerSideProps({ params }) {
+  const { token } = params;
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      token,
+    },
+  };
+}

@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
 import { memo, useRef, useState } from "react";
-import ReactTimeago from "react-timeago";
+import { convertTimeAgo } from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 const NewBlogs = (props) => {
   const [newBlog, setNewBlog] = useState(props.newBlog);
@@ -103,7 +103,7 @@ const NewBlogs = (props) => {
                   color: "text.secondary",
                 }}
               >
-                📆 <ReactTimeago date={newBlog[0].createdAt} />
+                📆 {convertTimeAgo(newBlog[0].createdAt)}
               </Typography>
               <Link href={`blog/${newBlog[0].slug}`}>
                 <ChildTitleNewBlog>{newBlog[0].title}</ChildTitleNewBlog>
@@ -149,7 +149,7 @@ const NewBlogs = (props) => {
                       color: "text.secondary",
                     }}
                   >
-                    📆 <ReactTimeago date={item.createdAt} />
+                    📆 {convertTimeAgo(item.createdAt)}
                   </Typography>
                   <Link href={`blog/${item.slug}`}>
                     <ChildTitleNewBlog>{item.title}</ChildTitleNewBlog>

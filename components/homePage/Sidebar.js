@@ -90,9 +90,8 @@ const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVis
   })
 );
 
-const Sidebar = (props) => {
+const Sidebar = ({ handleClickSidebarMobile, handleClickSwitch }) => {
   const { status } = useSession();
-  const { handleClickSidebarMobile, handleClickSwitch } = props;
   const theme = useTheme();
   const dispatch = useDispatch();
   const dataSystem = useSelector((state) => state.system.data);

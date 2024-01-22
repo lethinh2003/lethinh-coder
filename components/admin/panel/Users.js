@@ -1,30 +1,16 @@
 import { Box, Skeleton, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import useGetUsers from "../../../hooks/admin/useGetUsers";
 import convertToTime from "../../../utils/convertTime";
-import { useQuery } from "react-query";
 const Users = () => {
   const [users, setUsers] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  const callDataApi = async () => {
-    const results = await axios.get(`${process.env.ENDPOINT_SERVER}/api/v1/admin/users`);
 
-    return results.data;
-  };
-  const getListQuery = useQuery("get-admin-users", callDataApi, {
-    cacheTime: Infinity, //Thời gian cache data, ví dụ: 5000, sau 5s thì cache sẽ bị xóa, khi đó data trong cache sẽ là undefined
-    refetchOnWindowFocus: false,
-  });
-  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = getListQuery;
+  const { data: dataQuery, isLoading, isFetching, isError: isErrorQuery, error } = useGetUsers();
+
   useEffect(() => {
-    if (error && error.response) {
-      toast.error(error.response.data.message);
-    }
-  }, [isErrorQuery]);
-  useEffect(() => {
-    if (dataQuery && dataQuery.data.length > 0) {
-      const newData = dataQuery.data.map((item, i) => ({
+    if (dataQuery && dataQuery.length > 0) {
+      const newData = dataQuery.map((item, i) => ({
         id: item._id,
         stt: i + 1,
         account: item.account,
@@ -36,33 +22,6 @@ const Users = () => {
       setUsers(newData);
     }
   }, [dataQuery]);
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const results = await axios.get("/api/admin/users");
-        const data = results.data.data;
-        setIsLoading(false);
-        if (data.length > 0) {
-          const newData = data.map((item, i) => ({
-            id: item._id,
-            stt: i + 1,
-            account: item.account,
-            name: item.name,
-            time: convertToTime(item.createdAt),
-            role: item.role,
-            status: item.status,
-          }));
-          setUsers(newData);
-        }
-      } catch (err) {
-        setIsLoading(false);
-
-        console.log(err);
-      }
-    };
-
-    // getUsers();
-  }, []);
 
   const GridRowsProp = users;
 

@@ -30,8 +30,8 @@ class BlogRepository {
   };
 
   static createOne = async ({ data = {} }) => {
-    const result = await Blog.create(data);
-    return result;
+    const { _doc } = await Blog.create(data);
+    return _doc;
   };
 }
 

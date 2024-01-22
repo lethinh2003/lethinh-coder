@@ -1,6 +1,4 @@
 import { Box } from "@mui/material";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDarkMode } from "../redux/actions/darkMode";
@@ -11,13 +9,6 @@ import Sidebar from "./homePage/Sidebar";
 import SidebarMobile from "./homePage/SidebarMobile";
 
 const Layout = (props) => {
-  const { data: session, status } = useSession();
-
-  if (session && session.user.access_token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${session.user.access_token}`;
-  } else {
-    axios.defaults.headers.common["Authorization"] = null;
-  }
   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
 
   const isDarkMode = useSelector((state) => state.darkMode.on);
@@ -31,16 +22,10 @@ const Layout = (props) => {
 
   return (
     <>
-      <Sidebar
-        status={status}
-        handleClickSidebarMobile={handleClickSidebarMobile}
-        handleClickSwitch={handleClickSwitch}
-      />
+      <Sidebar handleClickSidebarMobile={handleClickSidebarMobile} handleClickSwitch={handleClickSwitch} />
       <Navbar />
 
       <SidebarMobile
-        session={session}
-        status={status}
         handleClickSidebarMobile={handleClickSidebarMobile}
         isSidebarMobile={isSidebarMobile}
         setIsSidebarMobile={setIsSidebarMobile}
