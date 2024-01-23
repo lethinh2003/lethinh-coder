@@ -12,9 +12,10 @@ import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
 import DescBlog from "../../components/blog/DescBlog";
 import RelationalBlog from "../../components/blog/RelationalBlog";
+import dbConnect from "../../database/dbConnect";
 import BlogRepository from "../../models/repositories/BlogRepository";
 import RedisService from "../../services/client/RedisService";
-const DetailSourceCode = ({ blogData, dataSystem }) => {
+const DetailBlog = ({ blogData, dataSystem }) => {
   return (
     <>
       {blogData && (
@@ -122,9 +123,10 @@ const DetailSourceCode = ({ blogData, dataSystem }) => {
     </>
   );
 };
-export default DetailSourceCode;
+export default DetailBlog;
 export const getServerSideProps = async (context) => {
   const { params } = context;
+  await dbConnect();
   const dataSystem = await RedisService.getDataSystem();
   const slug = params.slug.join("/");
 

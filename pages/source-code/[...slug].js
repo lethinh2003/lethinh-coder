@@ -11,6 +11,7 @@ import Tag from "../../components/Post/Tag";
 import DescCode from "../../components/code/DescCode";
 import InfoCode from "../../components/code/InfoCode";
 import RelationalCode from "../../components/code/RelationalCode";
+import dbConnect from "../../database/dbConnect";
 import CodeRepository from "../../models/repositories/CodeRepository";
 import RedisService from "../../services/client/RedisService";
 
@@ -114,6 +115,7 @@ const DetailSourceCode = ({ sourceCode, dataSystem }) => {
 export default DetailSourceCode;
 export const getServerSideProps = async (context) => {
   const { params } = context;
+  await dbConnect();
   const dataSystem = await RedisService.getDataSystem();
 
   const slug = params.slug.join("/");
