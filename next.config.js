@@ -30,5 +30,10 @@ module.exports = {
     OAUTH_REFRESH_TOKEN: process.env.OAUTH_REFRESH_TOKEN,
     SENDGRID_APIKEY: process.env.SENDGRID_APIKEY,
     NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
+
+    KV_URL: process.env.KV_URL,
+    KV_REST_API_URL: process.env.KV_REST_API_URL,
+    KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
+    KV_REST_API_READ_ONLY_TOKEN: process.env.KV_REST_API_READ_ONLY_TOKEN,
   },
 };

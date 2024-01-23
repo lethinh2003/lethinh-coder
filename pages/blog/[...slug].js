@@ -12,7 +12,9 @@ import TableOfContent from "../../components/Post/TableOfContent";
 import Tag from "../../components/Post/Tag";
 import DescBlog from "../../components/blog/DescBlog";
 import RelationalBlog from "../../components/blog/RelationalBlog";
-const DetailSourceCode = ({ blogData }) => {
+import BlogRepository from "../../models/repositories/BlogRepository";
+import RedisService from "../../services/client/RedisService";
+const DetailSourceCode = ({ blogData, dataSystem }) => {
   return (
     <>
       {blogData && (
@@ -110,7 +112,7 @@ const DetailSourceCode = ({ blogData }) => {
                   <TableOfContent dataPost={blogData} />
                 </Box>
               </Box>
-              <MySelf />
+              <MySelf dataSystem={dataSystem} />
               <RelationalBlog labels={blogData.labels} blogId={blogData._id} />
               <Tag data={blogData} />
             </Box>
@@ -123,6 +125,7 @@ const DetailSourceCode = ({ blogData }) => {
 export default DetailSourceCode;
 export const getServerSideProps = async (context) => {
   const { params } = context;
+  const dataSystem = await RedisService.getDataSystem();
   const slug = params.slug.join("/");
 
   const getDetailedBlog = await axios.get(`${process.env.NEXTAUTH_URL}/api/v1/blogs/${slug}`);
@@ -133,9 +136,22 @@ export const getServerSideProps = async (context) => {
       notFound: true,
     };
   }
+  // Increase views
+  await BlogRepository.findOneAndUpdate({
+    query: {
+      slug,
+    },
+    update: {
+      $inc: {
+        views: 1,
+      },
+    },
+  });
+
   return {
     props: {
       blogData: sourceBySlug,
+      dataSystem,
     },
   };
 };

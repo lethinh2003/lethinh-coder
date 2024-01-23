@@ -2,7 +2,6 @@ import { Box, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Layout from "../../components/Layout";
@@ -12,10 +11,10 @@ import Tag from "../../components/Post/Tag";
 import DescCode from "../../components/code/DescCode";
 import InfoCode from "../../components/code/InfoCode";
 import RelationalCode from "../../components/code/RelationalCode";
+import CodeRepository from "../../models/repositories/CodeRepository";
+import RedisService from "../../services/client/RedisService";
 
-const DetailSourceCode = ({ sourceCode }) => {
-  const { data: session, status } = useSession();
-
+const DetailSourceCode = ({ sourceCode, dataSystem }) => {
   return (
     <>
       {sourceCode && (
@@ -99,10 +98,10 @@ const DetailSourceCode = ({ sourceCode }) => {
                   }}
                 >
                   <DescCode sourceCode={sourceCode} />
-                  <TableOfContent dataPost={sourceCode} status={status} />
+                  <TableOfContent dataPost={sourceCode} />
                 </Box>
               </Box>
-              <MySelf />
+              <MySelf dataSystem={dataSystem} />
               <RelationalCode labels={sourceCode.labels} codeId={sourceCode._id} />
               <Tag data={sourceCode} />
             </Box>
@@ -115,6 +114,8 @@ const DetailSourceCode = ({ sourceCode }) => {
 export default DetailSourceCode;
 export const getServerSideProps = async (context) => {
   const { params } = context;
+  const dataSystem = await RedisService.getDataSystem();
+
   const slug = params.slug.join("/");
 
   const getDetailedCode = await axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes/${slug}`);
@@ -125,9 +126,23 @@ export const getServerSideProps = async (context) => {
       notFound: true,
     };
   }
+
+  // Increase views
+  await CodeRepository.findOneAndUpdate({
+    query: {
+      slug,
+    },
+    update: {
+      $inc: {
+        views: 1,
+      },
+    },
+  });
+
   return {
     props: {
       sourceCode: sourceBySlug,
+      dataSystem,
     },
   };
 };

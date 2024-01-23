@@ -1,15 +1,17 @@
 import { getSession, useSession } from "next-auth/react";
-import Layout from "../components/Layout";
-import { signOut } from "next-auth/react";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
+import Layout from "../components/Layout";
+import AuthService from "../services/client/AuthService";
 const Logout = () => {
   const { data: session, status } = useSession();
   const handleLogOut = async () => {
-    const data = await signOut({
-      redirect: true,
-      callbackUrl: "/",
-    });
-    localStorage.removeItem("listLikeComments");
+    try {
+      const data = await AuthService.logoutAccount({});
+    } catch (err) {
+      toast.error("Có lỗi khi đăng xuất tài khoản");
+      console.log(err);
+    }
   };
   useEffect(() => {
     if (session) {

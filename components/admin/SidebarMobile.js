@@ -4,13 +4,16 @@ import { useTheme } from "@mui/material/styles";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef } from "react";
+import { AiFillTool } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { FaHome } from "react-icons/fa";
 import { useOnClickOutside } from "usehooks-ts";
+
 const SidebarMobile = ({ handleClickSidebarMobile, isSidebarMobile }) => {
   const theme = useTheme();
   const router = useRouter();
   const ref = useRef();
+
   useOnClickOutside(ref, handleClickSidebarMobile);
   return (
     <>
@@ -111,6 +114,25 @@ const SidebarMobile = ({ handleClickSidebarMobile, isSidebarMobile }) => {
                     <SourceIcon sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
                     <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
                       Source
+                    </Typography>
+                  </Button>
+                </Link>
+                <Link href="/admin/setting">
+                  <Button
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      gap: "5px",
+                      fontSize: "25px",
+                      fontWeight: "bold",
+                      padding: "5px",
+                    }}
+                    component="div"
+                  >
+                    <AiFillTool sx={{ fontSize: "20px", fontWeight: "inherit", width: "30px" }} />
+                    <Typography sx={{ fontSize: "20px", fontWeight: "inherit" }} component="span">
+                      Setting
                     </Typography>
                   </Button>
                 </Link>

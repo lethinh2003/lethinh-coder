@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { memo } from "react";
-const ItemReaction = ({ item, handleClickReation, dataBlog }) => {
+const ItemReaction = ({ item, handleClickReation }) => {
   const ReactionButton = styled(Box)({
     boxShadow: "none",
     fontSize: "1.4rem",
@@ -48,7 +48,7 @@ const ItemReaction = ({ item, handleClickReation, dataBlog }) => {
             fontWeight: "bold",
           }}
         >
-          {dataBlog[item.key]}
+          {item.count}
         </Typography>
       </ReactionButton>
     </>

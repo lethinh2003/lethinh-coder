@@ -45,26 +45,6 @@ const BlogSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    readTime: {
-      type: Number,
-      default: 0,
-    },
-    likes: {
-      type: Number,
-      default: 0,
-    },
-    loves: {
-      type: Number,
-      default: 0,
-    },
-    claps: {
-      type: Number,
-      default: 0,
-    },
-    happies: {
-      type: Number,
-      default: 0,
-    },
   },
   {
     timestamps: true,

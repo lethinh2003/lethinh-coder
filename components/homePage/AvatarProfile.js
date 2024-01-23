@@ -2,9 +2,11 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import AuthService from "../../services/client/AuthService";
 const AvatarComponent = styled(Avatar)({
   borderRadius: "10px",
 });
@@ -39,10 +41,12 @@ const AvatarProfile = () => {
   const isMenuUser = Boolean(anchorEl);
 
   const handleClickLogout = async () => {
-    const data = await signOut({
-      redirect: true,
-      callbackUrl: "/",
-    });
+    try {
+      const data = await AuthService.logoutAccount({});
+    } catch (err) {
+      toast.error("Có lỗi khi đăng xuất tài khoản");
+      console.log(err);
+    }
   };
 
   const handleCloseUserMenu = () => {

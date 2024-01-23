@@ -121,6 +121,7 @@ const DescBlog = ({ blogData }) => {
             >
               <Box
                 sx={{
+                  backgroundColor: "#fff",
                   height: { xs: "300px" },
 
                   width: "100%",
@@ -144,7 +145,7 @@ const DescBlog = ({ blogData }) => {
             <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
               <div className="content-html" dangerouslySetInnerHTML={{ __html: blogData.content }} />
             </Typography>
-            <Reaction blogData={blogData} />
+            <Reaction dataId={blogData._id} />
 
             <SocialSharingButton slug={blogData.slug} />
           </Box>

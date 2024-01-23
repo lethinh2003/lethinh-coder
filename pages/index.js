@@ -4,15 +4,16 @@ import ShowBlogs from "../components/homePage/ShowBlogs";
 import ShowCodes from "../components/homePage/ShowCodes";
 import SubscribeEmail from "../components/homePage/SubscribeEmail";
 import dbConnect from "../database/dbConnect";
+import RedisService from "../services/client/RedisService";
 import BlogService from "../services/server/BlogService";
 import CodeService from "../services/server/CodeService";
 const Home = (props) => {
-  const { newCode, newBlog, mostDownloadCode, mostViewCode } = props;
+  const { newCode, newBlog, mostDownloadCode, mostViewCode, dataSystem } = props;
 
   return (
     <>
       <Layout>
-        <Introduce />
+        <Introduce dataSystem={dataSystem} />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
         <ShowCodes sourceCode={mostDownloadCode} title={"Most Download"}></ShowCodes>
@@ -26,20 +27,13 @@ const Home = (props) => {
 export default Home;
 
 export const getStaticProps = async () => {
+  const dataSystem = await RedisService.getDataSystem();
   await dbConnect();
   const limitItems = 6;
-  const latestSort = "-_id";
-  const downloadSort = "-downloads";
-  const viewSort = "-views";
   let query = {
     status: true,
   };
-  // const getNewBlogs = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/blogs?sort=${latestSort}&results=${limitItems}`);
-  // const getNewCodes = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${latestSort}&results=${limitItems}`);
-  // const getMostDownloadCodes = axios.get(
-  //   `${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${downloadSort}&results=${limitItems}`
-  // );
-  // const getMostViewCodes = axios.get(`${process.env.NEXTAUTH_URL}/api/v1/codes?sort=${viewSort}&results=${limitItems}`);
+
   const getNewBlogs = BlogService.findBlogs({
     query,
     sort: "-createdAt",
@@ -78,7 +72,8 @@ export const getStaticProps = async () => {
       newBlog: JSON.stringify(newBlog.data),
       mostDownloadCode: JSON.stringify(mostDownloadCode.data),
       mostViewCode: JSON.stringify(mostViewCode.data),
+      dataSystem: JSON.stringify(dataSystem),
     },
-    revalidate: 10,
+    revalidate: 60,
   };
 };

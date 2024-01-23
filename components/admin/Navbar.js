@@ -70,8 +70,8 @@ const Navbar = (props) => {
       icon: <HiTemplate />,
     },
     {
-      key: "/admin/tools",
-      value: "Tools",
+      key: "/admin/setting",
+      value: "Setting",
       icon: <AiFillTool />,
     },
   ];

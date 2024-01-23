@@ -1,7 +1,9 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { memo } from "react";
 
-const Introduce = (props) => {
+const Introduce = ({ dataSystem }) => {
+  let data = JSON.parse(dataSystem);
+
   return (
     <>
       <Box
@@ -27,11 +29,11 @@ const Introduce = (props) => {
           }}
         >
           <Avatar
-            alt="Le Van Thinh - LeThinh Blog"
+            alt={data?.meta_desc}
             sx={{ width: 128, height: 128 }}
-            src={"https://i.imgur.com/tAB8VeI.jpg"}
+            src={data?.myself_avatar || "https://i.imgur.com/tAB8VeI.jpg"}
           />
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -101,7 +103,13 @@ const Introduce = (props) => {
                 Github
               </a>
             </Typography>
-          </Box>
+          </Box> */}
+          <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
+            <div
+              className="content-html"
+              dangerouslySetInnerHTML={{ __html: data?.home_introduce || "No data system found" }}
+            />
+          </Typography>
         </Box>
       </Box>
     </>

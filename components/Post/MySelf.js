@@ -5,12 +5,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import { SiZalo } from "react-icons/si";
-import { useSelector } from "react-redux";
 
-const MySelf = (props) => {
-  // const { dataSystem } = props;
-  const dataSystem = useSelector((state) => state.system.data);
-
+const MySelf = ({ dataSystem }) => {
   const CardCode = styled(Card)(({ theme }) => ({
     padding: "15px",
     borderRadius: "20px",

@@ -23,14 +23,56 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import Layout from "../components/Layout";
 import LoadingBox from "../components/homePage/LoadingBox";
-const Login = () => {
-  const { data: session, status } = useSession();
+import AuthService from "../services/client/AuthService";
+const LoginTitle = styled(Typography)({
+  color: "#f4604c",
+  alignSelf: "flex-start",
+  fontWeight: "bold",
+  fontSize: "3.5rem",
+});
+
+const LabelInput = styled(Typography)({
+  fontWeight: "500",
+  opacity: "0.7",
+});
+
+const ButtonLogin = styled(Button)({
+  backgroundColor: "#0a8080",
+  color: "#fff",
+  textTransform: "none",
+
+  "&:hover": {
+    backgroundColor: "#0a8080",
+    opacity: 0.8,
+  },
+});
+const ButtonLoginSocial = styled(Button)({
+  color: "#fff",
+  textTransform: "none",
+  border: "2px solid",
+  color: "#0a8080",
+  backgroundColor: "#fff",
+
+  "&:hover": {
+    backgroundColor: "#fff",
+    opacity: 0.8,
+  },
+});
+const ErrorPassWord = styled(Typography)({
+  fontWeight: "400",
+  fontSize: "1.3rem",
+  lineHeight: 1.66,
+  textAlign: "left",
+  margin: "4px 14px 0 14px",
+  color: "#f44336",
+});
+const Login = ({ query }) => {
+  const { status } = useSession();
+  const { callbackUrl } = query;
   const router = useRouter();
-  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -69,95 +111,46 @@ const Login = () => {
       clearTimeout(refreshError.current);
     };
   }, []);
+
   useEffect(() => {
     if (status === "authenticated") {
-      window.location.href = "/";
+      router.push(callbackUrl ?? "/");
     }
   }, [status]);
 
   const onSubmit = async (data) => {
-    if (status !== "authenticated") {
-      try {
-        setIsLoading(true);
-        setIsSuccess(false);
-        setIsError(false);
-        const result = await signIn("login", {
-          account: data.account,
-          password: data.password,
-          redirect: false,
-          callbackUrl: "/",
-        });
-        console.log(result);
+    try {
+      setIsLoading(true);
+      setIsSuccess(false);
+      setIsError(false);
+      const { account, password } = data;
+      const result = await AuthService.loginAccount({
+        account,
+        password,
+        callbackUrl: callbackUrl ?? "/",
+      });
 
-        if (!result.error) {
-          console.log(session);
-          setIsSuccess(true);
-          setIsError(false);
-          refreshLoading.current = setTimeout(() => {
-            setIsLoading(false);
-            reset({ account: "", password: "" });
-          }, 1000);
-        } else {
-          setMessageError(result.error);
-          setIsError(true);
+      if (!result.error) {
+        setIsSuccess(true);
+        setIsError(false);
+        refreshLoading.current = setTimeout(() => {
           setIsLoading(false);
-          refreshError.current = setTimeout(() => {
-            setIsError(false);
-            setMessageError("");
-          }, 5000);
-        }
-      } catch (err) {
-        console.log(err);
+          reset();
+        }, 1000);
+      } else {
+        setMessageError(result.error);
+        setIsError(true);
+        setIsLoading(false);
+        refreshError.current = setTimeout(() => {
+          setIsError(false);
+          setMessageError("");
+        }, 5000);
       }
+    } catch (err) {
+      console.log(err);
     }
   };
-  const LoginTitle = styled(Typography)({
-    color: "#f4604c",
-    alignSelf: "flex-start",
-    fontWeight: "bold",
-    fontSize: "3.5rem",
-  });
-  const SignupLink = styled(Link)({
-    color: "#54d9b6",
-    textDecoration: "revert",
-  });
-  const LabelInput = styled(Typography)({
-    fontWeight: "500",
-    opacity: "0.7",
-  });
-  const InputLogin = styled(TextField)({
-    height: "45px",
-  });
-  const ButtonLogin = styled(Button)({
-    backgroundColor: "#0a8080",
-    color: "#fff",
-    textTransform: "none",
 
-    "&:hover": {
-      backgroundColor: "#0a8080",
-      opacity: 0.8,
-    },
-  });
-  const ButtonLoginSocial = styled(Button)({
-    color: "#fff",
-    textTransform: "none",
-    border: "2px solid",
-    color: "#0a8080",
-    backgroundColor: "#fff",
-
-    "&:hover": {
-      backgroundColor: "#fff",
-      opacity: 0.8,
-    },
-  });
-  const ErrorPassWord = styled(Typography)({
-    fontWeight: "400",
-    fontSize: "1.3rem",
-    lineHeight: 1.66,
-    textAlign: "left",
-    margin: "4px 14px 0 14px",
-    color: "#f44336",
-  });
   return (
     <>
       <NextSeo
@@ -182,222 +175,221 @@ const Login = () => {
           cardType: "summary_large_image",
         }}
       />
-      {status !== "authenticated" && (
-        <>
-          <Layout>
-            <LoadingBox isSuccess={isSuccess} isLoading={isLoading} />
 
+      <Layout>
+        <LoadingBox isSuccess={isSuccess} isLoading={isLoading} />
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            bgcolor: "background.default",
+            justifyContent: "space-around",
+            color: "text.primary",
+            gap: "10px",
+            padding: { xs: "0 10px", md: "0 20px" },
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: "450px",
+              width: "100%",
+              height: "400px",
+              display: { xs: "none", md: "block" },
+              position: "relative",
+            }}
+          >
+            <Image src="https://i.imgur.com/25eZxv6.png" priority={true} layout="fill" alt="Đăng nhập - LT Blog" />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              bgcolor: "background.default",
+              justifyContent: "center",
+              color: "text.primary",
+              gap: "10px",
+              padding: "40px 0",
+              maxWidth: "400px",
+              width: "100%",
+            }}
+          >
+            <LoginTitle>LeThinh Blog</LoginTitle>
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
-                bgcolor: "background.default",
-                justifyContent: "space-around",
-                color: "text.primary",
-                gap: "10px",
-                padding: { xs: "0 10px", md: "0 20px" },
+                flexDirection: "column",
+                width: "100%",
               }}
             >
-              <Box
+              <Typography
                 sx={{
-                  maxWidth: "450px",
-                  width: "100%",
-                  height: "400px",
-                  display: { xs: "none", md: "block" },
-                  position: "relative",
+                  fontWeight: "500",
+                  fontSize: "3rem",
                 }}
               >
-                <Image src="https://i.imgur.com/25eZxv6.png" priority={true} layout="fill" alt="Đăng nhập - LT Blog" />
-              </Box>
-              <Box
+                Welcome back to LT Blog
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: "400",
+                  fontSize: "1.8rem",
+                  display: "flex",
+                  gap: "5px",
+                  alignItems: "center",
+                }}
+                component="div"
+              >
+                No account?
+                <Typography
+                  sx={{
+                    color: "#54d9b6",
+                    textDecoration: "revert",
+                    fontWeight: "bold",
+                  }}
+                >
+                  <Link href="/signup">Create account</Link>
+                </Typography>
+              </Typography>
+              {isError && (
+                <Fade in={isError}>
+                  <Alert
+                    sx={{
+                      maxWidth: "400px",
+                      width: "100%",
+                    }}
+                    severity="error"
+                  >
+                    <AlertTitle>Error</AlertTitle>
+                    {messageError} — <strong>try again!</strong>
+                  </Alert>
+                </Fade>
+              )}
+            </Box>
+
+            <form
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                gap: "15px",
+              }}
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <FormControl
+                variant="standard"
                 sx={{
                   display: "flex",
-                  alignItems: "center",
                   flexDirection: "column",
-                  bgcolor: "background.default",
-                  justifyContent: "center",
-                  color: "text.primary",
-                  gap: "10px",
-                  padding: "40px 0",
-                  maxWidth: "400px",
-                  width: "100%",
                 }}
               >
-                <LoginTitle>LeThinh Blog</LoginTitle>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontWeight: "500",
-                      fontSize: "3rem",
-                    }}
-                  >
-                    Welcome back to LT Blog
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontWeight: "400",
-                      fontSize: "1.8rem",
-                      display: "flex",
-                      gap: "5px",
-                      alignItems: "center",
-                    }}
-                    component="div"
-                  >
-                    No account?
-                    <Typography
-                      sx={{
-                        color: "#54d9b6",
-                        textDecoration: "revert",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      <Link href="/signup">Create account</Link>
-                    </Typography>
-                  </Typography>
-                  {isError && (
-                    <Fade in={isError}>
-                      <Alert
-                        sx={{
-                          maxWidth: "400px",
-                          width: "100%",
-                        }}
-                        severity="error"
-                      >
-                        <AlertTitle>Error</AlertTitle>
-                        {messageError} — <strong>try again!</strong>
-                      </Alert>
-                    </Fade>
+                <LabelInput>Account</LabelInput>
+                <Controller
+                  name="account"
+                  control={control}
+                  render={({ field: { ref, ...field } }) => (
+                    <TextField
+                      size="small"
+                      fullWidth
+                      error={errors.account ? true : false}
+                      helperText={errors.account ? errors.account.message : ""}
+                      inputRef={ref}
+                      {...field}
+                    />
                   )}
-                </Box>
-
-                <form
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                    gap: "15px",
-                  }}
-                  onSubmit={handleSubmit(onSubmit)}
-                >
-                  <FormControl
-                    variant="standard"
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <LabelInput>Account</LabelInput>
-                    <Controller
-                      name="account"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          size="small"
-                          fullWidth
-                          error={errors.account ? true : false}
-                          helperText={errors.account ? errors.account.message : ""}
-                          {...field}
-                        />
-                      )}
-                      defaultValue=""
-                    />
-                  </FormControl>
-                  <FormControl
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      <LabelInput>Password</LabelInput>
-                      <LabelInput
-                        sx={{
-                          color: "#54d9b6",
-                          opacity: "1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        For got your Password
-                      </LabelInput>
-                    </Box>
-                    <Controller
-                      name="password"
-                      control={control}
-                      render={({ field }) => (
-                        <OutlinedInput
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          type={showPassword ? "text" : "password"}
-                          size="small"
-                          fullWidth
-                          error={errors.password ? true : false}
-                          helperText={errors.password ? errors.password.message : ""}
-                          {...field}
-                        />
-                      )}
-                      defaultValue=""
-                    />
-                    <ErrorPassWord>{errors.password ? errors.password.message : ""}</ErrorPassWord>
-                  </FormControl>
-                  <ButtonLogin type="submit" onClick={handleSubmit(onSubmit)} variant="contained">
-                    Sign in
-                  </ButtonLogin>
-                </form>
+                  defaultValue=""
+                />
+              </FormControl>
+              <FormControl
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
                   }}
                 >
+                  <LabelInput>Password</LabelInput>
                   <LabelInput
                     sx={{
-                      alignSelf: "center",
+                      color: "#54d9b6",
+                      opacity: "1",
+                      fontWeight: "bold",
                     }}
                   >
-                    or sign in with
+                    For got your Password
                   </LabelInput>
-
-                  <ButtonLoginSocial onClick={() => signIn("google")} variant="contained">
-                    <FcGoogle /> Google
-                  </ButtonLoginSocial>
                 </Box>
-              </Box>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field: { ref, ...field } }) => (
+                    <OutlinedInput
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      type={showPassword ? "text" : "password"}
+                      size="small"
+                      fullWidth
+                      error={errors.password ? true : false}
+                      helperText={errors.password ? errors.password.message : ""}
+                      inputRef={ref}
+                      {...field}
+                    />
+                  )}
+                  defaultValue=""
+                />
+                <ErrorPassWord>{errors.password ? errors.password.message : ""}</ErrorPassWord>
+              </FormControl>
+              <ButtonLogin type="submit" onClick={handleSubmit(onSubmit)} variant="contained">
+                Sign in
+              </ButtonLogin>
+            </form>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+              }}
+            >
+              <LabelInput
+                sx={{
+                  alignSelf: "center",
+                }}
+              >
+                or sign in with
+              </LabelInput>
+
+              <ButtonLoginSocial onClick={() => signIn("google")} variant="contained">
+                <FcGoogle /> Google
+              </ButtonLoginSocial>
             </Box>
-          </Layout>
-        </>
-      )}
+          </Box>
+        </Box>
+      </Layout>
     </>
   );
 };
 
 export default Login;
 export const getServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req, res, query } = context;
   const session = await getSession({ req });
 
-  if (session && session.user) {
+  if (session) {
     return {
       redirect: {
         permanent: false,
@@ -407,7 +399,9 @@ export const getServerSideProps = async (context) => {
     };
   } else {
     return {
-      props: {},
+      props: {
+        query,
+      },
     };
   }
 };

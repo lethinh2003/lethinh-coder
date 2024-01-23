@@ -1,14 +1,17 @@
-import axios from "axios";
+import { kv } from "@vercel/kv";
+import { KEY_SYSTEM } from "../../configs/keyRedis";
+import defaultSystemData from "../../configs/systemData";
 import { GET_SYSTEM_ERROR, GET_SYSTEM_REQUEST, GET_SYSTEM_SUCCESS } from "./constants";
-// import { toast } from "react-toastify";
 
 export const getSystem = () => async (dispatch) => {
   try {
     dispatch({ type: GET_SYSTEM_REQUEST });
-
-    const url = `${process.env.NEXTAUTH_URL}/api/v1/systems`;
-    const response = await axios.get(url);
-    const responseBody = response.data.data;
+    // set data if doesn't exist
+    await kv.set(KEY_SYSTEM, JSON.stringify(defaultSystemData), {
+      nx: true,
+    });
+    // Get data system
+    const responseBody = await kv.get(KEY_SYSTEM);
     dispatch({
       type: GET_SYSTEM_SUCCESS,
       data: responseBody,
