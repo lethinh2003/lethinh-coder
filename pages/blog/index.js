@@ -10,8 +10,8 @@ const BlogComponent = ({ newBlog, query }) => {
   return (
     <>
       <NextSeo
-        title="Blog lập trình viên - LeThinh Blog"
-        description="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog"
+        title="Danh sách blog"
+        description="Blog về lập trình, cuộc sống hằng ngày"
         openGraph={{
           type: "website",
           locale: "vi_VN",
@@ -19,16 +19,12 @@ const BlogComponent = ({ newBlog, query }) => {
           images: [
             {
               url: "https://i.imgur.com/ipoUilM.png",
-              width: 700,
-              height: 700,
-              alt: "Blog lập trình viên - LeThinh Blog",
+              alt: "Danh sách blog",
             },
           ],
         }}
         twitter={{
-          handle: "Thinh Le",
           site: `${process.env.NEXTAUTH_URL}/blog`,
-          cardType: "summary_large_image",
         }}
       />
       <Layout>

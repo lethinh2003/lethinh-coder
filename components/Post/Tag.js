@@ -14,7 +14,9 @@ const Tag = (props) => {
     <>
       {data && (
         <>
-          <TitleContent className="title">Tags</TitleContent>
+          <TitleContent className="title" component="h2">
+            Tags
+          </TitleContent>
           <Box
             sx={{
               display: "flex",
@@ -26,6 +28,7 @@ const Tag = (props) => {
               opacity: "0.7",
               color: "text.secondary",
             }}
+            component={"p"}
           >
             {data.keywords.join(", ")}
           </Box>

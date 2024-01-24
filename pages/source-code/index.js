@@ -67,8 +67,8 @@ const SourceCode = ({ query }) => {
   return (
     <>
       <NextSeo
-        title="Danh sách source code - LeThinh Blog"
-        description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi - Lethinh Blog"
+        title="Danh sách source code"
+        description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
         openGraph={{
           type: "website",
           locale: "vi_VN",
@@ -76,16 +76,12 @@ const SourceCode = ({ query }) => {
           images: [
             {
               url: "https://i.imgur.com/t1ySawT.png",
-              width: 700,
-              height: 700,
-              alt: "Danh sách source code - LeThinh Blog",
+              alt: "Danh sách source code",
             },
           ],
         }}
         twitter={{
-          handle: "Thinh Le",
           site: `${process.env.NEXTAUTH_URL}/source-code`,
-          cardType: "summary_large_image",
         }}
       />
       <Layout>
@@ -108,7 +104,11 @@ const SourceCode = ({ query }) => {
 
             <Typography color="text.primary">Source code</Typography>
           </Breadcrumbs>
-          <TitleContent className="title" sx={{ fontFamily: "Bebas Neue", fontSize: "2.5rem", fontWeight: "bold" }}>
+          <TitleContent
+            component="h1"
+            className="title"
+            sx={{ fontFamily: "Bebas Neue", fontSize: "2.5rem", fontWeight: "bold" }}
+          >
             All Source Code
           </TitleContent>
 
@@ -120,6 +120,7 @@ const SourceCode = ({ query }) => {
           />
 
           <CodeTitle
+            component="h2"
             sx={{
               padding: { xs: "0 10px", md: "0 20px" },
             }}

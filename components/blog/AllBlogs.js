@@ -74,7 +74,7 @@ const AllBlogs = ({ query }) => {
           flexDirection: "column",
         }}
       >
-        <BlogTitle component="h1">All Blog</BlogTitle>
+        <BlogTitle component="h2">All Blog</BlogTitle>
 
         <FilterBlog
           filterValues={filterValues}
@@ -83,13 +83,6 @@ const AllBlogs = ({ query }) => {
           searchQuery={searchQuery}
         />
 
-        <BlogTitle
-          sx={{
-            padding: { xs: "0 10px", md: "0 20px" },
-          }}
-        >
-          Kết quả
-        </BlogTitle>
         <Box
           sx={{
             width: "100%",

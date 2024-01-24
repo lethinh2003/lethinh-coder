@@ -54,7 +54,7 @@ const NewBlogs = (props) => {
   return (
     <>
       <BlogTitle
-        component="h1"
+        component="h2"
         sx={{
           padding: { xs: "0 10px", md: "0 20px" },
           alignSelf: "flex-start",
@@ -106,7 +106,7 @@ const NewBlogs = (props) => {
                 📆 {convertTimeAgo(newBlog[0].createdAt)}
               </Typography>
               <Link href={`blog/${newBlog[0].slug}`}>
-                <ChildTitleNewBlog>{newBlog[0].title}</ChildTitleNewBlog>
+                <ChildTitleNewBlog component="h3">{newBlog[0].title}</ChildTitleNewBlog>
               </Link>
               <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                 <Typography
@@ -152,7 +152,7 @@ const NewBlogs = (props) => {
                     📆 {convertTimeAgo(item.createdAt)}
                   </Typography>
                   <Link href={`blog/${item.slug}`}>
-                    <ChildTitleNewBlog>{item.title}</ChildTitleNewBlog>
+                    <ChildTitleNewBlog component="h3">{item.title}</ChildTitleNewBlog>
                   </Link>
                   <Typography sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                     <Typography

@@ -50,7 +50,7 @@ const ShowBlogs = (props) => {
       >
         <BoxCodeTitle>
           <CodeTitle
-            component="h1"
+            component="h2"
             sx={{
               padding: { xs: "0 10px", md: "0 20px" },
             }}

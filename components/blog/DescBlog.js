@@ -73,15 +73,7 @@ const DescBlog = ({ blogData }) => {
             >
               📆 Thời gian: {convertTimeAgo(blogData.createdAt)}
             </Typography>
-            {blogData.updatedAt && (
-              <Typography
-                sx={{
-                  color: "text.secondary",
-                }}
-              >
-                📆 Cập nhật: {convertTimeAgo(blogData.updatedAt)}
-              </Typography>
-            )}
+
             <Typography
               sx={{
                 color: "text.secondary",

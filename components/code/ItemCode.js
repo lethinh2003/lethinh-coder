@@ -113,7 +113,7 @@ const ItemCode = ({ images, title, createdAt, costs, slug, desc, labels }) => {
             </Typography>
           </Box>
           <Link href={`/source-code/${slug}`}>
-            <CardContentCodeTitle component="div" className="code-title">
+            <CardContentCodeTitle component="h3" className="code-title">
               {title}
             </CardContentCodeTitle>
           </Link>

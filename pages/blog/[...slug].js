@@ -21,8 +21,8 @@ const DetailBlog = ({ blogData, dataSystem }) => {
       {blogData && (
         <>
           <NextSeo
-            title={`${blogData.title} - LeThinh Blog`}
-            description={`${blogData.desc} - LeThinh Blog`}
+            title={`${blogData.title}`}
+            description={`${blogData.desc}`}
             openGraph={{
               type: "article",
               locale: "vi_VN",
@@ -30,16 +30,12 @@ const DetailBlog = ({ blogData, dataSystem }) => {
               images: [
                 {
                   url: blogData.images[0],
-                  width: 700,
-                  height: 700,
-                  alt: `${blogData.desc} - LeThinh Blog`,
+                  alt: `${blogData.title}`,
                 },
               ],
             }}
             twitter={{
-              handle: "Thinh Le",
               site: `${process.env.NEXTAUTH_URL}/blog/${blogData.slug}`,
-              cardType: "summary_large_image",
             }}
           />
 

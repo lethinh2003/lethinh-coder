@@ -1,3 +1,4 @@
+import { NextSeo } from "next-seo";
 import Layout from "../components/Layout";
 import Introduce from "../components/homePage/Introduce";
 import ShowBlogs from "../components/homePage/ShowBlogs";
@@ -8,16 +9,16 @@ import RedisService from "../services/client/RedisService";
 import BlogService from "../services/server/BlogService";
 import CodeService from "../services/server/CodeService";
 const Home = (props) => {
-  const { newCode, newBlog, mostDownloadCode, mostViewCode, dataSystem } = props;
+  const { newCode, newBlog, dataSystem } = props;
 
   return (
     <>
+      <NextSeo title="Trang chủ" description="Trang chủ" />
+
       <Layout>
         <Introduce dataSystem={dataSystem} />
         <ShowBlogs blogData={newBlog} title={"New Blog"}></ShowBlogs>
         <ShowCodes sourceCode={newCode} title={"New Code"}></ShowCodes>
-        <ShowCodes sourceCode={mostDownloadCode} title={"Most Download"}></ShowCodes>
-        <ShowCodes sourceCode={mostViewCode} title={"Most View"}></ShowCodes>
         <SubscribeEmail />
       </Layout>
     </>
@@ -46,32 +47,13 @@ export const getStaticProps = async () => {
     itemsOfPage: limitItems,
     select: "-__v -link -content",
   });
-  const getMostDownloadCodes = CodeService.findCodes({
-    query,
-    sort: "-downloads",
-    itemsOfPage: limitItems,
-    select: "-__v -link -content",
-  });
-  const getMostViewCodes = CodeService.findCodes({
-    query,
-    sort: "-views",
-    itemsOfPage: limitItems,
-    select: "-__v -link -content",
-  });
 
-  const [newBlog, newCode, mostDownloadCode, mostViewCode] = await Promise.all([
-    getNewBlogs,
-    getNewCodes,
-    getMostDownloadCodes,
-    getMostViewCodes,
-  ]);
+  const [newBlog, newCode] = await Promise.all([getNewBlogs, getNewCodes]);
 
   return {
     props: {
       newCode: JSON.stringify(newCode.data),
       newBlog: JSON.stringify(newBlog.data),
-      mostDownloadCode: JSON.stringify(mostDownloadCode.data),
-      mostViewCode: JSON.stringify(mostViewCode.data),
       dataSystem: JSON.stringify(dataSystem),
     },
     revalidate: 60,

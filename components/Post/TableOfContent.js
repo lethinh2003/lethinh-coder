@@ -37,9 +37,10 @@ const TableOfContent = (props) => {
 
   const handleClickContent = (item) => {
     window.scrollTo(0, item.offsetTop - item.offsetHeight);
+
     // item.scrollIntoView({
     //   behavior: "smooth",
-    //   block: "start",
+    //   block: "center",
     // });
   };
   const TitleContent = styled(Typography)({
@@ -73,6 +74,7 @@ const TableOfContent = (props) => {
             paddingTop: "30px",
           }}
           className="title"
+          component="h2"
         >
           Contents
         </TitleContent>

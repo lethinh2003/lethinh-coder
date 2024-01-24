@@ -30,7 +30,9 @@ const RelationalBlog = ({ labels, blogId }) => {
 
   return (
     <>
-      <TitleContent className="title">Relationship Blogs</TitleContent>
+      <TitleContent className="title" component="h2">
+        Relationship Blogs
+      </TitleContent>
       <Box
         sx={{
           width: "100%",

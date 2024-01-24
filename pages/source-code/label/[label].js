@@ -7,8 +7,8 @@ const BlogComponent = ({ label }) => {
   return (
     <>
       <NextSeo
-        title={`Danh sách source code thuộc ${label}  - LeThinh Blog`}
-        description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi - Lethinh Blog"
+        title={`Danh sách source code thuộc ${label}`}
+        description="Danh sách toàn bộ source code được đăng tải, bao gồm các code free và mất phí. Code chất lượng, đã qua kiểm định và code sẽ được check thường xuyên về vấn đề lỗi"
         openGraph={{
           type: "website",
           locale: "vi_VN",
@@ -16,16 +16,13 @@ const BlogComponent = ({ label }) => {
           images: [
             {
               url: "https://i.imgur.com/t1ySawT.png",
-              width: 700,
-              height: 700,
-              alt: `Danh sách source code thuộc ${label}  - LeThinh Blog`,
+
+              alt: `Danh sách source code thuộc ${label} `,
             },
           ],
         }}
         twitter={{
-          handle: "Thinh Le",
           site: `${process.env.NEXTAUTH_URL}/source-code/label/${label}`,
-          cardType: "summary_large_image",
         }}
       />
       <Layout>

@@ -104,7 +104,7 @@ const ItemBlog = ({ item }) => {
             </Typography>
           </Box>
           <Link href={`/blog/${item.slug}`}>
-            <ChildTitleNewBlog>{item.title}</ChildTitleNewBlog>
+            <ChildTitleNewBlog component="h3">{item.title}</ChildTitleNewBlog>
           </Link>
           <ChildDescNewBlog
             sx={{

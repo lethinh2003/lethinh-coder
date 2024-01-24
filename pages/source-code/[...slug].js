@@ -21,8 +21,8 @@ const DetailSourceCode = ({ sourceCode, dataSystem }) => {
       {sourceCode && (
         <>
           <NextSeo
-            title={`${sourceCode.title} - LeThinh Blog`}
-            description={`${sourceCode.desc} - LeThinh Blog`}
+            title={`${sourceCode.title}`}
+            description={`${sourceCode.desc}`}
             openGraph={{
               type: "article",
               locale: "vi_VN",
@@ -30,16 +30,13 @@ const DetailSourceCode = ({ sourceCode, dataSystem }) => {
               images: [
                 {
                   url: sourceCode.images[0],
-                  width: 700,
-                  height: 700,
-                  alt: `${sourceCode.desc} - LeThinh Blog`,
+
+                  alt: `${sourceCode.title}`,
                 },
               ],
             }}
             twitter={{
-              handle: "Thinh Le",
               site: `${process.env.NEXTAUTH_URL}/source-code/${sourceCode.slug}`,
-              cardType: "summary_large_image",
             }}
           />
 

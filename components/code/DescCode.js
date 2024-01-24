@@ -2,7 +2,6 @@ import { Box, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { convertTimeAgo } from "../../utils/convertTime";
 import Reaction from "../ReactionPost/Reaction";
 import CodeDownloadModal from "./CodeDownloadModal";
 import SocialSharingButton from "./SocialSharingButton";
@@ -61,15 +60,7 @@ const DescCode = ({ sourceCode }) => {
           <Typography component={"h1"} sx={{ fontFamily: "Noto Sans", fontSize: { xs: "3.5rem" }, fontWeight: "bold" }}>
             {sourceCode.title}
           </Typography>
-          {sourceCode.updatedAt && (
-            <Typography
-              sx={{
-                color: "text.secondary",
-              }}
-            >
-              📅 Cập nhật: {convertTimeAgo(sourceCode.updatedAt)}
-            </Typography>
-          )}
+
           <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
             <div className="content-html" dangerouslySetInnerHTML={{ __html: sourceCode.content }} />
           </Typography>

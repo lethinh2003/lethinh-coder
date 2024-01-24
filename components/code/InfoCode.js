@@ -75,13 +75,7 @@ const InfoCode = ({ sourceCode: { title, views, images, costs, downloads, create
             >
               📁 Tên code: {title}{" "}
             </Typography>
-            <Typography
-              sx={{
-                fontWeight: "500",
-              }}
-            >
-              👁️ Lượt xem: {views}{" "}
-            </Typography>
+
             <Typography
               sx={{
                 fontWeight: "500",

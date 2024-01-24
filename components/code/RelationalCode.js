@@ -29,7 +29,9 @@ const RelationalCode = ({ labels, codeId }) => {
 
   return (
     <>
-      <TitleContent className="title">Relationship Codes</TitleContent>
+      <TitleContent className="title" component="h2">
+        Relationship Codes
+      </TitleContent>
       <Box
         sx={{
           width: "100%",

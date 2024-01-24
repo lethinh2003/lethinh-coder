@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 
 import { NextSeo } from "next-seo";
 import Link from "next/link";
-import BlogsOfLabel from "../../../components/blog/BlogsOfLabel";
 import Layout from "../../../components/Layout";
+import BlogsOfLabel from "../../../components/blog/BlogsOfLabel";
 import dbConnect from "../../../database/dbConnect";
 import System from "../../../models/System";
 const BlogComponent = (props) => {
@@ -14,8 +14,8 @@ const BlogComponent = (props) => {
   return (
     <>
       <NextSeo
-        title={`Blog lập trình viên về ${label} - LeThinh Blog`}
-        description="Blog về lập trình, cuộc sống hằng ngày - Lethinh Blog"
+        title={`Danh sách blog về ${label}`}
+        description="Blog về lập trình, cuộc sống hằng ngày"
         openGraph={{
           type: "website",
           locale: "vi_VN",
@@ -23,16 +23,12 @@ const BlogComponent = (props) => {
           images: [
             {
               url: "https://i.imgur.com/ipoUilM.png",
-              width: 700,
-              height: 700,
-              alt: `Blog lập trình viên về ${label} - LeThinh Blog`,
+              alt: `Blog lập trình viên về ${label}`,
             },
           ],
         }}
         twitter={{
-          handle: "Thinh Le",
           site: `${process.env.NEXTAUTH_URL}/blog/label/${label}`,
-          cardType: "summary_large_image",
         }}
       />
       <Layout>

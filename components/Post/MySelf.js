@@ -64,7 +64,9 @@ const MySelf = ({ dataSystem }) => {
     <>
       {dataSystem && (
         <>
-          <TitleContent className="title">MYSELF</TitleContent>
+          <TitleContent className="title" component="h2">
+            MYSELF
+          </TitleContent>
           <CardCode sx={{ display: "flex", padding: "20px 0px" }}>
             <Box
               sx={{
