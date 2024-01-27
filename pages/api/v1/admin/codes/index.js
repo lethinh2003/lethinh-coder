@@ -4,6 +4,7 @@ import authMiddleware from "../../../../../lib/auth-middleware";
 import initMiddleware from "../../../../../lib/init-middleware";
 import catchAsync from "../../../../../lib/trycatch-middleware";
 import AdminService from "../../../../../services/server/AdminService";
+import EmailService from "../../../../../services/server/EmailService";
 import { NotFoundError, UnauthorizedError } from "../../../../../utils/appError";
 import { OkResponse } from "../../../../../utils/successResponse";
 const cors = initMiddleware(
@@ -36,6 +37,10 @@ const handle = async (req, res) => {
       desc,
       labels,
       keywords,
+    });
+
+    EmailService.sendEmailNewCodeToSubcriber({ code: result }).catch((err) => {
+      console.log("Lỗi send mail thông báo code mới: ", err);
     });
 
     return new OkResponse({
