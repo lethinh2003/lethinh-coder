@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import useCkeditor from "../../hooks/useCkeditor";
 
@@ -44,7 +44,7 @@ const Ckeditor = ({ content, setContent, setIsLoadingUploadImage }) => {
   };
   return (
     <>
-      {!editorLoaded && <div>Editor loading</div>}
+      {!editorLoaded && <Typography>Editor loading</Typography>}
       {editorLoaded && (
         <Box sx={{ width: "100%", color: "black", pt: 2, fontSize: "2rem" }}>
           <CKEditor

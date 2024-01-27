@@ -1,8 +1,8 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import { DefaultSeo } from "next-seo";
-import App from "next/app";
 import "nprogress/nprogress.css";
+import "react-highlight/node_modules/highlight.js/styles/vs2015.css";
 import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -17,7 +17,7 @@ import "../styles/layout.scss";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps: { session, ...pageProps }, example }) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
     <>
       <SessionProvider session={session} refetchOnWindowFocus={false}>
@@ -49,8 +49,3 @@ function MyApp({ Component, pageProps: { session, ...pageProps }, example }) {
 }
 
 export default MyApp;
-
-MyApp.getInitialProps = async (context) => {
-  const ctx = await App.getInitialProps(context);
-  return { ...ctx, example: "data" };
-};

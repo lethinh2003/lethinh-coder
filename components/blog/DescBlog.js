@@ -3,10 +3,12 @@ import { styled } from "@mui/material/styles";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import Highlight from "react-highlight";
 import blurImage from "../../public/blur_image.png";
 import { convertTimeAgo } from "../../utils/convertTime";
 import getReadingTime from "../../utils/getReadingTime";
 import Reaction from "../ReactionPost/Reaction";
+
 import SocialSharingButton from "./SocialSharingButton";
 const TagButton = styled(Box)({
   boxShadow: "none",
@@ -134,8 +136,8 @@ const DescBlog = ({ blogData }) => {
                 />
               </Box>
             </Box>
-            <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
-              <div className="content-html" dangerouslySetInnerHTML={{ __html: blogData.content }} />
+            <Typography component="div" className="content-html" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
+              <Highlight innerHTML={true}>{blogData.content}</Highlight>
             </Typography>
             <Reaction dataId={blogData._id} />
 

@@ -2,5 +2,5 @@
 
 - **Name:** LETHINH BLOG
 - **Author**: LE THINH
-- **Homeurl**: lethinh-coder.site
+- **Homeurl**: https://blog.lethinh.id.vn
 - **Thank for visited!**

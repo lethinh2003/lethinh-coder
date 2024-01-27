@@ -14,14 +14,15 @@ const GlobalStyle = createGlobalStyle`
     width: 100%;
     color: #ffffff;
     font-size: 2rem;
-    padding: 1.5rem 1rem;
+    padding: 1rem 1rem;
     overflow-x: auto;
-    background-color: ${({ theme }) => theme.palette.background.preCode};
+    border-radius: 0.5rem;
 
     code {
       color: #ffffff;
       background-color: unset;
       font-weight: 500;
+      border-radius: 0.5rem;
       &:before, &:after
     {
       content: "";

@@ -2,9 +2,11 @@ import { Box, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Highlight from "react-highlight";
 import Reaction from "../ReactionPost/Reaction";
 import CodeDownloadModal from "./CodeDownloadModal";
 import SocialSharingButton from "./SocialSharingButton";
+
 const DescCode = ({ sourceCode }) => {
   const { status } = useSession();
   const [isOpenDownloadModal, setIsOpenDownloadModal] = useState(false);
@@ -61,8 +63,8 @@ const DescCode = ({ sourceCode }) => {
             {sourceCode.title}
           </Typography>
 
-          <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
-            <div className="content-html" dangerouslySetInnerHTML={{ __html: sourceCode.content }} />
+          <Typography component="div" className="content-html" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
+            <Highlight innerHTML={true}>{sourceCode.content}</Highlight>
           </Typography>
           <Typography
             component="div"
