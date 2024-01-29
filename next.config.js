@@ -1,9 +1,9 @@
 module.exports = {
   reactStrictMode: true,
   optimizeFonts: false,
+  output: "standalone",
   experimental: {
     scrollRestoration: true,
-    outputStandalone: true,
   },
   images: {
     domains: ["i.imgur.com", "anonyviet.com"],

@@ -1,6 +1,5 @@
-import InputUnstyled from "@mui/base/InputUnstyled";
 import CheckIcon from "@mui/icons-material/Check";
-import { Alert, Box, Button, Card, CardContent, Fade, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, CardContent, Fade, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import Image from "next/image";
@@ -28,7 +27,7 @@ const grey = {
   900: "#1A2027",
 };
 
-const StyledInputElement = styled("input")(
+const StyledInputElement = styled(TextField)(
   ({ theme }) => `
  
   width: 100%;
@@ -52,10 +51,6 @@ const StyledInputElement = styled("input")(
   }
 `
 );
-
-const CustomInput = React.forwardRef(function CustomInput(props, ref) {
-  return <InputUnstyled components={{ Input: StyledInputElement }} {...props} ref={ref} />;
-});
 
 const IntroduceTitle = styled(Typography)({
   fontWeight: "bold",
@@ -188,7 +183,11 @@ const Introduce = () => {
                   gap: "10px",
                 }}
               >
-                <CustomInput value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Type email..." />
+                <StyledInputElement
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Type email..."
+                />
                 <Button onClick={handleClickSubmit}>Subscribe</Button>
               </Box>
             </Box>

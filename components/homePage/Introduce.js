@@ -1,6 +1,7 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Box, CardMedia, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-
+import Image from "next/image";
+import blurImage from "../../public/blur_image.png";
 const TitleContent = styled(Typography)({
   fontFamily: "Bebas Neue",
   position: "relative",
@@ -41,7 +42,25 @@ const Introduce = ({ dataSystem }) => {
             padding: { xs: "10px", md: "10px 20px" },
           }}
         >
-          <Avatar alt={data?.meta_desc} sx={{ width: 128, height: 128 }} src={data?.myself_avatar} />
+          <CardMedia
+            sx={{
+              height: 120,
+              width: 130,
+              objectFit: "cover",
+              borderRadius: "50%",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <Image
+              src={data.myself_avatar}
+              layout="fill"
+              objectFit="cover"
+              alt={data.meta_desc}
+              placeholder="blur"
+              blurDataURL={blurImage}
+            />
+          </CardMedia>
 
           <Typography component="div" sx={{ fontFamily: "Noto Sans", width: "100%" }}>
             <div

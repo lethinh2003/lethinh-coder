@@ -1,8 +1,8 @@
 import { Analytics } from "@vercel/analytics/react";
+import "highlight.js/styles/vs2015.css";
 import { SessionProvider } from "next-auth/react";
 import { DefaultSeo } from "next-seo";
 import "nprogress/nprogress.css";
-import "react-highlight/node_modules/highlight.js/styles/vs2015.css";
 import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
