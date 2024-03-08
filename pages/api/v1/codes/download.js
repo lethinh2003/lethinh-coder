@@ -1,5 +1,5 @@
 import Cors from "cors";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
 import dbConnect from "../../../../database/dbConnect";
 import { protectedMiddleware } from "../../../../lib/auth-middleware";
 import initMiddleware from "../../../../lib/init-middleware";
@@ -7,6 +7,7 @@ import catchAsync from "../../../../lib/trycatch-middleware";
 import CodeService from "../../../../services/server/CodeService";
 import { NotFoundError, UnauthorizedError } from "../../../../utils/appError";
 import { OkResponse } from "../../../../utils/successResponse";
+import { authOptions } from "../../auth/[...nextauth]";
 const cors = initMiddleware(
   Cors({
     origin: process.env.NEXTAUTH_URL,
@@ -18,11 +19,7 @@ const handle = async (req, res) => {
   await cors(req, res);
   await dbConnect();
   if (req.method === "POST") {
-    const session = await getSession({ req });
-
-    if (!session) {
-      throw new UnauthorizedError("Vui lòng đăng nhập tài khoản");
-    }
+    const session = await getServerSession(req, res, authOptions);
 
     const { codeId, email } = req.body;
     if (!codeId || !email) {

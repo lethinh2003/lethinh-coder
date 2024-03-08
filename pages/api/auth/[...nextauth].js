@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import dbConnect from "../../../database/dbConnect";
 import UserService from "../../../services/server/UserService";
 
-const authOptions = NextAuth({
+export const authOptions = {
   pages: {
     signIn: "/login",
   },
@@ -103,6 +103,6 @@ const authOptions = NextAuth({
       return session;
     },
   },
-});
+};
 
-export default authOptions;
+export default NextAuth(authOptions);
