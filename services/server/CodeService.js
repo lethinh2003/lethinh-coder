@@ -5,6 +5,16 @@ import { BadRequestError } from "../../utils/appError";
 import EmailService from "./EmailService";
 
 class CodeService {
+  static findAllCodes = async ({ query = {}, sort = "-createdAt", select, options }) => {
+    const data = await CodeRepository.find({
+      query,
+      select,
+      sort,
+      options,
+    });
+    return data;
+  };
+
   static findCodes = async ({ query = {}, sort = { createdAt: -1 }, itemsOfPage = 10, page = 1, select, options }) => {
     const limitItems = itemsOfPage * 1;
     const pageItem = page * 1;

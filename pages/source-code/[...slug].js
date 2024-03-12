@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
@@ -12,8 +11,8 @@ import DescCode from "../../components/code/DescCode";
 import InfoCode from "../../components/code/InfoCode";
 import RelationalCode from "../../components/code/RelationalCode";
 import dbConnect from "../../database/dbConnect";
-import CodeRepository from "../../models/repositories/CodeRepository";
 import RedisService from "../../services/client/RedisService";
+import CodeService from "../../services/server/CodeService";
 
 const DetailSourceCode = ({ sourceCode, dataSystem }) => {
   return (
@@ -110,6 +109,75 @@ const DetailSourceCode = ({ sourceCode, dataSystem }) => {
   );
 };
 export default DetailSourceCode;
+
+export async function getStaticPaths() {
+  const handleGetAllSlugs = async () => {
+    const sortQuery = "-createdAt";
+    let query = {
+      status: true,
+    };
+    let options = {};
+
+    const select = "slug";
+    const data = await CodeService.findAllCodes({
+      query,
+      sort: sortQuery,
+      select,
+      options,
+    });
+    return data;
+  };
+  await dbConnect();
+
+  const sourceSlug = await handleGetAllSlugs();
+
+  // Get the paths we want to pre-render based on posts
+  const paths = sourceSlug.map((slug) => ({
+    params: { slug: slug.slug.split("/") },
+  }));
+
+  return { paths, fallback: "blocking" };
+}
+
+export async function getStaticProps({ params }) {
+  await dbConnect();
+  const handleGetDetailedCode = async () => {
+    const slug = params.slug.join("/");
+    let query = {
+      status: true,
+      slug: { $in: slug },
+    };
+    let options = {};
+
+    const select = "-__v";
+    const data = await CodeService.findDetailedCode({
+      query,
+      select,
+      options,
+    });
+    return data;
+  };
+
+  const dataSystem = await RedisService.getDataSystem();
+
+  const sourceBySlug = await handleGetDetailedCode();
+
+  if (!sourceBySlug) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      sourceCode: JSON.parse(JSON.stringify(sourceBySlug)),
+      dataSystem,
+    },
+    revalidate: 60,
+  };
+}
+
+/*
 export const getServerSideProps = async (context) => {
   const { params } = context;
   await dbConnect();
@@ -145,3 +213,4 @@ export const getServerSideProps = async (context) => {
     },
   };
 };
+*/

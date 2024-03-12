@@ -183,6 +183,7 @@ export async function getStaticProps({ params }) {
       blogData: JSON.parse(JSON.stringify(sourceBySlug)),
       dataSystem,
     },
+    revalidate: 60,
   };
 }
 /*
