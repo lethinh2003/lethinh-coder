@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 
 import { Typography } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import axios from "axios";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
 import Layout from "../../components/Layout";
@@ -13,8 +12,8 @@ import Tag from "../../components/Post/Tag";
 import DescBlog from "../../components/blog/DescBlog";
 import RelationalBlog from "../../components/blog/RelationalBlog";
 import dbConnect from "../../database/dbConnect";
-import BlogRepository from "../../models/repositories/BlogRepository";
 import RedisService from "../../services/client/RedisService";
+import BlogService from "../../services/server/BlogService";
 const DetailBlog = ({ blogData, dataSystem }) => {
   return (
     <>
@@ -120,6 +119,73 @@ const DetailBlog = ({ blogData, dataSystem }) => {
   );
 };
 export default DetailBlog;
+
+export async function getStaticPaths() {
+  const handleGetAllSlugs = async () => {
+    const sortQuery = "-createdAt";
+    let query = {
+      status: true,
+    };
+    let options = {};
+
+    const select = "slug";
+    const data = await BlogService.findAllBlogs({
+      query,
+      sort: sortQuery,
+      select,
+      options,
+    });
+    return data;
+  };
+  await dbConnect();
+
+  const sourceSlug = await handleGetAllSlugs();
+
+  // Get the paths we want to pre-render based on posts
+  const paths = sourceSlug.map((slug) => ({
+    params: { slug: slug.slug.split("/") },
+  }));
+
+  return { paths, fallback: "blocking" };
+}
+
+export async function getStaticProps({ params }) {
+  await dbConnect();
+  const handleGetDetailedBlog = async () => {
+    const slug = params.slug.join("/");
+    let query = {
+      status: true,
+      slug: { $in: slug },
+    };
+    let options = {};
+
+    const select = "-__v";
+    const data = await BlogService.findDetailedBlog({
+      query,
+      select,
+      options,
+    });
+    return data;
+  };
+
+  const dataSystem = await RedisService.getDataSystem();
+
+  const sourceBySlug = await handleGetDetailedBlog();
+
+  if (!sourceBySlug) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      blogData: JSON.parse(JSON.stringify(sourceBySlug)),
+      dataSystem,
+    },
+  };
+}
+/*
 export const getServerSideProps = async (context) => {
   const { params } = context;
   await dbConnect();
@@ -153,3 +219,4 @@ export const getServerSideProps = async (context) => {
     },
   };
 };
+*/

@@ -1,6 +1,15 @@
 import BlogRepository from "../../models/repositories/BlogRepository";
 
 class BlogService {
+  static findAllBlogs = async ({ query = {}, sort = "-createdAt", select, options }) => {
+    const data = await BlogRepository.find({
+      query,
+      select,
+      sort,
+      options,
+    });
+    return data;
+  };
   static findBlogs = async ({ query = {}, sort = "-createdAt", itemsOfPage = 10, page = 1, select, options }) => {
     const limitItems = itemsOfPage * 1;
     const pageItem = page * 1;
