@@ -6,7 +6,7 @@ module.exports = {
     scrollRestoration: true,
   },
   images: {
-    domains: ["i.imgur.com", "anonyviet.com"],
+    domains: ["i.imgur.com", "anonyviet.com", "res.cloudinary.com"],
   },
   env: {
     CLOUDINARY_KEY: process.env.CLOUDINARY_KEY,
@@ -35,5 +35,6 @@ module.exports = {
     KV_REST_API_URL: process.env.KV_REST_API_URL,
     KV_REST_API_TOKEN: process.env.KV_REST_API_TOKEN,
     KV_REST_API_READ_ONLY_TOKEN: process.env.KV_REST_API_READ_ONLY_TOKEN,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
   },
 };

@@ -1,5 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Backdrop, Box, Button, Checkbox, CircularProgress, DialogContentText, TextField } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  DialogContentText,
+  FormControl,
+  TextField,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -9,10 +20,19 @@ import { TYPE_ADD_NEW } from "../../../configs/typeBlogForm";
 import convertTime from "../../../utils/convertTime";
 
 const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) => {
+  const [file, setFile] = useState();
+
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const srcAvatarImage = file ? URL.createObjectURL(file) : "";
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
     desc: Yup.string().required("Desc is required"),
-    images: Yup.string().required("Images is required"),
+    images: Yup.string(),
     keywords: Yup.string().required("Keywords is required"),
     content: Yup.string().required("Content is required"),
     labels: Yup.string().required("Labels is required"),
@@ -27,6 +47,7 @@ const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) =
     formState: { errors },
     register,
     reset,
+    setValue,
   } = useForm(formOptions);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +56,24 @@ const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) =
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
+
+      if (!file && typeForm === TYPE_ADD_NEW) {
+        throw new Error("Vui lòng up ảnh đại diện");
+      }
+      // Upload Avatar Image
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const uploadFile = await axios.post(`/api/v1/admin/upload-file`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        const filePath = uploadFile.data.data;
+        setValue("images", filePath, {
+          shouldValidate: true,
+        });
+      }
       const response = await handleSubmitForm(data);
       if (typeForm === TYPE_ADD_NEW) {
         reset();
@@ -68,6 +107,38 @@ const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) =
           padding: "40px 20px",
         }}
       >
+        <FormControl>
+          <Typography component={"label"} htmlFor="image-avatar">
+            Ảnh đại diện
+          </Typography>
+          <input id="image-avatar" type="file" onChange={handleFileChange} />
+          {file && (
+            <>
+              <Typography>Preview</Typography>
+              <img
+                src={srcAvatarImage}
+                style={{
+                  width: "10rem",
+                  height: "10rem",
+                  objectFit: "cover",
+                }}
+              />
+            </>
+          )}
+          {initDataBlog.images[0] && (
+            <>
+              <Typography>Ảnh hiện tại</Typography>
+              <img
+                src={initDataBlog.images[0]}
+                style={{
+                  width: "10rem",
+                  height: "10rem",
+                  objectFit: "cover",
+                }}
+              />
+            </>
+          )}
+        </FormControl>
         <form
           style={{
             display: "flex",
@@ -112,7 +183,7 @@ const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) =
             defaultValue={initDataBlog.desc}
           />
 
-          <Controller
+          {/* <Controller
             name="images"
             control={control}
             render={({ field: { ref, ...field } }) => (
@@ -128,7 +199,7 @@ const BlogForm = ({ typeForm = TYPE_ADD_NEW, initDataBlog, handleSubmitForm }) =
               />
             )}
             defaultValue={initDataBlog.images.join(", ")}
-          />
+          /> */}
           <Controller
             name="keywords"
             control={control}
