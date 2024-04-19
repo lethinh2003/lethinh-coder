@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Insights } from "../components/Insight";
 import ThemeLayout from "../components/ThemeLayout";
 import NextSeoConfig from "../configs/next-seo.config";
 import { store } from "../redux/reducers/store";
@@ -40,6 +41,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
                 pauseOnHover={false}
               />
               <Analytics />
+              <Insights />
             </ThemeLayout>
           </Provider>
         </QueryClientProvider>
